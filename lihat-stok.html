@@ -5,107 +5,126 @@
   <title>Laporan Stok | APJ Inventori</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
+    body { font-family: 'Inter', sans-serif; background-color: #0f172a; margin: 0; padding: 0; }
     
-    /* Layout untuk Print */
+    /* ======== LAYOUT KHUSUS PRINT PDF ======== */
     @media print {
-      body { background: white !important; color: black !important; font-family: 'Times New Roman', serif; margin: 0 !important; padding: 0 !important; }
-      .no-print { display: none !important; }
+      /* Sembunyikan UI Web secara Total agar tidak berantakan */
+      .web-ui, #modalPrint { display: none !important; }
       
-      /* Hilangkan Header/Footer bawaan browser (URL, Tanggal, Title) */
+      /* Hapus Header & Footer Bawaan Browser (URL, Jam, Tanggal) */
       @page { size: A4 portrait; margin: 0; }
       
-      /* Paksa ukuran 1 Lembar A4 & Flexbox agar TTD selalu di bawah */
+      /* Format Kertas */
+      body { background: white !important; color: black !important; }
+      
       #printArea { 
-        display: flex !important; 
-        flex-direction: column; 
-        height: 100vh; /* Setinggi 1 halaman layar penuh */
-        padding: 1.5cm 2cm; /* Margin konten pengganti margin @page */
-        box-sizing: border-box; 
+        display: block !important; 
+        position: relative;
+        width: 21cm;
+        height: 29.6cm; /* Mengunci tinggi 1 lembar A4 */
+        padding: 1.5cm 1.5cm 2cm 1.5cm;
+        box-sizing: border-box;
+        font-family: 'Times New Roman', serif;
+        margin: 0 auto;
+        overflow: hidden;
       }
       
-      /* Kop Surat: Logo dipaksa ke kiri (absolute), Teks di tengah */
-      .kop-surat { position: relative; border-bottom: 2px solid black; padding-bottom: 15px; margin-bottom: 20px; }
-      .kop-logo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 100px; }
-      .kop-text { text-align: center; width: 100%; }
+      /* KOP SURAT */
+      .kop-surat { position: relative; text-align: center; border-bottom: 3px solid black; padding-bottom: 15px; margin-bottom: 20px; }
+      .kop-logo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 100px; width: auto; }
+      .kop-title { font-weight: bold; font-size: 24pt; color: black !important; margin-bottom: 5px; }
+      .kop-sub { font-style: italic; font-size: 14pt; color: black !important; }
       
-      /* Container Tabel agar bisa mengisi ruang kosong */
-      #printTableContainer { flex-grow: 1; overflow: hidden; }
+      /* TABEL */
+      table { width: 100%; border-collapse: collapse; font-size: 11pt; color: black !important; }
+      th, td { border: 1px solid black !important; padding: 8px !important; color: black !important; }
+      th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       
-      /* Tabel Print */
-      table { border-collapse: collapse; width: 100%; font-size: 11pt; color: black !important; }
-      th, td { border: 1px solid black !important; padding: 6px !important; color: black !important; }
-      th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; }
-      .text-left { text-align: left !important; }
-      .text-center { text-align: center !important; }
+      /* ISI TABEL: TIDAK BOLD, NAMA KIRI, LAINNYA TENGAH */
+      #printTbody td { font-weight: normal !important; text-align: center !important; background: transparent !important; }
+      #printTbody td:nth-child(2) { text-align: left !important; }
       
-      /* Tanda Tangan Mengunci di Bawah */
-      #printFooter { margin-top: auto; }
-      .ttd-container { display: flex; justify-content: space-around; margin-top: 10px; }
-      .ttd-box { text-align: center; width: 33%; }
-      .role-label { font-weight: bold; }
-      .name-label { font-weight: bold; text-decoration: underline; margin-top: 70px; }
+      /* FOOTER / TTD (DIKUNCI DI BAGIAN BAWAH HALAMAN) */
+      #printFooter { position: absolute; bottom: 2cm; left: 1.5cm; right: 1.5cm; }
+      .print-loc { text-align: right; margin-bottom: 15px; font-size: 11pt; padding-right: 20px; color: black !important; }
+      .ttd-container { display: flex; justify-content: space-around; width: 100%; }
+      .ttd-box { text-align: center; width: 33%; color: black !important; }
+      .role-label { font-weight: bold; color: black !important; font-size: 11pt;}
+      .name-label { font-weight: bold; text-decoration: underline; margin-top: 70px; color: black !important; font-size: 11pt;}
     }
   </style>
 </head>
-<body class="flex h-screen overflow-hidden antialiased">
+<body>
 
-  <div id="modalPrint" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-4 no-print">
+  <div class="web-ui flex h-screen overflow-hidden antialiased">
+    
+    <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0">
+      <div class="h-16 flex items-center px-6 border-b border-slate-800 text-white font-bold tracking-wider">APJ INVENTORI</div>
+      <nav class="flex-1 py-4 px-3 space-y-1">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Dashboard</a>
+        <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Input Stok</a>
+        <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Output Stok</a>
+        <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Stok Opname</a>
+        <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-600/10 text-emerald-500 rounded-lg text-sm border border-emerald-500/20">Lihat Stok</a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col bg-slate-900 overflow-y-auto">
+      <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50">
+        <h2 class="text-lg font-semibold text-emerald-400">Laporan Stok Terkini</h2>
+      </header>
+      <div class="p-8 max-w-[1000px] mx-auto w-full">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
+          <div class="flex flex-col md:flex-row gap-4 mb-8">
+             <select id="kategoriSelect" onchange="loadStokData()" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+              <option value="" disabled selected>-- Pilih Kategori --</option>
+             </select>
+             <button onclick="document.getElementById('modalPrint').classList.remove('hidden')" class="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">Simpan Sebagai PDF</button>
+          </div>
+          <div class="border border-slate-800 rounded-lg overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                  <thead class="bg-slate-900 text-xs text-slate-400 border-b border-slate-800 uppercase">
+                      <tr><th class="p-4 text-center">ID Barang</th><th class="p-4">Nama Barang</th><th class="p-4 text-center">Qty Stok</th><th class="p-4 text-center">Satuan</th></tr>
+                  </thead>
+                  <tbody id="tbodyStok">
+                      <tr><td colspan="4" class="p-6 text-center text-slate-500">Pilih kategori di atas untuk memuat data.</td></tr>
+                  </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="modalPrint" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-4">
     <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl w-full max-w-md shadow-2xl">
       <h3 class="text-white font-bold mb-4">Data Penandatangan</h3>
-      <div class="mb-4"><label class="text-xs text-slate-400">Nama Supervisor</label><input type="text" id="modalSup" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600"></div>
-      <div class="mb-4"><label class="text-xs text-slate-400">Nama PIC 1</label><input type="text" id="modalPic1" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600"></div>
-      <div class="mb-6"><label class="text-xs text-slate-400">Nama PIC 2</label><input type="text" id="modalPic2" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600"></div>
+      <div class="mb-4"><label class="text-xs text-slate-400">Nama Supervisor</label><input type="text" id="modalSup" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"></div>
+      <div class="mb-4"><label class="text-xs text-slate-400">Nama PIC 1</label><input type="text" id="modalPic1" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"></div>
+      <div class="mb-6"><label class="text-xs text-slate-400">Nama PIC 2 (Opsional)</label><input type="text" id="modalPic2" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"></div>
       <div class="flex gap-3">
-        <button onclick="document.getElementById('modalPrint').classList.add('hidden')" class="flex-1 bg-slate-700 py-2 rounded text-sm text-white">Batal</button>
-        <button onclick="processPrint()" class="flex-1 bg-emerald-600 py-2 rounded text-sm text-white font-bold">Sudah Sesuai</button>
+        <button onclick="document.getElementById('modalPrint').classList.add('hidden')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded text-sm text-white transition-colors">Batal</button>
+        <button onclick="processPrint()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-2 rounded text-sm text-white font-bold transition-colors">Sudah Sesuai</button>
       </div>
     </div>
   </div>
 
-  <main class="flex-1 flex flex-col bg-slate-900 overflow-y-auto no-print">
-    <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50">
-      <h2 class="text-lg font-semibold text-emerald-400">Laporan Stok Terkini</h2>
-    </header>
-    <div class="p-8 max-w-[1000px] mx-auto w-full">
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
-        <div class="flex flex-col md:flex-row gap-4 mb-8">
-           <select id="kategoriSelect" onchange="loadStokData()" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
-            <option value="" disabled selected>-- Pilih Kategori --</option>
-           </select>
-           <button onclick="document.getElementById('modalPrint').classList.remove('hidden')" class="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold">Simpan Sebagai PDF</button>
-        </div>
-        <div class="border border-slate-800 rounded-lg overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-slate-900 text-xs text-slate-400 border-b border-slate-800 uppercase">
-                    <tr><th class="p-4 text-center">ID Barang</th><th class="p-4">Nama Barang</th><th class="p-4 text-center">Qty Stok</th><th class="p-4 text-center">Satuan</th></tr>
-                </thead>
-                <tbody id="tbodyStok"></tbody>
-            </table>
-        </div>
-      </div>
-    </div>
-  </main>
-
   <div id="printArea" style="display:none;">
     
     <div class="kop-surat">
-        <img src="https://i.imgur.com/Sb5mLrt.png" class="kop-logo">
-        <div class="kop-text">
-            <div style="font-weight: bold; font-size: 24pt; margin-bottom: 5px;">AMPERA PAK JENGGOT</div>
-            <div style="font-style: italic; font-size: 14pt;" id="printSub"></div>
-        </div>
+        <img src="https://i.imgur.com/Sb5mLrt.png" class="kop-logo" alt="Logo">
+        <div class="kop-title">AMPERA PAK JENGGOT</div>
+        <div class="kop-sub" id="printSub"></div>
     </div>
     
-    <div id="printTableContainer">
-        <table id="printTable">
-          <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
-          <tbody id="printTbody"></tbody>
-        </table>
-    </div>
+    <table id="printTable">
+      <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
+      <tbody id="printTbody"></tbody>
+    </table>
 
     <div id="printFooter">
-        <div style="text-align: center; font-size: 11pt; margin-bottom: 10px;">Batu, <span id="printLocDate"></span></div>
+        <div class="print-loc">Batu, <span id="printLocDate"></span></div>
         <div class="ttd-container" id="printTTD"></div>
     </div>
 
@@ -115,9 +134,12 @@
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
     
     document.addEventListener('DOMContentLoaded', () => {
+      // Set nama default dari login
       const nama = localStorage.getItem('APJ_USER_NAME') || '';
       document.getElementById('modalSup').value = nama;
       document.getElementById('modalPic1').value = nama;
+
+      // Memuat Opsi Kategori Berdasarkan Hak Akses
       const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
       kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
@@ -126,47 +148,59 @@
     async function loadStokData() {
       const sh = document.getElementById('kategoriSelect').value;
       const tbody = document.getElementById('tbodyStok');
-      tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-500">Memuat...</td></tr>';
-      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
-      if(res.success) {
-        tbody.innerHTML = res.data.map(b => `<tr class="border-b border-slate-800 bg-slate-950">
-            <td class="p-4 text-sm text-slate-400 text-center">${b.id}</td>
-            <td class="p-4 text-sm text-white text-left">${b.nama}</td>
-            <td class="p-4 text-center font-bold text-emerald-400">${b.stokTersedia}</td>
-            <td class="p-4 text-center text-sm text-slate-400">${b.satuanStok}</td>
-        </tr>`).join('');
+      if(!sh) return;
+      
+      tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-500 animate-pulse">Menarik data dari database...</td></tr>';
+      
+      try {
+        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
+        if(res.success) {
+          if (res.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-rose-500">Belum ada data barang.</td></tr>';
+          } else {
+            tbody.innerHTML = res.data.map(b => `<tr class="border-b border-slate-800 bg-slate-950 hover:bg-slate-900">
+                <td class="p-4 text-sm text-slate-400 text-center">${b.id}</td>
+                <td class="p-4 text-sm text-white text-left">${b.nama}</td>
+                <td class="p-4 text-center font-bold text-emerald-400">${b.stokTersedia}</td>
+                <td class="p-4 text-center text-sm text-slate-400">${b.satuanStok}</td>
+            </tr>`).join('');
+          }
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-rose-500">Gagal terhubung ke database.</td></tr>';
       }
     }
 
     function processPrint() {
+      // 1. Ambil Data
       const sup = document.getElementById('modalSup').value;
       const pic1 = document.getElementById('modalPic1').value;
       const pic2 = document.getElementById('modalPic2').value;
-      const kat = document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text;
+      const selKategori = document.getElementById('kategoriSelect');
+      const katText = selKategori.options[selKategori.selectedIndex].text;
       
-      document.getElementById('printSub').innerText = "Rekap Bulanan Stok " + kat + " Akhir";
+      // 2. Isi Area Cetak
+      document.getElementById('printSub').innerText = "Rekap Bulanan Stok " + katText + " Akhir";
       document.getElementById('printLocDate').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
       
-      // Update tabel print, bersihkan warna dan HILANGKAN font-bold
-      let rows = document.getElementById('tbodyStok').innerHTML
-                 .replace(/text-emerald-400/g, 'text-black') // hijau jadi hitam
-                 .replace(/text-slate-400/g, 'text-black') // abu jadi hitam
-                 .replace(/text-white/g, 'text-black') // putih jadi hitam
-                 .replace(/bg-slate-950/g, 'bg-white') // hapus background gelap
-                 .replace(/font-bold/g, 'font-normal'); // hapus bold pada isi tabel
-                 
-      document.getElementById('printTbody').innerHTML = rows;
+      // Meng-copy tabel dari web ke kertas cetak
+      document.getElementById('printTbody').innerHTML = document.getElementById('tbodyStok').innerHTML;
       
-      // Susun TTD
+      // 3. Susun Tanda Tangan
       const signers = [{r: "Supervisor", n: sup}, {r: "PIC 1", n: pic1}, {r: "PIC 2", n: pic2}].filter(s => s.n.trim() !== "");
       let ttdHtml = '';
       signers.forEach(s => { 
-          ttdHtml += `<div class="ttd-box"><p class="role-label">${s.r}</p><br><br><br><p class="name-label">${s.n}</p></div>`; 
+          ttdHtml += `<div class="ttd-box"><p class="role-label">${s.r}</p><p class="name-label">${s.n}</p></div>`; 
       });
       document.getElementById('printTTD').innerHTML = ttdHtml;
       
+      // 4. Proses Print
       document.getElementById('modalPrint').classList.add('hidden');
-      window.print();
+      
+      // Memberi sedikit waktu agar browser merender data ke hidden area sebelum mencetak
+      setTimeout(() => {
+        window.print();
+      }, 100);
     }
   </script>
 </body>
