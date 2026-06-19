@@ -9,99 +9,126 @@
 </head>
 <body class="flex h-screen overflow-hidden antialiased">
 
-  <div id="customToast" class="toast flex items-center max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md bg-emerald-950 text-emerald-400"><div id="toastMessage"></div></div>
+  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert"><div class="ml-3 text-sm font-medium" id="toastMessage"></div></div>
 
   <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0">
-    <div class="h-16 flex items-center px-6 border-b border-slate-800"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span></div>
+    <div class="h-16 flex items-center px-6 border-b border-slate-800"><div class="flex items-center gap-3 text-blue-500"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span></div></div>
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg text-sm">Dashboard</a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg text-sm">Input Stok</a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-rose-600/10 text-rose-500 rounded-lg text-sm border border-rose-500/20">Output Stok</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg text-sm">Stok Opname</a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg text-sm">Lihat Stok</a>
+      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
+      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
+      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
+      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-rose-600/10 text-rose-500 rounded-lg font-medium text-sm transition-colors border border-rose-500/20">Output Stok</a>
+      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
+      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
     </nav>
   </aside>
 
   <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
-<header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
-  <h2 class="text-lg font-semibold text-rose-400">Form Output Stok (Pemakaian)</h2>
-  <div class="text-sm font-medium text-slate-400">
-    Petugas: <span id="namaPetugas" class="text-rose-400">Memuat...</span>
-  </div>
-</header>
+    <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <h2 class="text-lg font-semibold text-rose-400">Form Output Stok (Pemakaian)</h2>
+      <div class="text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-rose-400">Memuat...</span></div>
+    </header>
 
-    <div class="p-8 max-w-[1200px] mx-auto w-full">
+    <div class="p-8 max-w-[1400px] mx-auto w-full">
       <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div><label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Tanggal Keluar</label><input type="date" id="tanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-rose-500 focus:outline-none"></div>
-          <div><label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Kategori Transaksi</label><select id="kategoriSelect" onchange="handleKategori()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-rose-500 focus:outline-none"><option value="" selected>-- Pilih Kategori --</option></select></div>
+          <div><label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Keluar</label><input type="date" id="tanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-rose-500 focus:outline-none"></div>
+          <div><label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Transaksi</label><select id="kategoriSelect" onchange="handleKategoriChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-rose-500 focus:outline-none"><option value="" disabled selected>-- Pilih Kategori --</option></select></div>
         </div>
 
         <div class="border border-slate-800 rounded-lg overflow-x-auto mb-6">
           <table class="w-full text-left border-collapse min-w-[800px]">
-            <thead class="bg-slate-900 text-xs text-slate-400 border-b border-slate-800 uppercase tracking-wider">
-              <tr><th class="p-4 w-4/12">Nama Barang</th><th class="p-4 w-2/12 text-center">Qty Keluar</th><th class="p-4 w-1/12 text-center">Satuan</th><th class="p-4 w-4/12">Keterangan</th><th class="p-4 w-1/12 text-center">Aksi</th></tr>
+            <thead>
+              <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
+                <th class="p-4 w-5/12">Nama Barang</th>
+                <th class="p-4 w-2/12 text-center">Qty Keluar</th>
+                <th class="p-4 w-1/12 text-center">Satuan</th>
+                <th class="p-4 w-3/12">Keterangan / Tujuan</th>
+                <th class="p-4 w-1/12 text-center">Aksi</th>
+              </tr>
             </thead>
-            <tbody id="tbodyData">
-              <tr class="border-b border-slate-800/50 bg-slate-950">
-                <td class="p-4 text-center text-slate-600 italic" colspan="5">Pilih kategori di atas untuk memulai transaksi...</td>
+            <tbody id="itemTableBody">
+              <tr class="border-b border-slate-800/50 bg-slate-950 item-row">
+                <td class="p-3">
+                  <select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option value="">Pilih kategori terlebih dahulu...</option></select>
+                </td>
+                <td class="p-3"><input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0" disabled></td>
+                <td class="p-3 text-center"><span class="text-sm font-bold text-rose-400 label-satuan">-</span></td>
+                <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket" placeholder="Keterangan..." disabled></td>
+                <td class="p-3 text-center"><button type="button" class="text-slate-600 text-sm font-medium" disabled>Hapus</button></td>
               </tr>
             </tbody>
           </table>
-          <button onclick="tambahBaris()" id="btnTambahBaris" class="text-rose-500 text-sm font-medium w-full text-center p-3 border-t border-slate-800 bg-slate-900 hover:bg-slate-800" disabled>+ Tambah Baris Barang</button>
+          <div class="bg-slate-900 p-3 text-center border-t border-slate-800">
+            <button type="button" id="btnTambahBaris" onclick="tambahBarisBaru()" class="text-rose-500 hover:text-rose-400 text-sm font-medium flex items-center justify-center gap-2 w-full" disabled>+ Tambah Baris Barang</button>
+          </div>
         </div>
-        <div class="flex justify-end"><button id="btnSimpan" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-lg text-sm font-semibold shadow-lg shadow-rose-600/20">Simpan Output Stok</button></div>
+
+        <div class="flex justify-end">
+          <button type="button" id="btnSimpan" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-rose-600/20">Simpan Output Stok</button>
+        </div>
       </div>
     </div>
   </main>
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
-    let listBarang = [];
+    let globalListBarang = [];
 
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
+      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME');
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
-      const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
+      const permissions = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
-      kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
+      kats.forEach(kat => { if (permissions[kat.key] === 'Y') { const op = document.createElement('option'); op.value = kat.sheet; op.textContent = kat.label; document.getElementById('kategoriSelect').appendChild(op); }});
     });
 
-    async function handleKategori() {
-      const sh = document.getElementById('kategoriSelect').value; if(!sh) return;
-      document.getElementById('tbodyData').innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Memuat data...</td></tr>';
-      
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('customToast'); document.getElementById('toastMessage').textContent = msg;
+      t.className = type === 'success' ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md" : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    async function handleKategoriChange() {
+      const sh = document.getElementById('kategoriSelect').value; if (!sh) return;
+      document.getElementById('tbodyData').innerHTML = `<tr class="border-b border-slate-800/50 bg-slate-950 item-row"><td class="p-3"><select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option>Memuat data...</option></select></td><td class="p-3"><input type="number" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center" disabled></td><td class="p-3 text-center">-</td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white" disabled></td><td class="p-3 text-center">-</td></tr>`;
       try {
-        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
-        if(res.success) {
-          listBarang = res.data;
-          document.getElementById('tbodyData').innerHTML = ''; 
-          document.getElementById('btnTambahBaris').disabled = false;
-          tambahBaris(); // Langsung munculkan 1 baris input aktif
-        } else { alert(res.message); }
-      } catch(e) { alert("Gagal mengambil data"); }
+        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow', body: JSON.stringify({ action: 'getBarang', sheetName: sh }) })).json();
+        if (res.success) {
+          globalListBarang = res.data;
+          document.getElementById('tbodyData').innerHTML = ''; document.getElementById('btnTambahBaris').disabled = false;
+          tambahBarisBaru();
+        } else showToast(res.message, "error");
+      } catch (e) { showToast("Koneksi gagal.", "error"); }
     }
 
-    function tambahBaris() {
-      const tbody = document.getElementById('tbodyData');
-      const tr = document.createElement('tr');
-      tr.className = "border-b border-slate-800 item-row bg-slate-950";
-      tr.innerHTML = `<td class="p-3"><select onchange="updSat(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang">${listBarang.map(b => `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}</select></td><td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 text-center rounded-lg p-2.5 text-sm text-white input-qty"></td><td class="p-3 text-center label-sat text-sm font-bold text-rose-400">-</td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket"></td><td class="p-3 text-center"><button onclick="this.closest('tr').remove()" class="text-slate-600 hover:text-rose-500 text-sm">Hapus</button></td>`;
-      tbody.appendChild(tr);
+    function populate(sel) {
+      sel.innerHTML = '<option value="" disabled selected>-- Pilih Barang --</option>';
+      globalListBarang.forEach(b => {
+        const op = document.createElement('option'); op.value = b.id; op.textContent = `[${b.id}] ${b.nama}`; op.setAttribute('data-sat', b.satuanStok); sel.appendChild(op);
+      });
     }
 
-    function updSat(sel) { sel.closest('tr').querySelector('.label-sat').innerText = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-'; }
+    function tambahBarisBaru() {
+      const tbody = document.getElementById('itemTableBody');
+      const tr = document.createElement('tr'); tr.className = "border-b border-slate-800/50 bg-slate-950 item-row";
+      tr.innerHTML = `<td class="p-3"><select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang"></select></td><td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty"></td><td class="p-3 text-center"><span class="text-sm font-bold text-rose-400 label-sat">-</span></td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket"></td><td class="p-3 text-center"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-400 text-sm font-medium">Hapus</button></td>`;
+      tbody.appendChild(tr); populate(tr.querySelector('.select-barang'));
+    }
+
+    function upd(sel) { sel.closest('tr').querySelector('.label-sat').innerText = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-'; }
 
     document.getElementById('btnSimpan').addEventListener('click', async () => {
-      let data = [], err = false;
+      let data = [];
       document.querySelectorAll('.item-row').forEach(r => {
         let sel = r.querySelector('.select-barang'), q = r.querySelector('.input-qty').value, k = r.querySelector('.input-ket').value;
-        if(sel.value && q > 0) data.push([document.getElementById('tanggalInput').value, localStorage.getItem('APJ_USER_NAME'), document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, sel.value, sel.options[sel.selectedIndex].text.split('] ')[1], q, r.querySelector('.label-sat').innerText, k]);
+        if (sel.value && q > 0) data.push([document.getElementById('tanggalInput').value, localStorage.getItem('APJ_USER_NAME'), document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, sel.value, sel.options[sel.selectedIndex].text.split('] ')[1], q, r.querySelector('.label-sat').innerText, k]);
       });
-      if(!data.length) return alert("Barang belum dipilih atau qty 0!");
-      const btn = document.getElementById('btnSimpan'); btn.innerText = "Menyimpan..."; btn.disabled = true;
-      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'simpanTransaksi', sheetName:'TRANSAKSI_OUTPUT_STOK', data})})).json();
-      if(res.success) { alert("Berhasil!"); location.reload(); } else { alert(res.message); btn.disabled = false; btn.innerText = "Simpan Output Stok"; }
+      if(!data.length) return showToast("Isi data dengan benar!", "error");
+      const btn = document.getElementById('btnSimpan'); btn.disabled = true; btn.innerText = "Menyimpan...";
+      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'simpanTransaksi', sheetName: 'TRANSAKSI_OUTPUT_STOK', data }) })).json();
+      if(res.success) { showToast(res.message); setTimeout(()=>location.reload(), 2000); } else { showToast(res.message, "error"); btn.disabled = false; btn.innerText = "Simpan Output Stok"; }
     });
   </script>
 </body>
