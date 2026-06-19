@@ -17,26 +17,24 @@
       
       body { background: white !important; color: black !important; }
       
-      /* Pembungkus Halaman Cetak (Margin lebih tipis) */
+      /* Pembungkus Halaman Cetak (Normal Flow) */
       #printArea { 
-        display: flex !important; 
-        flex-direction: column; 
-        height: 100vh; /* Memaksa maksimal 1 layar */
-        padding: 1cm 1.5cm; /* Atas/bawah 1cm, Kiri/kanan 1.5cm */
+        display: block !important; 
+        padding: 1cm 1.5cm; 
         box-sizing: border-box;
         font-family: 'Times New Roman', serif;
       }
       
-      /* Kop Surat: Diperpadat agar hemat ruang */
-      .kop-surat { text-align: center; border-bottom: 3px solid black; padding-bottom: 8px; margin-bottom: 10px; }
+      /* Kop Surat */
+      .kop-surat { text-align: center; border-bottom: 3px solid black; padding-bottom: 8px; margin-bottom: 15px; }
       .kop-title { font-weight: bold; font-size: 20pt; color: black !important; margin-bottom: 2px; }
       .kop-sub { font-style: italic; font-size: 12pt; color: black !important; margin-bottom: 2px; }
       .kop-nomor { font-size: 10pt; font-weight: normal; color: black !important; }
       
       /* WADAH TABEL */
-      #printTableContainer { flex-grow: 1; margin-bottom: 10px; }
+      #printTableContainer { margin-bottom: 30px; } /* Jarak ideal antara tabel dan area TTD */
       
-      /* TABEL: Font lebih kecil & padding lebih rapat */
+      /* TABEL */
       table { width: 100%; border-collapse: collapse; font-size: 10pt; color: black !important; }
       th, td { border: 1px solid black !important; padding: 4px !important; color: black !important; }
       th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -46,15 +44,12 @@
       #printTbody td:nth-child(2) { text-align: left !important; }
       
       /* FOOTER / AREA TTD */
-      #printFooter { 
-        margin-top: auto; 
-        page-break-inside: avoid; 
-      }
+      #printFooter { page-break-inside: avoid; }
       .print-loc { text-align: center; margin-bottom: 15px; font-size: 10pt; color: black !important; }
       .ttd-container { display: flex; justify-content: space-around; width: 100%; }
       .ttd-box { text-align: center; width: 33%; color: black !important; }
       .role-label { font-weight: bold; color: black !important; font-size: 10pt; text-transform: uppercase; }
-      .name-label { font-weight: bold; text-decoration: underline; margin-top: 50px; color: black !important; font-size: 10pt;}
+      .name-label { font-weight: bold; text-decoration: underline; margin-top: 60px; color: black !important; font-size: 10pt;}
     }
   </style>
 </head>
