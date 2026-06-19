@@ -116,7 +116,7 @@
   </div>
 
   <script>
-    // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+    // URL WEB APP GOOGLE APPS SCRIPT ANDA
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
 
     function showPopup(message, type = 'success') {
@@ -155,8 +155,8 @@
       const btnText = document.getElementById('btnText');
       const btnSpinner = document.getElementById('btnSpinner');
 
-      // Proteksi URL Apps Script kosong
-      if(APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec") {
+      // PERBAIKAN 1: Pengecekan URL sudah diperbaiki agar tidak error
+      if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL === "") {
         showPopup("Konfigurasi Error: Developer belum memasukkan URL API Apps Script.", "error");
         return;
       }
@@ -167,9 +167,13 @@
       btnSpinner.classList.remove('hidden');
 
       try {
-        // Mengirim data menggunakan metode text/plain raw string untuk bypass CORS Preflight di Apps Script
+        // PERBAIKAN 2: Penambahan method headers dan redirect: 'follow'
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+          },
+          redirect: 'follow', // Wajib ada untuk bypass CORS Google
           body: JSON.stringify({
             username: usernameInput,
             password: passwordInput
@@ -181,12 +185,12 @@
         if (result.success) {
           showPopup(result.message + " Selamat datang, " + result.user.nama, "success");
           
-          // Menyimpan data sesi login ke LocalStorage untuk pengecekan Hak Akses di dashboard nanti
+          // Menyimpan data sesi login ke LocalStorage
           localStorage.setItem('APJ_SESSION_ACTIVE', 'true');
           localStorage.setItem('APJ_USER_NAME', result.user.nama);
           localStorage.setItem('APJ_USER_LEVEL', result.user.level);
 
-          // Redirect ke Halaman Dashboard (Netlify URL target Anda nanti) setelah 1.5 detik
+          // Redirect ke Halaman Dashboard
           setTimeout(() => {
              window.location.href = "dashboard.html"; 
           }, 1500);
@@ -201,6 +205,7 @@
 
       } catch (error) {
         showPopup("Gagal terhubung ke server database. Periksa koneksi internet Anda.", "error");
+        console.error(error); // Untuk membantu debugging di console browser
         // Kembalikan State Tombol
         submitBtn.disabled = false;
         btnText.innerText = "Masuk ke Sistem";
