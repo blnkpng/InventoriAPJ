@@ -120,11 +120,17 @@
       tbody.appendChild(tr);
     }
 
-    function upd(sel) { 
+function upd(sel) { 
       const sat = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-';
+      const stok = sel.options[sel.selectedIndex].getAttribute('data-stok') || '0';
       const row = sel.closest('tr');
+      
+      // Update Satuan
       row.querySelector('.label-sat-1').innerText = sat;
       row.querySelector('.label-sat-2').innerText = sat;
+      
+      // Update Stok Tersedia
+      row.querySelector('.label-stok-tersedia').innerText = stok;
     }
 
     document.getElementById('btnSimpan').addEventListener('click', async () => {
