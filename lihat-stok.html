@@ -7,26 +7,29 @@
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
     
-    /* Layout untuk Print */
     @media print {
       body { background: white !important; color: black !important; font-family: 'Times New Roman', serif; }
       .no-print { display: none !important; }
       #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
-      
       @page { size: A4 portrait; margin: 1cm; }
       
+      /* Reset warna & font */
+      * { color: black !important; background: transparent !important; }
+      
       /* Kop Surat */
-      .kop-surat { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 10px; }
+      .kop-surat { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; border-bottom: 2px solid black; padding-bottom: 10px; }
       
       /* Tabel */
-      table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 11pt; table-layout: fixed; }
-      th { border: 1px solid black !important; padding: 8px !important; text-align: center !important; background-color: #eee !important; font-weight: bold !important; }
-      td { border: 1px solid black !important; padding: 6px !important; text-align: center !important; font-weight: normal !important; }
+      table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 11pt; }
+      th { border: 1px solid black !important; padding: 8px !important; text-align: center !important; font-weight: bold !important; }
+      td { border: 1px solid black !important; padding: 6px !important; }
+      .align-left { text-align: left !important; }
+      .align-center { text-align: center !important; }
       
       /* TTD */
-      #printTTD { display: flex; justify-content: space-around; margin-top: 40px; }
+      #printTTD { display: flex; justify-content: space-around; margin-top: 50px; }
       .ttd-box { text-align: center; width: 30%; }
-      .nama-ttd { font-weight: bold; text-decoration: underline; }
+      .nama-ttd { font-weight: bold; text-decoration: underline; margin-top: 60px; }
     }
   </style>
 </head>
@@ -71,7 +74,7 @@
         <div class="border border-slate-800 rounded-lg overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-900 text-xs text-slate-400 border-b border-slate-800 uppercase">
-                    <tr><th class="p-4 text-center">ID Barang</th><th class="p-4 text-center">Nama Barang</th><th class="p-4 text-center">Qty Stok</th><th class="p-4 text-center">Satuan</th></tr>
+                    <tr><th class="p-4 text-center">ID Barang</th><th class="p-4">Nama Barang</th><th class="p-4 text-center">Qty Stok</th><th class="p-4 text-center">Satuan</th></tr>
                 </thead>
                 <tbody id="tbodyStok"></tbody>
             </table>
@@ -82,21 +85,19 @@
 
   <div id="printArea" style="display:none;">
     <div class="kop-surat">
-        <img src="https://i.imgur.com/Sb5mLrt.png" style="height: 60px;">
-        <div style="text-align: center;">
+        <img src="https://i.imgur.com/Sb5mLrt.png" style="height: 80px;">
+        <div>
             <div style="font-weight: bold; font-size: 20pt;">AMPERA PAK JENGGOT</div>
-            <div style="font-style: italic; font-size: 12pt;" id="printSub"></div>
+            <div style="font-style: italic; font-size: 14pt;" id="printSub"></div>
         </div>
     </div>
-    <hr style="border: 1px solid black; margin: 10px 0;">
-    <div style="text-align: center; font-size: 10pt;" id="printDate"></div>
     
     <table id="printTable">
       <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
       <tbody id="printTbody"></tbody>
     </table>
 
-    <div style="text-align: center; margin-top: 20px; font-size: 11pt;">Batu, <span id="printLocDate"></span></div>
+    <div style="margin-top: 20px; font-size: 11pt; text-align: center;">Batu, <span id="printLocDate"></span></div>
     <div id="printTTD"></div>
   </div>
 
@@ -120,8 +121,8 @@
       if(res.success) {
         tbody.innerHTML = res.data.map(b => `<tr class="border-b border-slate-800 bg-slate-950">
             <td class="p-4 text-sm text-slate-400 text-center">${b.id}</td>
-            <td class="p-4 text-sm text-white text-center">${b.nama}</td>
-            <td class="p-4 text-center text-emerald-400 text-center">${b.stokTersedia}</td>
+            <td class="p-4 text-sm text-white">${b.nama}</td>
+            <td class="p-4 text-center font-bold text-emerald-400">${b.stokTersedia}</td>
             <td class="p-4 text-sm text-slate-400 text-center">${b.satuanStok}</td>
         </tr>`).join('');
       }
@@ -134,17 +135,17 @@
       const kat = document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text;
       
       document.getElementById('printSub').innerText = "Rekap Bulanan Stok " + kat + " Akhir";
-      document.getElementById('printDate').innerText = "Dicetak pada: " + new Date().toLocaleDateString('id-ID');
       document.getElementById('printLocDate').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
       
-      // Update tabel print, hapus class warna agar netral
-      let tableContent = document.getElementById('tbodyStok').innerHTML
-        .replace(/text-emerald-400/g, '')
-        .replace(/text-slate-400/g, '')
-        .replace(/text-slate-950/g, '');
-        
-      document.getElementById('printTbody').innerHTML = tableContent;
+      // Update tabel print
+      let rows = document.getElementById('tbodyStok').innerHTML;
+      // Hapus kelas warna agar bersih saat print
+      rows = rows.replace(/text-emerald-400/g, 'text-black')
+                 .replace(/text-slate-400/g, 'text-black')
+                 .replace(/text-slate-950/g, 'bg-white');
+      document.getElementById('printTbody').innerHTML = rows;
       
+      // TTD
       const signers = [{r: "Supervisor", n: sup}, {r: "PIC 1", n: pic1}, {r: "PIC 2", n: pic2}].filter(s => s.n.trim() !== "");
       let ttdHtml = '';
       signers.forEach(s => { ttdHtml += `<div class="ttd-box"><p>${s.r}</p><br><br><br><p class="nama-ttd">${s.n}</p></div>`; });
