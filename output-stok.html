@@ -48,8 +48,14 @@
               </tr>
             </thead>
             <tbody id="tbodyData">
-              <tr class="border-b border-slate-800/50 bg-slate-950">
-                <td class="p-4 text-center text-slate-600 italic" colspan="5">Silahkan pilih kategori untuk mulai...</td>
+              <tr class="border-b border-slate-800/50 bg-slate-950 item-row">
+                <td class="p-3">
+                  <select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option value="">Pilih kategori terlebih dahulu...</option></select>
+                </td>
+                <td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0" disabled></td>
+                <td class="p-3 text-center"><span class="text-sm font-bold text-rose-400 label-sat">-</span></td>
+                <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket" placeholder="Keterangan..." disabled></td>
+                <td class="p-3 text-center"><button type="button" class="text-slate-600 text-sm font-medium" disabled>Hapus</button></td>
               </tr>
             </tbody>
           </table>
@@ -57,7 +63,10 @@
             <button type="button" id="btnTambahBaris" onclick="tambahBarisBaru()" class="text-rose-500 hover:text-rose-400 text-sm font-medium flex items-center justify-center gap-2 w-full" disabled>+ Tambah Baris Barang</button>
           </div>
         </div>
-        <div class="flex justify-end"><button type="button" id="btnSimpan" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-rose-600/20">Simpan Output Stok</button></div>
+
+        <div class="flex justify-end">
+          <button type="button" id="btnSimpan" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-rose-600/20">Simpan Output Stok</button>
+        </div>
       </div>
     </div>
   </main>
@@ -83,34 +92,23 @@
 
     async function handleKategoriChange() {
       const sh = document.getElementById('kategoriSelect').value; if(!sh) return;
-      document.getElementById('tbodyData').innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Memuat data...</td></tr>`;
+      document.getElementById('tbodyData').innerHTML = `<tr class="border-b border-slate-800/50 bg-slate-950 item-row"><td class="p-3"><select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option>Memuat data...</option></select></td><td class="p-3"><input type="number" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center" disabled></td><td class="p-3 text-center">-</td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white" disabled></td><td class="p-3 text-center">-</td></tr>`;
       try {
-        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
+        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({action:'getBarang', sheetName: sh}) })).json();
         if(res.success) {
           listBarang = res.data;
-          document.getElementById('tbodyData').innerHTML = '';
+          document.getElementById('tbodyData').innerHTML = ''; // Clear loading
           document.getElementById('btnTambahBaris').disabled = false;
           tambahBarisBaru();
         } else showToast(res.message, "error");
-      } catch(e) { showToast("Gagal mengambil data", "error"); }
+      } catch(e) { showToast("Koneksi gagal.", "error"); }
     }
 
     function tambahBarisBaru() {
       const tbody = document.getElementById('tbodyData');
       const tr = document.createElement('tr');
       tr.className = "border-b border-slate-800/50 bg-slate-950 item-row";
-      tr.innerHTML = `
-        <td class="p-3">
-          <select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang">
-            <option value="">-- Pilih Barang --</option>
-            ${listBarang.map(b => `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}
-          </select>
-        </td>
-        <td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty"></td>
-        <td class="p-3 text-center"><span class="text-sm font-bold text-rose-400 label-sat">-</span></td>
-        <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket"></td>
-        <td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button></td>
-      `;
+      tr.innerHTML = `<td class="p-3"><select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang"><option value="">-- Pilih Barang --</option>${listBarang.map(b => `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}</select></td><td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0"></td><td class="p-3 text-center"><span class="text-sm font-bold text-rose-400 label-sat">-</span></td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket" placeholder="Keterangan..."></td><td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button></td>`;
       tbody.appendChild(tr);
     }
 
@@ -124,7 +122,7 @@
       });
       if(!data.length) return showToast("Data belum lengkap!", "error");
       const btn = document.getElementById('btnSimpan'); btn.innerText = "Menyimpan..."; btn.disabled = true;
-      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'simpanTransaksi', sheetName:'TRANSAKSI_OUTPUT_STOK', data})})).json();
+      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action:'simpanTransaksi', sheetName:'TRANSAKSI_OUTPUT_STOK', data}) })).json();
       if(res.success) { showToast(res.message); setTimeout(()=>location.reload(), 2000); } else { showToast(res.message, "error"); btn.disabled = false; btn.innerText = "Simpan Output Stok"; }
     });
   </script>
