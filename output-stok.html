@@ -33,7 +33,7 @@
       <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div><label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Keluar</label><input type="date" id="tanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-rose-500 focus:outline-none"></div>
-          <div><label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Transaksi</label><select id="kategoriSelect" onchange="handleKategori()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-rose-500 focus:outline-none"><option value="" disabled selected>-- Pilih Kategori --</option></select></div>
+          <div><label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Transaksi</label><select id="kategoriSelect" onchange="handleKategoriChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-rose-500 focus:outline-none"><option value="" disabled selected>-- Pilih Kategori --</option></select></div>
         </div>
 
         <div class="border border-slate-800 rounded-lg overflow-x-auto mb-6">
@@ -47,16 +47,17 @@
                 <th class="p-4 w-1/12 text-center">Aksi</th>
               </tr>
             </thead>
-            <tbody id="tbodyData"></tbody>
+            <tbody id="tbodyData">
+              <tr class="border-b border-slate-800/50 bg-slate-950">
+                <td class="p-4 text-center text-slate-600 italic" colspan="5">Silahkan pilih kategori untuk mulai...</td>
+              </tr>
+            </tbody>
           </table>
           <div class="bg-slate-900 p-3 text-center border-t border-slate-800">
-            <button type="button" id="btnTambahBaris" onclick="tambahBaris()" class="text-rose-500 hover:text-rose-400 text-sm font-medium flex items-center justify-center gap-2 w-full" disabled>+ Tambah Baris Barang</button>
+            <button type="button" id="btnTambahBaris" onclick="tambahBarisBaru()" class="text-rose-500 hover:text-rose-400 text-sm font-medium flex items-center justify-center gap-2 w-full" disabled>+ Tambah Baris Barang</button>
           </div>
         </div>
-
-        <div class="flex justify-end">
-          <button type="button" id="btnSimpan" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-rose-600/20">Simpan Output Stok</button>
-        </div>
+        <div class="flex justify-end"><button type="button" id="btnSimpan" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-rose-600/20">Simpan Output Stok</button></div>
       </div>
     </div>
   </main>
@@ -80,49 +81,48 @@
       setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // Fungsi trigger yang benar (disesuaikan dengan onchange di select)
-    async function handleKategori() {
+    async function handleKategoriChange() {
       const sh = document.getElementById('kategoriSelect').value; if(!sh) return;
-      document.getElementById('tbodyData').innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Memuat data...</td></tr>';
-      document.getElementById('btnTambahBaris').disabled = true;
+      document.getElementById('tbodyData').innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Memuat data...</td></tr>`;
       try {
         const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
         if(res.success) {
           listBarang = res.data;
           document.getElementById('tbodyData').innerHTML = '';
           document.getElementById('btnTambahBaris').disabled = false;
-          tambahBaris(); 
+          tambahBarisBaru();
         } else showToast(res.message, "error");
       } catch(e) { showToast("Gagal mengambil data", "error"); }
     }
 
-    function tambahBaris() {
+    function tambahBarisBaru() {
+      const tbody = document.getElementById('tbodyData');
       const tr = document.createElement('tr');
       tr.className = "border-b border-slate-800/50 bg-slate-950 item-row";
       tr.innerHTML = `
         <td class="p-3">
           <select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang">
-            <option value="" disabled selected>-- Pilih Barang --</option>
+            <option value="">-- Pilih Barang --</option>
             ${listBarang.map(b => `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}
           </select>
         </td>
-        <td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0"></td>
+        <td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty"></td>
         <td class="p-3 text-center"><span class="text-sm font-bold text-rose-400 label-sat">-</span></td>
-        <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket" placeholder="Keterangan..."></td>
+        <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket"></td>
         <td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button></td>
       `;
-      document.getElementById('tbodyData').appendChild(tr);
+      tbody.appendChild(tr);
     }
 
     function upd(sel) { sel.closest('tr').querySelector('.label-sat').innerText = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-'; }
 
     document.getElementById('btnSimpan').addEventListener('click', async () => {
-      let data = [], err = false;
+      let data = [];
       document.querySelectorAll('.item-row').forEach(r => {
         let sel = r.querySelector('.select-barang'), q = r.querySelector('.input-qty').value, k = r.querySelector('.input-ket').value;
         if(sel.value && q > 0) data.push([document.getElementById('tanggalInput').value, localStorage.getItem('APJ_USER_NAME'), document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, sel.value, sel.options[sel.selectedIndex].text.split('] ')[1], q, r.querySelector('.label-sat').innerText, k]);
       });
-      if(!data.length) return showToast("Isi data dengan benar!", "error");
+      if(!data.length) return showToast("Data belum lengkap!", "error");
       const btn = document.getElementById('btnSimpan'); btn.innerText = "Menyimpan..."; btn.disabled = true;
       const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'simpanTransaksi', sheetName:'TRANSAKSI_OUTPUT_STOK', data})})).json();
       if(res.success) { showToast(res.message); setTimeout(()=>location.reload(), 2000); } else { showToast(res.message, "error"); btn.disabled = false; btn.innerText = "Simpan Output Stok"; }
