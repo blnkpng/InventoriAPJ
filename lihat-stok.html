@@ -6,36 +6,38 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
-    
-    /* Layout untuk Print */
+
+    /* CSS KHUSUS PRINT PDF */
     @media print {
-      body { background-color: white; color: black; font-family: 'Times New Roman', serif; }
+      body { background: white !important; color: black !important; }
       .no-print { display: none !important; }
-      #printArea { display: block !important; }
-      #printTable { border-collapse: collapse; width: 100%; margin: 20px 0; }
-      #printTable th, #printTable td { border: 1px solid black; padding: 8px; text-align: left; }
-      #printTable th { font-weight: bold; background-color: #f3f4f6; }
+      #printArea { display: block !important; width: 100%; }
+      
+      /* Reset warna ke hitam putih */
+      * { color: black !important; background: transparent !important; }
+      
+      /* Format A4 & Margin */
+      @page { size: A4 portrait; margin: 1cm; }
+      
+      /* Tabel Bersih (Tanpa warna tailwind) */
+      table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px; }
+      th, td { border: 1px solid black !important; padding: 6px !important; text-align: left; }
+      th { font-weight: bold; background: #eee !important; }
+      
+      /* TTD */
+      #printTTD { margin-top: 30px; display: flex; justify-content: space-around; width: 100%; }
+      .ttd-box { width: 30%; text-align: center; }
     }
-    .hidden-print { display: none; }
   </style>
 </head>
 <body class="flex h-screen overflow-hidden antialiased">
 
-  <div id="modalPrint" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-4">
+  <div id="modalPrint" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-4 no-print">
     <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl w-full max-w-md shadow-2xl">
       <h3 class="text-white font-bold mb-4">Data Penandatangan</h3>
-      <div class="mb-4">
-        <label class="text-xs text-slate-400">Nama Supervisor</label>
-        <input type="text" id="modalSup" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600">
-      </div>
-      <div class="mb-4">
-        <label class="text-xs text-slate-400">Nama PIC 1</label>
-        <input type="text" id="modalPic1" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600">
-      </div>
-      <div class="mb-6">
-        <label class="text-xs text-slate-400">Nama PIC 2</label>
-        <input type="text" id="modalPic2" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600">
-      </div>
+      <input type="text" id="modalSup" placeholder="Supervisor" class="w-full mb-3 bg-slate-800 p-2 rounded text-white text-sm border border-slate-600">
+      <input type="text" id="modalPic1" placeholder="PIC 1" class="w-full mb-3 bg-slate-800 p-2 rounded text-white text-sm border border-slate-600">
+      <input type="text" id="modalPic2" placeholder="PIC 2" class="w-full mb-6 bg-slate-800 p-2 rounded text-white text-sm border border-slate-600">
       <div class="flex gap-3">
         <button onclick="document.getElementById('modalPrint').classList.add('hidden')" class="flex-1 bg-slate-700 py-2 rounded text-sm text-white">Batal</button>
         <button onclick="processPrint()" class="flex-1 bg-emerald-600 py-2 rounded text-sm text-white font-bold">Sudah Sesuai</button>
@@ -43,25 +45,10 @@
     </div>
   </div>
 
-  <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 no-print">
-    <div class="h-16 flex items-center px-6 border-b border-slate-800 text-white font-bold tracking-wider">APJ INVENTORI</div>
-    <nav class="flex-1 py-4 px-3 space-y-1">
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Dashboard</a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Input Stok</a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Output Stok</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Stok Opname</a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-600/10 text-emerald-500 rounded-lg text-sm border border-emerald-500/20">Lihat Stok</a>
-    </nav>
-  </aside>
-
   <main class="flex-1 flex flex-col bg-slate-900 overflow-y-auto no-print">
-    <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50">
-      <h2 class="text-lg font-semibold text-emerald-400">Laporan Stok Terkini</h2>
-    </header>
-
     <div class="p-8 max-w-[1000px] mx-auto w-full">
       <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
-        <div class="flex flex-col md:flex-row gap-4 mb-8">
+        <div class="flex gap-4 mb-8">
            <select id="kategoriSelect" onchange="loadStokData()" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
             <option value="" disabled selected>-- Pilih Kategori --</option>
            </select>
@@ -79,19 +66,22 @@
     </div>
   </main>
 
-  <div id="printArea" class="hidden-print">
-    <div class="text-center font-bold text-2xl">AMPERA PAK JENGGOT</div>
-    <div class="text-center italic text-md mb-2" id="printSub">Rekap bulanan stok akhir</div>
-    <div class="text-center text-sm mb-6" id="printDate"></div>
+  <div id="printArea" class="hidden">
+    <div style="text-align: center; font-weight: bold; font-size: 20px;">AMPERA PAK JENGGOT</div>
+    <div style="text-align: center; font-style: italic; margin-bottom: 20px;" id="printSub">Rekap bulanan stok akhir</div>
+    <div style="text-align: center; font-size: 12px; margin-bottom: 20px;" id="printDate"></div>
     
-    <table id="printTable" class="w-full border-collapse mb-8">
+    <table id="printTable">
       <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
       <tbody id="printTbody"></tbody>
     </table>
 
-    <div class="text-sm mb-12">Kami yang bertanda tangan dibawah ini menyatakan stok akhir telah sesuai.</div>
-    <div class="text-sm mb-12">Batu, <span id="printLocDate"></span></div>
-    <div id="printTTD" class="flex justify-around text-center text-sm"></div>
+    <div style="margin-top: 30px; margin-bottom: 50px;">
+        Kami yang bertanda tangan dibawah ini menyatakan stok akhir telah sesuai.<br>
+        Batu, <span id="printLocDate"></span>
+    </div>
+    
+    <div id="printTTD"></div>
   </div>
 
   <script>
@@ -101,7 +91,7 @@
       const nama = localStorage.getItem('APJ_USER_NAME') || '';
       document.getElementById('modalSup').value = nama;
       document.getElementById('modalPic1').value = nama;
-
+      
       const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
       kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
@@ -133,23 +123,18 @@
       const pic2 = document.getElementById('modalPic2').value;
       const katText = document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text;
       
-      // Update data cetak
       document.getElementById('printSub').innerText = "Rekap bulanan stok " + katText + " akhir";
       document.getElementById('printDate').innerText = "Dicetak pada tanggal: " + new Date().toLocaleDateString('id-ID');
       document.getElementById('printLocDate').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
       document.getElementById('printTbody').innerHTML = document.getElementById('tbodyStok').innerHTML;
       
-      // TTD Dinamis
-      const signers = [
-        {role: "Supervisor", name: sup}, 
-        {role: "PIC 1", name: pic1}, 
-        {role: "PIC 2", name: pic2}
-      ].filter(s => s.name.trim() !== "");
-      
-      let ttdHtml = '';
+      // TTD Dinamis dengan Class CSS print
+      const signers = [{r: "Supervisor", n: sup}, {r: "PIC 1", n: pic1}, {r: "PIC 2", n: pic2}].filter(s => s.n.trim() !== "");
+      let ttdHtml = '<div style="display:flex; justify-content:space-around;">';
       signers.forEach(s => {
-          ttdHtml += `<div><p>${s.role}</p><br><br><br><p>(${s.name})</p></div>`;
+          ttdHtml += `<div class="ttd-box"><p>${s.r}</p><br><br><br><p>(${s.n})</p></div>`;
       });
+      ttdHtml += '</div>';
       document.getElementById('printTTD').innerHTML = ttdHtml;
       
       document.getElementById('modalPrint').classList.add('hidden');
