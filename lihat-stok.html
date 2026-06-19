@@ -13,18 +13,20 @@
       .no-print { display: none !important; }
       #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
       
-      @page { size: A4 portrait; margin: 1.5cm; }
+      @page { size: A4 portrait; margin: 1cm; }
       
-      /* Paksa Tabel Hitam Putih */
-      table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 11pt; }
-      th, td { border: 1px solid #000 !important; padding: 8px !important; text-align: left; color: black !important; }
-      th { background-color: #eee !important; font-weight: bold; }
+      /* Kop Surat */
+      .kop-surat { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 10px; }
       
-      /* Paksa warna stok kembali hitam */
-      .print-text-black { color: black !important; font-weight: bold; }
+      /* Tabel */
+      table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 11pt; table-layout: fixed; }
+      th { border: 1px solid black !important; padding: 8px !important; text-align: center !important; background-color: #eee !important; font-weight: bold !important; }
+      td { border: 1px solid black !important; padding: 6px !important; text-align: center !important; font-weight: normal !important; }
       
-      #printTTD { display: flex; justify-content: space-around; margin-top: 50px; }
+      /* TTD */
+      #printTTD { display: flex; justify-content: space-around; margin-top: 40px; }
       .ttd-box { text-align: center; width: 30%; }
+      .nama-ttd { font-weight: bold; text-decoration: underline; }
     }
   </style>
 </head>
@@ -69,7 +71,7 @@
         <div class="border border-slate-800 rounded-lg overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-900 text-xs text-slate-400 border-b border-slate-800 uppercase">
-                    <tr><th class="p-4">ID Barang</th><th class="p-4">Nama Barang</th><th class="p-4 text-center">Qty Stok</th><th class="p-4 text-center">Satuan</th></tr>
+                    <tr><th class="p-4 text-center">ID Barang</th><th class="p-4 text-center">Nama Barang</th><th class="p-4 text-center">Qty Stok</th><th class="p-4 text-center">Satuan</th></tr>
                 </thead>
                 <tbody id="tbodyStok"></tbody>
             </table>
@@ -79,17 +81,22 @@
   </main>
 
   <div id="printArea" style="display:none;">
-    <div style="text-align: center; font-weight: bold; font-size: 18pt;">AMPERA PAK JENGGOT</div>
-    <div style="text-align: center; font-style: italic; font-size: 12pt; margin-bottom: 20px;" id="printSub"></div>
-    <div style="text-align: center; font-size: 10pt; margin-bottom: 20px;" id="printDate"></div>
+    <div class="kop-surat">
+        <img src="https://i.imgur.com/Sb5mLrt.png" style="height: 60px;">
+        <div style="text-align: center;">
+            <div style="font-weight: bold; font-size: 20pt;">AMPERA PAK JENGGOT</div>
+            <div style="font-style: italic; font-size: 12pt;" id="printSub"></div>
+        </div>
+    </div>
+    <hr style="border: 1px solid black; margin: 10px 0;">
+    <div style="text-align: center; font-size: 10pt;" id="printDate"></div>
     
     <table id="printTable">
       <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
       <tbody id="printTbody"></tbody>
     </table>
 
-    <div style="margin-top: 20px; font-size: 11pt;">Kami yang bertanda tangan dibawah ini menyatakan stok akhir telah sesuai.</div>
-    <div style="margin-top: 10px; font-size: 11pt;">Batu, <span id="printLocDate"></span></div>
+    <div style="text-align: center; margin-top: 20px; font-size: 11pt;">Batu, <span id="printLocDate"></span></div>
     <div id="printTTD"></div>
   </div>
 
@@ -112,10 +119,10 @@
       const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
       if(res.success) {
         tbody.innerHTML = res.data.map(b => `<tr class="border-b border-slate-800 bg-slate-950">
-            <td class="p-4 text-sm text-slate-400">${b.id}</td>
-            <td class="p-4 text-sm text-white">${b.nama}</td>
-            <td class="p-4 text-center font-bold text-emerald-400">${b.stokTersedia}</td>
-            <td class="p-4 text-center text-sm text-slate-400">${b.satuanStok}</td>
+            <td class="p-4 text-sm text-slate-400 text-center">${b.id}</td>
+            <td class="p-4 text-sm text-white text-center">${b.nama}</td>
+            <td class="p-4 text-center text-emerald-400 text-center">${b.stokTersedia}</td>
+            <td class="p-4 text-sm text-slate-400 text-center">${b.satuanStok}</td>
         </tr>`).join('');
       }
     }
@@ -130,14 +137,17 @@
       document.getElementById('printDate').innerText = "Dicetak pada: " + new Date().toLocaleDateString('id-ID');
       document.getElementById('printLocDate').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
       
-      // Update tabel print dengan class print-text-black agar jadi hitam
-      document.getElementById('printTbody').innerHTML = document.getElementById('tbodyStok').innerHTML
-        .replace(/text-emerald-400/g, 'print-text-black')
-        .replace(/text-slate-400/g, 'print-text-black');
+      // Update tabel print, hapus class warna agar netral
+      let tableContent = document.getElementById('tbodyStok').innerHTML
+        .replace(/text-emerald-400/g, '')
+        .replace(/text-slate-400/g, '')
+        .replace(/text-slate-950/g, '');
+        
+      document.getElementById('printTbody').innerHTML = tableContent;
       
       const signers = [{r: "Supervisor", n: sup}, {r: "PIC 1", n: pic1}, {r: "PIC 2", n: pic2}].filter(s => s.n.trim() !== "");
       let ttdHtml = '';
-      signers.forEach(s => { ttdHtml += `<div class="ttd-box"><p>${s.r}</p><br><br><br><p>(${s.n})</p></div>`; });
+      signers.forEach(s => { ttdHtml += `<div class="ttd-box"><p>${s.r}</p><br><br><br><p class="nama-ttd">${s.n}</p></div>`; });
       document.getElementById('printTTD').innerHTML = ttdHtml;
       
       document.getElementById('modalPrint').classList.add('hidden');
