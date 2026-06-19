@@ -170,11 +170,10 @@
         // PERBAIKAN 2: Penambahan method headers dan redirect: 'follow'
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8',
-          },
-          redirect: 'follow', // Wajib ada untuk bypass CORS Google
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          redirect: 'follow',
           body: JSON.stringify({
+            action: 'login', // Tambahkan baris ini
             username: usernameInput,
             password: passwordInput
           })
