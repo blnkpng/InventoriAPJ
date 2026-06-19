@@ -7,29 +7,44 @@
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
     
+    /* Layout untuk Print */
     @media print {
-      body { background: white !important; color: black !important; font-family: 'Times New Roman', serif; }
+      body { background: white !important; color: black !important; font-family: 'Times New Roman', serif; margin: 0 !important; padding: 0 !important; }
       .no-print { display: none !important; }
-      #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
-      @page { size: A4 portrait; margin: 1cm; }
       
-      /* Reset warna & font */
-      * { color: black !important; background: transparent !important; }
+      /* Hilangkan Header/Footer bawaan browser (URL, Tanggal, Title) */
+      @page { size: A4 portrait; margin: 0; }
       
-      /* Kop Surat */
-      .kop-surat { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; border-bottom: 2px solid black; padding-bottom: 10px; }
+      /* Paksa ukuran 1 Lembar A4 & Flexbox agar TTD selalu di bawah */
+      #printArea { 
+        display: flex !important; 
+        flex-direction: column; 
+        height: 100vh; /* Setinggi 1 halaman layar penuh */
+        padding: 1.5cm 2cm; /* Margin konten pengganti margin @page */
+        box-sizing: border-box; 
+      }
       
-      /* Tabel */
-      table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 11pt; }
-      th { border: 1px solid black !important; padding: 8px !important; text-align: center !important; font-weight: bold !important; }
-      td { border: 1px solid black !important; padding: 6px !important; }
-      .align-left { text-align: left !important; }
-      .align-center { text-align: center !important; }
+      /* Kop Surat: Logo dipaksa ke kiri (absolute), Teks di tengah */
+      .kop-surat { position: relative; border-bottom: 2px solid black; padding-bottom: 15px; margin-bottom: 20px; }
+      .kop-logo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 100px; }
+      .kop-text { text-align: center; width: 100%; }
       
-      /* TTD */
-      #printTTD { display: flex; justify-content: space-around; margin-top: 50px; }
-      .ttd-box { text-align: center; width: 30%; }
-      .nama-ttd { font-weight: bold; text-decoration: underline; margin-top: 60px; }
+      /* Container Tabel agar bisa mengisi ruang kosong */
+      #printTableContainer { flex-grow: 1; overflow: hidden; }
+      
+      /* Tabel Print */
+      table { border-collapse: collapse; width: 100%; font-size: 11pt; color: black !important; }
+      th, td { border: 1px solid black !important; padding: 6px !important; color: black !important; }
+      th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; }
+      .text-left { text-align: left !important; }
+      .text-center { text-align: center !important; }
+      
+      /* Tanda Tangan Mengunci di Bawah */
+      #printFooter { margin-top: auto; }
+      .ttd-container { display: flex; justify-content: space-around; margin-top: 10px; }
+      .ttd-box { text-align: center; width: 33%; }
+      .role-label { font-weight: bold; }
+      .name-label { font-weight: bold; text-decoration: underline; margin-top: 70px; }
     }
   </style>
 </head>
@@ -47,17 +62,6 @@
       </div>
     </div>
   </div>
-
-  <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 no-print">
-    <div class="h-16 flex items-center px-6 border-b border-slate-800 text-white font-bold tracking-wider">APJ INVENTORI</div>
-    <nav class="flex-1 py-4 px-3 space-y-1">
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Dashboard</a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Input Stok</a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Output Stok</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Stok Opname</a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-600/10 text-emerald-500 rounded-lg text-sm border border-emerald-500/20">Lihat Stok</a>
-    </nav>
-  </aside>
 
   <main class="flex-1 flex flex-col bg-slate-900 overflow-y-auto no-print">
     <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50">
@@ -84,21 +88,27 @@
   </main>
 
   <div id="printArea" style="display:none;">
+    
     <div class="kop-surat">
-        <img src="https://i.imgur.com/Sb5mLrt.png" style="height: 80px;">
-        <div>
-            <div style="font-weight: bold; font-size: 20pt;">AMPERA PAK JENGGOT</div>
+        <img src="https://i.imgur.com/Sb5mLrt.png" class="kop-logo">
+        <div class="kop-text">
+            <div style="font-weight: bold; font-size: 24pt; margin-bottom: 5px;">AMPERA PAK JENGGOT</div>
             <div style="font-style: italic; font-size: 14pt;" id="printSub"></div>
         </div>
     </div>
     
-    <table id="printTable">
-      <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
-      <tbody id="printTbody"></tbody>
-    </table>
+    <div id="printTableContainer">
+        <table id="printTable">
+          <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
+          <tbody id="printTbody"></tbody>
+        </table>
+    </div>
 
-    <div style="margin-top: 20px; font-size: 11pt; text-align: center;">Batu, <span id="printLocDate"></span></div>
-    <div id="printTTD"></div>
+    <div id="printFooter">
+        <div style="text-align: center; font-size: 11pt; margin-bottom: 10px;">Batu, <span id="printLocDate"></span></div>
+        <div class="ttd-container" id="printTTD"></div>
+    </div>
+
   </div>
 
   <script>
@@ -121,9 +131,9 @@
       if(res.success) {
         tbody.innerHTML = res.data.map(b => `<tr class="border-b border-slate-800 bg-slate-950">
             <td class="p-4 text-sm text-slate-400 text-center">${b.id}</td>
-            <td class="p-4 text-sm text-white">${b.nama}</td>
+            <td class="p-4 text-sm text-white text-left">${b.nama}</td>
             <td class="p-4 text-center font-bold text-emerald-400">${b.stokTersedia}</td>
-            <td class="p-4 text-sm text-slate-400 text-center">${b.satuanStok}</td>
+            <td class="p-4 text-center text-sm text-slate-400">${b.satuanStok}</td>
         </tr>`).join('');
       }
     }
@@ -137,18 +147,22 @@
       document.getElementById('printSub').innerText = "Rekap Bulanan Stok " + kat + " Akhir";
       document.getElementById('printLocDate').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
       
-      // Update tabel print
-      let rows = document.getElementById('tbodyStok').innerHTML;
-      // Hapus kelas warna agar bersih saat print
-      rows = rows.replace(/text-emerald-400/g, 'text-black')
-                 .replace(/text-slate-400/g, 'text-black')
-                 .replace(/text-slate-950/g, 'bg-white');
+      // Update tabel print, bersihkan warna dan HILANGKAN font-bold
+      let rows = document.getElementById('tbodyStok').innerHTML
+                 .replace(/text-emerald-400/g, 'text-black') // hijau jadi hitam
+                 .replace(/text-slate-400/g, 'text-black') // abu jadi hitam
+                 .replace(/text-white/g, 'text-black') // putih jadi hitam
+                 .replace(/bg-slate-950/g, 'bg-white') // hapus background gelap
+                 .replace(/font-bold/g, 'font-normal'); // hapus bold pada isi tabel
+                 
       document.getElementById('printTbody').innerHTML = rows;
       
-      // TTD
+      // Susun TTD
       const signers = [{r: "Supervisor", n: sup}, {r: "PIC 1", n: pic1}, {r: "PIC 2", n: pic2}].filter(s => s.n.trim() !== "");
       let ttdHtml = '';
-      signers.forEach(s => { ttdHtml += `<div class="ttd-box"><p>${s.r}</p><br><br><br><p class="nama-ttd">${s.n}</p></div>`; });
+      signers.forEach(s => { 
+          ttdHtml += `<div class="ttd-box"><p class="role-label">${s.r}</p><br><br><br><p class="name-label">${s.n}</p></div>`; 
+      });
       document.getElementById('printTTD').innerHTML = ttdHtml;
       
       document.getElementById('modalPrint').classList.add('hidden');
