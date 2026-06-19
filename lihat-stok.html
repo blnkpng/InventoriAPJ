@@ -9,44 +9,45 @@
     
     /* ======== LAYOUT KHUSUS PRINT PDF ======== */
     @media print {
-      /* Sembunyikan UI Web secara Total agar tidak berantakan */
+      /* Sembunyikan UI Web secara Total */
       .web-ui, #modalPrint { display: none !important; }
       
-      /* Hapus Header & Footer Bawaan Browser (URL, Jam, Tanggal) */
+      /* Hapus Header & Footer Bawaan Browser */
       @page { size: A4 portrait; margin: 0; }
       
-      /* Format Kertas */
       body { background: white !important; color: black !important; }
       
+      /* Kunci Area Cetak sebagai Flexbox */
       #printArea { 
-        display: block !important; 
-        position: relative;
-        width: 21cm;
-        height: 29.6cm; /* Mengunci tinggi 1 lembar A4 */
-        padding: 1.5cm 1.5cm 2cm 1.5cm;
+        display: flex !important; 
+        flex-direction: column; 
+        min-height: 100vh; /* Memastikan minimal 1 layar penuh A4 */
+        padding: 1.5cm;
         box-sizing: border-box;
         font-family: 'Times New Roman', serif;
-        margin: 0 auto;
-        overflow: hidden;
       }
       
       /* KOP SURAT */
       .kop-surat { position: relative; text-align: center; border-bottom: 3px solid black; padding-bottom: 15px; margin-bottom: 20px; }
-      .kop-logo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 100px; width: auto; }
-      .kop-title { font-weight: bold; font-size: 24pt; color: black !important; margin-bottom: 5px; }
+      .kop-logo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 90px; width: auto; }
+      .kop-title { font-weight: bold; font-size: 22pt; color: black !important; margin-bottom: 5px; }
       .kop-sub { font-style: italic; font-size: 14pt; color: black !important; }
       
-      /* TABEL */
+      /* WADAH TABEL (Mengambil sisa ruang kosong) */
+      #printTableContainer { flex-grow: 1; margin-bottom: 30px; }
+      
       table { width: 100%; border-collapse: collapse; font-size: 11pt; color: black !important; }
-      th, td { border: 1px solid black !important; padding: 8px !important; color: black !important; }
+      th, td { border: 1px solid black !important; padding: 6px !important; color: black !important; }
       th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       
-      /* ISI TABEL: TIDAK BOLD, NAMA KIRI, LAINNYA TENGAH */
       #printTbody td { font-weight: normal !important; text-align: center !important; background: transparent !important; }
       #printTbody td:nth-child(2) { text-align: left !important; }
       
-      /* FOOTER / TTD (DIKUNCI DI BAGIAN BAWAH HALAMAN) */
-      #printFooter { position: absolute; bottom: 2cm; left: 1.5cm; right: 1.5cm; }
+      /* FOOTER / TTD (Menyesuaikan letak) */
+      #printFooter { 
+        margin-top: auto; /* Mendorong ke paling bawah jika data sedikit */
+        page-break-inside: avoid; /* Mencegah TTD terpotong ke halaman baru */
+      }
       .print-loc { text-align: right; margin-bottom: 15px; font-size: 11pt; padding-right: 20px; color: black !important; }
       .ttd-container { display: flex; justify-content: space-around; width: 100%; }
       .ttd-box { text-align: center; width: 33%; color: black !important; }
@@ -118,10 +119,12 @@
         <div class="kop-sub" id="printSub"></div>
     </div>
     
-    <table id="printTable">
-      <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
-      <tbody id="printTbody"></tbody>
-    </table>
+    <div id="printTableContainer">
+        <table id="printTable">
+          <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
+          <tbody id="printTbody"></tbody>
+        </table>
+    </div>
 
     <div id="printFooter">
         <div class="print-loc">Batu, <span id="printLocDate"></span></div>
@@ -197,7 +200,6 @@
       // 4. Proses Print
       document.getElementById('modalPrint').classList.add('hidden');
       
-      // Memberi sedikit waktu agar browser merender data ke hidden area sebelum mencetak
       setTimeout(() => {
         window.print();
       }, 100);
