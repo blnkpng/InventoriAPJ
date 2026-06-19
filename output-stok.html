@@ -37,23 +37,25 @@
         </div>
 
         <div class="border border-slate-800 rounded-lg overflow-x-auto mb-6">
-          <table class="w-full text-left border-collapse min-w-[800px]">
+          <table class="w-full text-left border-collapse min-w-[900px]">
             <thead>
               <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
-                <th class="p-4 w-5/12">Nama Barang</th>
+                <th class="p-4 w-4/12">Nama Barang</th>
+                <th class="p-4 w-1/12 text-center">Stok Tersedia</th>
+                <th class="p-4 w-1/12 text-center">Satuan</th>
                 <th class="p-4 w-2/12 text-center">Qty Keluar</th>
                 <th class="p-4 w-1/12 text-center">Satuan</th>
-                <th class="p-4 w-3/12">Keterangan / Tujuan</th>
+                <th class="p-4 w-2/12">Keterangan / Tujuan</th>
                 <th class="p-4 w-1/12 text-center">Aksi</th>
               </tr>
             </thead>
-            <tbody id="tbodyData">
+            <tbody id="itemTableBody">
               <tr class="border-b border-slate-800/50 bg-slate-950 item-row">
-                <td class="p-3">
-                  <select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option value="">Pilih kategori terlebih dahulu...</option></select>
-                </td>
+                <td class="p-3"><select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option value="">Pilih kategori terlebih dahulu...</option></select></td>
+                <td class="p-3 text-center text-sm font-bold text-emerald-400 label-stok-tersedia">-</td>
+                <td class="p-3 text-center text-sm font-bold text-slate-500 label-sat-1">-</td>
                 <td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0" disabled></td>
-                <td class="p-3 text-center"><span class="text-sm font-bold text-rose-400 label-sat">-</span></td>
+                <td class="p-3 text-center text-sm font-bold text-rose-400 label-sat-2">-</td>
                 <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket" placeholder="Keterangan..." disabled></td>
                 <td class="p-3 text-center"><button type="button" class="text-slate-600 text-sm font-medium" disabled>Hapus</button></td>
               </tr>
@@ -73,7 +75,7 @@
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
-    let listBarang = [];
+    let globalListBarang = [];
 
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
@@ -81,48 +83,59 @@
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
       const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
-      kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
+      kats.forEach(kat => { if (perms[kat.key] === 'Y') { const op = document.createElement('option'); op.value = kat.sheet; op.textContent = kat.label; document.getElementById('kategoriSelect').appendChild(op); }});
     });
 
-    function showToast(msg, type = 'success') {
-      const t = document.getElementById('customToast'); document.getElementById('toastMessage').textContent = msg;
-      t.className = type === 'success' ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md" : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
-      setTimeout(() => t.classList.remove('show'), 3000);
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('customToast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.className = type === 'success' ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md" : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
+      setTimeout(() => toast.classList.remove('show'), 4000);
     }
 
     async function handleKategoriChange() {
-      const sh = document.getElementById('kategoriSelect').value; if(!sh) return;
-      document.getElementById('tbodyData').innerHTML = `<tr class="border-b border-slate-800/50 bg-slate-950 item-row"><td class="p-3"><select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option>Memuat data...</option></select></td><td class="p-3"><input type="number" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center" disabled></td><td class="p-3 text-center">-</td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white" disabled></td><td class="p-3 text-center">-</td></tr>`;
+      const selectedSheet = document.getElementById('kategoriSelect').value;
+      if (!selectedSheet) return;
+
+      const tbody = document.getElementById('itemTableBody');
+      tbody.innerHTML = `<tr class="border-b border-slate-800/50 bg-slate-950 item-row"><td class="p-3"><select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option>Memuat data...</option></select></td><td class="p-3 text-center text-emerald-400">-</td><td class="p-3 text-center text-slate-500">-</td><td class="p-3"><input type="number" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center" disabled></td><td class="p-3 text-center text-rose-400">-</td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white" disabled></td><td class="p-3 text-center">-</td></tr>`;
+      document.getElementById('btnTambahBaris').disabled = true;
+
       try {
-        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({action:'getBarang', sheetName: sh}) })).json();
-        if(res.success) {
-          listBarang = res.data;
-          document.getElementById('tbodyData').innerHTML = ''; // Clear loading
-          document.getElementById('btnTambahBaris').disabled = false;
+        const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow', body: JSON.stringify({ action: 'getBarang', sheetName: selectedSheet }) });
+        const result = await response.json();
+        if (result.success) {
+          globalListBarang = result.data;
+          tbody.innerHTML = ''; document.getElementById('btnTambahBaris').disabled = false;
           tambahBarisBaru();
-        } else showToast(res.message, "error");
-      } catch(e) { showToast("Koneksi gagal.", "error"); }
+        } else showToast(result.message, "error");
+      } catch (error) { showToast("Koneksi gagal.", "error"); }
     }
 
     function tambahBarisBaru() {
-      const tbody = document.getElementById('tbodyData');
+      const tbody = document.getElementById('itemTableBody');
       const tr = document.createElement('tr');
       tr.className = "border-b border-slate-800/50 bg-slate-950 item-row";
-      tr.innerHTML = `<td class="p-3"><select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang"><option value="">-- Pilih Barang --</option>${listBarang.map(b => `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}</select></td><td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0"></td><td class="p-3 text-center"><span class="text-sm font-bold text-rose-400 label-sat">-</span></td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket" placeholder="Keterangan..."></td><td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button></td>`;
+      tr.innerHTML = `<td class="p-3"><select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang"><option value="">-- Pilih Barang --</option>${globalListBarang.map(b => `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}</select></td><td class="p-3 text-center text-sm font-bold text-emerald-400 label-stok-tersedia">0</td><td class="p-3 text-center text-sm font-bold text-slate-500 label-sat-1">-</td><td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0"></td><td class="p-3 text-center text-sm font-bold text-rose-400 label-sat-2">-</td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket" placeholder="Keterangan..."></td><td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button></td>`;
       tbody.appendChild(tr);
     }
 
-    function upd(sel) { sel.closest('tr').querySelector('.label-sat').innerText = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-'; }
+    function upd(sel) { 
+      const sat = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-';
+      const row = sel.closest('tr');
+      row.querySelector('.label-sat-1').innerText = sat;
+      row.querySelector('.label-sat-2').innerText = sat;
+    }
 
     document.getElementById('btnSimpan').addEventListener('click', async () => {
       let data = [];
       document.querySelectorAll('.item-row').forEach(r => {
         let sel = r.querySelector('.select-barang'), q = r.querySelector('.input-qty').value, k = r.querySelector('.input-ket').value;
-        if(sel.value && q > 0) data.push([document.getElementById('tanggalInput').value, localStorage.getItem('APJ_USER_NAME'), document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, sel.value, sel.options[sel.selectedIndex].text.split('] ')[1], q, r.querySelector('.label-sat').innerText, k]);
+        if(sel.value && q > 0) data.push([document.getElementById('tanggalInput').value, localStorage.getItem('APJ_USER_NAME'), document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, sel.value, sel.options[sel.selectedIndex].text.split('] ')[1], q, r.querySelector('.label-sat-2').innerText, k]);
       });
-      if(!data.length) return showToast("Data belum lengkap!", "error");
-      const btn = document.getElementById('btnSimpan'); btn.innerText = "Menyimpan..."; btn.disabled = true;
-      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action:'simpanTransaksi', sheetName:'TRANSAKSI_OUTPUT_STOK', data}) })).json();
+      if(!data.length) return showToast("Isi data dengan benar!", "error");
+      const btn = document.getElementById('btnSimpan'); btn.disabled = true; btn.innerText = "Menyimpan...";
+      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'simpanTransaksi', sheetName: 'TRANSAKSI_OUTPUT_STOK', data }) })).json();
       if(res.success) { showToast(res.message); setTimeout(()=>location.reload(), 2000); } else { showToast(res.message, "error"); btn.disabled = false; btn.innerText = "Simpan Output Stok"; }
     });
   </script>
