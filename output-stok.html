@@ -52,48 +52,142 @@
     </div>
   </main>
 
-  <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
-    let listBarang = [];
-    document.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
-      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME');
-      document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
-      const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
-      const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
-      kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
+<script>
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
+  let listBarang = []; // Variabel global untuk menyimpan data barang yang ditarik
+
+  // 1. Inisialisasi Halaman
+  document.addEventListener('DOMContentLoaded', () => {
+    // Proteksi Sesi
+    if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
+    
+    // Set Nama Petugas & Tanggal
+    document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME');
+    document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
+
+    // Filter Kategori berdasarkan Hak Akses
+    const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
+    const kats = [
+      { key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' },
+      { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' },
+      { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' },
+      { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' },
+      { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }
+    ];
+    
+    const select = document.getElementById('kategoriSelect');
+    kats.forEach(k => {
+      if(perms[k.key] === 'Y') {
+        select.innerHTML += `<option value="${k.sheet}">${k.label}</option>`;
+      }
+    });
+  });
+
+  // 2. Notifikasi Toast
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('customToast');
+    document.getElementById('toastMessage').textContent = msg;
+    toast.className = `toast show flex items-center max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md ${type === 'success' ? 'bg-emerald-950 text-emerald-400' : 'bg-rose-950 text-rose-400'}`;
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  // 3. Handle Perubahan Kategori (Tarik Data)
+  async function handleKategori() {
+    const sh = document.getElementById('kategoriSelect').value;
+    if(!sh) return;
+
+    document.getElementById('tbodyData').innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">Memuat data dari database...</td></tr>';
+    document.getElementById('btnTambahBaris').disabled = true;
+
+    try {
+      const res = await (await fetch(APPS_SCRIPT_URL, { 
+        method: 'POST', 
+        headers: {'Content-Type': 'text/plain'}, 
+        body: JSON.stringify({action: 'getBarang', sheetName: sh}) 
+      })).json();
+
+      if(res.success) {
+        listBarang = res.data;
+        document.getElementById('tbodyData').innerHTML = ''; // Kosongkan
+        document.getElementById('btnTambahBaris').disabled = false;
+        tambahBaris(); // Langsung tambah 1 baris kosong
+      } else {
+        showToast(res.message, 'error');
+      }
+    } catch(e) { showToast("Gagal mengambil data", 'error'); }
+  }
+
+  // 4. Tambah Baris Transaksi
+  function tambahBaris() {
+    const tbody = document.getElementById('tbodyData');
+    const tr = document.createElement('tr');
+    tr.className = "border-b border-slate-800 item-row bg-slate-950";
+    
+    tr.innerHTML = `
+      <td class="p-3">
+        <select onchange="updSat(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang">
+          <option value="">-- Pilih Barang --</option>
+          ${listBarang.map(b => `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}
+        </select>
+      </td>
+      <td class="p-3">
+        <input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0">
+      </td>
+      <td class="p-3 text-center text-sm font-bold text-rose-400 label-sat">-</td>
+      <td class="p-3">
+        <input type="text" placeholder="Tujuan..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket">
+      </td>
+      <td class="p-3 text-center">
+        <button onclick="this.closest('tr').remove()" class="text-slate-600 hover:text-rose-500 text-sm">Hapus</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function updSat(sel) {
+    sel.closest('tr').querySelector('.label-sat').innerText = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-';
+  }
+
+  // 5. Simpan Data
+  document.getElementById('btnSimpan').addEventListener('click', async () => {
+    let data = [], err = false;
+    document.querySelectorAll('.item-row').forEach(r => {
+      let sel = r.querySelector('.select-barang'), 
+          q = r.querySelector('.input-qty').value, 
+          k = r.querySelector('.input-ket').value;
+      
+      if(sel.value && q > 0) {
+        data.push([
+          document.getElementById('tanggalInput').value, 
+          localStorage.getItem('APJ_USER_NAME'), 
+          document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, 
+          sel.value, 
+          sel.options[sel.selectedIndex].text.split('] ')[1], 
+          q, 
+          r.querySelector('.label-sat').innerText, 
+          k
+        ]);
+      } else if(sel.value) err = true;
     });
 
-    async function handleKategori() {
-      const sh = document.getElementById('kategoriSelect').value; if(!sh) return;
-      document.getElementById('tbodyData').innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Memuat data dari database...</td></tr>';
-      try {
-        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
-        listBarang = res.data; document.getElementById('tbodyData').innerHTML = ''; document.getElementById('btnTambahBaris').disabled = false; tambahBaris();
-      } catch(e) { alert("Gagal mengambil data"); }
-    }
+    if(!data.length || err) { showToast("Cek kembali data barang dan jumlah!", "error"); return; }
+    
+    const btn = document.getElementById('btnSimpan');
+    btn.innerText = "Menyimpan..."; btn.disabled = true;
 
-    function tambahBaris() {
-      const tr = document.createElement('tr'); tr.className = "border-b border-slate-800 item-row bg-slate-950";
-      tr.innerHTML = `<td class="p-3"><select onchange="updSat(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang"></select></td><td class="p-3"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 text-center rounded-lg p-2.5 text-sm text-white input-qty"></td><td class="p-3 text-center label-sat text-sm font-bold text-rose-400">-</td><td class="p-3"><input type="text" placeholder="Misal: Produksi Batch A" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-ket"></td><td class="p-3 text-center"><button onclick="this.closest('tr').remove()" class="text-slate-600 text-sm">Hapus</button></td>`;
-      document.getElementById('tbodyData').appendChild(tr); if(listBarang.length) populate(tr.querySelector('.select-barang'));
-    }
+    try {
+      const res = await (await fetch(APPS_SCRIPT_URL, { 
+        method: 'POST', 
+        headers: {'Content-Type': 'text/plain'}, 
+        body: JSON.stringify({action: 'simpanTransaksi', sheetName: 'TRANSAKSI_OUTPUT_STOK', data}) 
+      })).json();
 
-    function populate(sel) { sel.innerHTML = '<option value="" disabled selected>-- Pilih Barang --</option>'; listBarang.forEach(b => sel.innerHTML += `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`); }
-    function updSat(sel) { sel.closest('tr').querySelector('.label-sat').innerText = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-'; }
-
-    document.getElementById('btnSimpan').addEventListener('click', async () => {
-      let data = [], err = false;
-      document.querySelectorAll('.item-row').forEach(r => {
-        let sel = r.querySelector('.select-barang'), q = r.querySelector('.input-qty').value, k = r.querySelector('.input-ket').value;
-        if(sel.value && q > 0) data.push([document.getElementById('tanggalInput').value, localStorage.getItem('APJ_USER_NAME'), document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, sel.value, sel.options[sel.selectedIndex].text.split('] ')[1], q, r.querySelector('.label-sat').innerText, k]);
-        else if(sel.value) err = true;
-      });
-      if(!data.length || err) return alert("Cek kembali data barang dan jumlah (qty)!");
-      document.getElementById('btnSimpan').innerText = "Menyimpan ke Database..."; document.getElementById('btnSimpan').disabled = true;
-      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'simpanTransaksi', sheetName:'TRANSAKSI_OUTPUT_STOK', data})})).json();
-      if(res.success) { alert(res.message); location.reload(); } else { alert(res.message); document.getElementById('btnSimpan').disabled = false; }
-    });
-  </script>
+      if(res.success) {
+        showToast(res.message);
+        setTimeout(() => location.reload(), 2000);
+      } else { showToast(res.message, "error"); btn.disabled = false; btn.innerText = "Simpan Output Stok"; }
+    } catch(e) { showToast("Gagal terhubung", "error"); btn.disabled = false; }
+  });
+</script>
 </body>
 </html>
