@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lihat Stok | APJ Inventori</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; } </style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased">
+
+  <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0">
+    <div class="h-16 flex items-center px-6 border-b border-slate-800">
+      <div class="flex items-center gap-3 text-blue-500"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span></div>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
+      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
+      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
+      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
+      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
+      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-600/10 text-emerald-500 rounded-lg font-medium text-sm transition-colors border border-emerald-500/20">Lihat Stok</a>
+    </nav>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
+    <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <h2 class="text-lg font-semibold text-emerald-400">Laporan Stok Terkini</h2>
+      <div class="text-sm font-medium text-slate-400">Hak Akses: <span id="namaPetugas" class="text-emerald-400">Memuat...</span></div>
+    </header>
+
+    <div class="p-8 max-w-[1200px] mx-auto w-full">
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
+        <div class="mb-8">
+          <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Pilih Kategori untuk Melihat Stok</label>
+          <select id="kategoriSelect" onchange="loadStokData()" class="w-full md:w-1/2 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none">
+            <option value="" disabled selected>-- Pilih Kategori --</option>
+          </select>
+        </div>
+
+        <div class="border border-slate-800 rounded-lg overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-xs text-slate-400 border-b border-slate-800 uppercase tracking-wider">
+              <tr>
+                <th class="p-4">ID Barang</th>
+                <th class="p-4">Nama Barang</th>
+                <th class="p-4 text-center">Satuan Stok</th>
+                <th class="p-4 text-center">Estimasi Stok Sistem</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyStok">
+              <tr><td colspan="4" class="p-6 text-center text-slate-500">Pilih kategori di atas untuk menampilkan data stok</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
+      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME');
+      
+      const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
+      const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
+      kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
+    });
+
+    async function loadStokData() {
+      const sh = document.getElementById('kategoriSelect').value; if(!sh) return;
+      document.getElementById('tbodyStok').innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">Sedang menarik data dari database...</td></tr>';
+      try {
+        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
+        let html = '';
+        if(res.data.length === 0) {
+          html = '<tr><td colspan="4" class="p-6 text-center text-rose-400">Belum ada data barang di kategori ini.</td></tr>';
+        } else {
+          res.data.forEach(b => {
+            // (Tahap ini baru menampilkan kerangka master barang. Nanti akan diupdate API untuk narik angka aslinya)
+            html += `<tr class="border-b border-slate-800/50 bg-slate-950 hover:bg-slate-900 transition-colors">
+              <td class="p-4 text-sm font-mono text-slate-400">${b.id}</td>
+              <td class="p-4 text-sm font-medium text-white">${b.nama}</td>
+              <td class="p-4 text-sm text-center text-emerald-400">${b.satuanStok}</td>
+              <td class="p-4 text-sm text-center font-bold text-slate-300">Menunggu Kalkulasi Sistem</td>
+            </tr>`;
+          });
+        }
+        document.getElementById('tbodyStok').innerHTML = html;
+      } catch(e) { 
+        document.getElementById('tbodyStok').innerHTML = '<tr><td colspan="4" class="p-6 text-center text-rose-500">Koneksi database terputus.</td></tr>';
+      }
+    }
+  </script>
+</body>
+</html>
