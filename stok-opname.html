@@ -53,11 +53,11 @@
               <tr class="border-b border-slate-800/50 bg-slate-950 item-row">
                 <td class="p-3"><select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option>Pilih kategori dulu...</option></select></td>
                 <td class="p-3 text-center text-sm font-bold text-slate-400">-</td>
-                <td class="p-3 text-center"><input type="number" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-fis" placeholder="0" disabled></td>
-                <td class="p-3 text-center text-sm font-bold text-slate-400 label-selisih">-</td>
-                <td class="p-3 text-center text-sm font-bold text-slate-500 label-sat">-</td>
-                <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-alasan" placeholder="Alasan..." disabled></td>
-                <td class="p-3 text-center"><button class="text-slate-600 text-sm font-medium" disabled>Hapus</button></td>
+                <td class="p-3"><input type="number" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center" disabled></td>
+                <td class="p-3 text-center text-sm font-bold text-slate-400">-</td>
+                <td class="p-3 text-center text-sm font-bold text-slate-500">-</td>
+                <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white" disabled></td>
+                <td class="p-3 text-center"><button class="text-slate-600 text-sm">Hapus</button></td>
               </tr>
             </tbody>
           </table>
@@ -77,6 +77,12 @@
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
     let globalListBarang = [];
 
+    // Utility untuk angka
+    function parseNumber(inputVal) {
+      if (!inputVal) return 0;
+      return parseFloat(inputVal.toString().replace(',', '.'));
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
       document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME');
@@ -94,41 +100,64 @@
 
     async function handleKategoriChange() {
       const sh = document.getElementById('kategoriSelect').value; if(!sh) return;
-      document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500 italic">Memuat...</td></tr>';
+      document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500 italic">Memuat data...</td></tr>';
       try {
         const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
-        if(res.success) { globalListBarang = res.data; document.getElementById('itemTableBody').innerHTML = ''; document.getElementById('btnTambahBaris').disabled = false; tambahBarisBaru(); }
-        else showToast(res.message, "error");
-      } catch(e) { showToast("Koneksi gagal", "error"); }
+        if(res.success) {
+          globalListBarang = res.data;
+          document.getElementById('itemTableBody').innerHTML = '';
+          document.getElementById('btnTambahBaris').disabled = false;
+          tambahBarisBaru();
+        } else showToast(res.message, "error");
+      } catch(e) { showToast("Gagal koneksi", "error"); }
     }
 
     function tambahBarisBaru() {
-      const tr = document.createElement('tr'); tr.className = "border-b border-slate-800/50 bg-slate-950 item-row";
-      tr.innerHTML = `<td class="p-3"><select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang"><option value="">-- Pilih Barang --</option>${globalListBarang.map(b => `<option value="${b.id}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}</select></td><td class="p-3 text-center text-slate-400 font-bold">0</td><td class="p-3"><input type="number" step="any" onkeyup="calc(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-fis" placeholder="0"></td><td class="p-3 text-center text-sm font-bold label-selisih text-slate-400">0</td><td class="p-3 text-center text-sm font-bold text-amber-400 label-sat">-</td><td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-alasan" placeholder="Alasan..."></td><td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button></td>`;
-      document.getElementById('itemTableBody').appendChild(tr);
+      const tbody = document.getElementById('itemTableBody');
+      const tr = document.createElement('tr');
+      tr.className = "border-b border-slate-800/50 bg-slate-950 item-row";
+      tr.innerHTML = `
+        <td class="p-3"><select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang"><option value="">-- Pilih Barang --</option>${globalListBarang.map(b => `<option value="${b.id}" data-stok="${b.stokTersedia}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}</select></td>
+        <td class="p-3 text-center text-sm font-bold text-slate-400 label-stok-sistem">0</td>
+        <td class="p-3"><input type="number" step="any" onkeyup="calc(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-fis" placeholder="0"></td>
+        <td class="p-3 text-center text-sm font-bold label-selisih text-slate-400">0</td>
+        <td class="p-3 text-center text-sm font-bold text-amber-400 label-sat">-</td>
+        <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-alasan" placeholder="Alasan..."></td>
+        <td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function upd(sel) {
+      const opt = sel.options[sel.selectedIndex];
+      const stok = opt.getAttribute('data-stok') || '0';
+      const sat = opt.getAttribute('data-sat') || '-';
+      const tr = sel.closest('tr');
+      tr.querySelector('.label-stok-sistem').innerText = stok;
+      tr.querySelector('.label-sat').innerText = sat;
+      calc(tr.querySelector('.input-fis')); // Hitung selisih otomatis
     }
 
     function calc(el) {
       const tr = el.closest('tr');
-      const s = 0; // Nanti diupdate dengan stok sistem asli
-      const f = parseFloat(tr.querySelector('.input-fis').value) || 0;
+      const s = parseNumber(tr.querySelector('.label-stok-sistem').innerText);
+      const f = parseNumber(el.value);
       const d = f - s;
       const lbl = tr.querySelector('.label-selisih');
-      lbl.innerText = d; lbl.className = `p-3 text-center text-sm font-bold label-selisih ${d < 0 ? 'text-rose-500' : (d > 0 ? 'text-emerald-500' : 'text-slate-400')}`;
+      lbl.innerText = d;
+      lbl.className = `p-3 text-center text-sm font-bold label-selisih ${d < 0 ? 'text-rose-500' : (d > 0 ? 'text-emerald-500' : 'text-slate-400')}`;
     }
-
-    function upd(sel) { sel.closest('tr').querySelector('.label-sat').innerText = sel.options[sel.selectedIndex].getAttribute('data-sat') || '-'; }
 
     document.getElementById('btnSimpan').addEventListener('click', async () => {
       let data = [];
       document.querySelectorAll('.item-row').forEach(r => {
-        let sel = r.querySelector('.select-barang'), fis = r.querySelector('.input-fis').value, selisih = r.querySelector('.label-selisih').innerText, als = r.querySelector('.input-alasan').value;
-        if(sel.value) data.push([document.getElementById('tanggalInput').value, localStorage.getItem('APJ_USER_NAME'), document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, sel.value, sel.options[sel.selectedIndex].text.split('] ')[1], 0, fis, selisih, r.querySelector('.label-sat').innerText, als]);
+        let sel = r.querySelector('.select-barang');
+        if(sel.value) data.push([document.getElementById('tanggalInput').value, localStorage.getItem('APJ_USER_NAME'), document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, sel.value, sel.options[sel.selectedIndex].text.split('] ')[1], r.querySelector('.label-stok-sistem').innerText, r.querySelector('.input-fis').value, r.querySelector('.label-selisih').innerText, r.querySelector('.label-sat').innerText, r.querySelector('.input-alasan').value]);
       });
       if(!data.length) return showToast("Isi data!", "error");
       const btn = document.getElementById('btnSimpan'); btn.disabled = true; btn.innerText = "Menyimpan...";
-      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action:'simpanTransaksi', sheetName:'STOK_OPNAME', data}) })).json();
-      if(res.success) { showToast("Berhasil!"); setTimeout(()=>location.reload(), 2000); } else { showToast(res.message, "error"); btn.disabled = false; btn.innerText = "Simpan Stok Opname"; }
+      const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'simpanTransaksi', sheetName: 'STOK_OPNAME', data }) })).json();
+      if(res.success) { showToast(res.message); setTimeout(()=>location.reload(), 2000); } else { showToast(res.message, "error"); btn.disabled = false; btn.innerText = "Simpan Stok Opname"; }
     });
   </script>
 </body>
