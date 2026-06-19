@@ -268,6 +268,61 @@
       row.querySelector('.label-satuan-beli').textContent = satuanBeli;
       row.querySelector('.label-satuan-stok').textContent = satuanStok;
     }
+    // FUNGSI SIMPAN DATA KE DATABASE (INPUT STOK)
+    document.getElementById('btnSimpan').addEventListener('click', async () => {
+      const tanggal = document.getElementById('tanggalInput').value;
+      const kategoriSelect = document.getElementById('kategoriSelect');
+      const kategori = kategoriSelect.options[kategoriSelect.selectedIndex].text;
+      const petugas = localStorage.getItem('APJ_USER_NAME');
+
+      if (!tanggal || !kategoriSelect.value) {
+        showToast("Tanggal dan Kategori wajib diisi!", "error"); return;
+      }
+
+      const rows = document.querySelectorAll('.item-row');
+      let dataToSave = [];
+      let hasError = false;
+
+      rows.forEach(row => {
+        const select = row.querySelector('.select-barang');
+        const qtyBeli = row.querySelector('.input-qty-masuk').value;
+        const qtyStok = row.querySelector('.input-qty-stok').value;
+
+        if (select.value && qtyBeli > 0 && qtyStok > 0) {
+          const idBarang = select.value;
+          const namaBarang = select.options[select.selectedIndex].text.split('] ')[1];
+          const satuanBeli = row.querySelector('.label-satuan-beli').innerText;
+          const satuanStok = row.querySelector('.label-satuan-stok').innerText;
+          // Format urutan array: Tanggal, Petugas, Kategori, ID, Nama, Qty Beli, Sat Beli, Qty Stok, Sat Stok
+          dataToSave.push([tanggal, petugas, kategori, idBarang, namaBarang, qtyBeli, satuanBeli, qtyStok, satuanStok]);
+        } else if (select.value) {
+          hasError = true;
+        }
+      });
+
+      if (dataToSave.length === 0 || hasError) {
+        showToast("Harap isi Qty Masuk & Qty Stok untuk barang yang dipilih!", "error"); return;
+      }
+
+      const btnSimpan = document.getElementById('btnSimpan');
+      btnSimpan.disabled = true; btnSimpan.innerText = "Menyimpan ke Database...";
+
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow',
+          body: JSON.stringify({ action: 'simpanTransaksi', sheetName: 'TRANSAKSI_INPUT_STOK', data: dataToSave })
+        });
+        const result = await response.json();
+        if (result.success) {
+          showToast(result.message, "success");
+          setTimeout(() => location.reload(), 2000); // Otomatis refresh form setelah sukses
+        } else showToast(result.message, "error");
+      } catch (err) {
+        showToast("Gagal terhubung ke server.", "error");
+      }
+      btnSimpan.disabled = false; btnSimpan.innerText = "Simpan Transaksi Input";
+    });
+    
   </script>
 </body>
 </html>
