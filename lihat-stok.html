@@ -12,47 +12,48 @@
       /* Sembunyikan UI Web secara Total */
       .web-ui, #modalPrint { display: none !important; }
       
-      /* Hapus Header & Footer Bawaan Browser */
+      /* Hapus Header & Footer Bawaan Browser (URL, Jam, Tanggal) */
       @page { size: A4 portrait; margin: 0; }
       
       body { background: white !important; color: black !important; }
       
-      /* Kunci Area Cetak sebagai Flexbox */
+      /* Pembungkus Halaman Cetak */
       #printArea { 
         display: flex !important; 
         flex-direction: column; 
-        min-height: 100vh; /* Memastikan minimal 1 layar penuh A4 */
+        min-height: 100vh;
         padding: 1.5cm;
         box-sizing: border-box;
         font-family: 'Times New Roman', serif;
       }
       
-      /* KOP SURAT */
-      .kop-surat { position: relative; text-align: center; border-bottom: 3px solid black; padding-bottom: 15px; margin-bottom: 20px; }
-      .kop-logo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 90px; width: auto; }
+      /* Kop Surat: Tanpa Logo, Judul Center */
+      .kop-surat { text-align: center; border-bottom: 3px solid black; padding-bottom: 10px; margin-bottom: 20px; }
       .kop-title { font-weight: bold; font-size: 22pt; color: black !important; margin-bottom: 5px; }
-      .kop-sub { font-style: italic; font-size: 14pt; color: black !important; }
+      .kop-sub { font-style: italic; font-size: 14pt; color: black !important; margin-bottom: 5px; }
+      .kop-nomor { font-size: 11pt; font-weight: normal; color: black !important; }
       
-      /* WADAH TABEL (Mengambil sisa ruang kosong) */
+      /* WADAH TABEL (Agar dinamis mengalir ke bawah) */
       #printTableContainer { flex-grow: 1; margin-bottom: 30px; }
       
       table { width: 100%; border-collapse: collapse; font-size: 11pt; color: black !important; }
       th, td { border: 1px solid black !important; padding: 6px !important; color: black !important; }
       th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       
+      /* Aturan Isi Tabel (Tidak Bold, Nama Kiri, Lainnya Tengah) */
       #printTbody td { font-weight: normal !important; text-align: center !important; background: transparent !important; }
       #printTbody td:nth-child(2) { text-align: left !important; }
       
-      /* FOOTER / TTD (Menyesuaikan letak) */
+      /* FOOTER / AREA TTD */
       #printFooter { 
-        margin-top: auto; /* Mendorong ke paling bawah jika data sedikit */
-        page-break-inside: avoid; /* Mencegah TTD terpotong ke halaman baru */
+        margin-top: auto; /* Mendorong ke bawah jika data sedikit, tapi tetap mengalah jika data panjang */
+        page-break-inside: avoid; 
       }
-      .print-loc { text-align: right; margin-bottom: 15px; font-size: 11pt; padding-right: 20px; color: black !important; }
+      .print-loc { text-align: center; margin-bottom: 25px; font-size: 11pt; color: black !important; }
       .ttd-container { display: flex; justify-content: space-around; width: 100%; }
       .ttd-box { text-align: center; width: 33%; color: black !important; }
-      .role-label { font-weight: bold; color: black !important; font-size: 11pt;}
-      .name-label { font-weight: bold; text-decoration: underline; margin-top: 70px; color: black !important; font-size: 11pt;}
+      .role-label { font-weight: bold; color: black !important; font-size: 11pt; text-transform: uppercase; }
+      .name-label { font-weight: bold; text-decoration: underline; margin-top: 65px; color: black !important; font-size: 11pt;}
     }
   </style>
 </head>
@@ -81,7 +82,7 @@
              <select id="kategoriSelect" onchange="loadStokData()" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
               <option value="" disabled selected>-- Pilih Kategori --</option>
              </select>
-             <button onclick="document.getElementById('modalPrint').classList.remove('hidden')" class="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">Simpan Sebagai PDF</button>
+             <button id="btnSimpanPDF" onclick="bukaModalPrint()" class="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">Simpan Sebagai PDF</button>
           </div>
           <div class="border border-slate-800 rounded-lg overflow-x-auto">
               <table class="w-full text-left border-collapse">
@@ -100,10 +101,29 @@
 
   <div id="modalPrint" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-4">
     <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl w-full max-w-md shadow-2xl">
-      <h3 class="text-white font-bold mb-4">Data Penandatangan</h3>
-      <div class="mb-4"><label class="text-xs text-slate-400">Nama Supervisor</label><input type="text" id="modalSup" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"></div>
-      <div class="mb-4"><label class="text-xs text-slate-400">Nama PIC 1</label><input type="text" id="modalPic1" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"></div>
-      <div class="mb-6"><label class="text-xs text-slate-400">Nama PIC 2 (Opsional)</label><input type="text" id="modalPic2" class="w-full bg-slate-800 p-2 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"></div>
+      <h3 class="text-white font-bold mb-4">Pilih Penandatangan</h3>
+      
+      <div class="mb-4">
+        <label class="text-xs text-slate-400">Nama Supervisor</label>
+        <select id="modalSup" class="w-full bg-slate-800 p-2.5 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500">
+          <option value="">-- Pilih Supervisor --</option>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="text-xs text-slate-400">Nama PIC 1</label>
+        <select id="modalPic1" class="w-full bg-slate-800 p-2.5 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500">
+          <option value="">-- Pilih PIC 1 --</option>
+        </select>
+      </div>
+      
+      <div class="mb-6">
+        <label class="text-xs text-slate-400">Nama PIC 2 (Opsional)</label>
+        <select id="modalPic2" class="w-full bg-slate-800 p-2.5 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500">
+          <option value="">-- Tanpa PIC 2 --</option>
+        </select>
+      </div>
+      
       <div class="flex gap-3">
         <button onclick="document.getElementById('modalPrint').classList.add('hidden')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded text-sm text-white transition-colors">Batal</button>
         <button onclick="processPrint()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-2 rounded text-sm text-white font-bold transition-colors">Sudah Sesuai</button>
@@ -114,9 +134,9 @@
   <div id="printArea" style="display:none;">
     
     <div class="kop-surat">
-        <img src="https://i.imgur.com/Sb5mLrt.png" class="kop-logo" alt="Logo">
         <div class="kop-title">AMPERA PAK JENGGOT</div>
         <div class="kop-sub" id="printSub"></div>
+        <div class="kop-nomor" id="printNomorSurat"></div>
     </div>
     
     <div id="printTableContainer">
@@ -135,18 +155,66 @@
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
-    
-    document.addEventListener('DOMContentLoaded', () => {
-      // Set nama default dari login
-      const nama = localStorage.getItem('APJ_USER_NAME') || '';
-      document.getElementById('modalSup').value = nama;
-      document.getElementById('modalPic1').value = nama;
+    let listUserGlobal = [];
 
-      // Memuat Opsi Kategori Berdasarkan Hak Akses
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Proteksi Hak Akses & Disable Tombol PDF Jika Role Admin
+      const userLevel = localStorage.getItem('APJ_USER_LEVEL') || '';
+      if(userLevel.toLowerCase() === 'admin') {
+        const btn = document.getElementById('btnSimpanPDF');
+        btn.disabled = true;
+        btn.className = "bg-slate-800 text-slate-600 px-6 py-2.5 rounded-lg text-sm font-semibold cursor-not-allowed border border-slate-700/50";
+        btn.innerText = "Simpan PDF (Akses Ditolak)";
+        btn.title = "Role Admin tidak diizinkan mendownload/mencetak dokumen stok.";
+      }
+
+      // 2. Memuat Kategori Berdasarkan Hak Akses
       const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
       kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
+
+      // 3. Tarik Data User secara Asynchronous untuk Dropdown TTD
+      ambilDataUser();
     });
+
+    async function ambilDataUser() {
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify({ action: 'getUsers' }) });
+        const result = await response.json();
+        if(result.success) {
+          listUserGlobal = result.data;
+        }
+      } catch (e) { console.log("Gagal memuat daftar user."); }
+    }
+
+    function bukaModalPrint() {
+      const selKategori = document.getElementById('kategoriSelect').value;
+      if(!selKategori) { alert("Pilih kategori stok terlebih dahulu!"); return; }
+
+      // Isi Opsi Dropdown di Modal
+      const supSelect = document.getElementById('modalSup');
+      const pic1Select = document.getElementById('modalPic1');
+      const pic2Select = document.getElementById('modalPic2');
+      
+      const currentSup = supSelect.value;
+      const currentPic1 = pic1Select.value;
+      const currentPic2 = pic2Select.value;
+
+      let optionsHtml = `<option value="">-- Pilih Nama --</option>`;
+      listUserGlobal.forEach(nama => { optionsHtml += `<option value="${nama}">${nama}</option>`; });
+      
+      supSelect.innerHTML = optionsHtml;
+      pic1Select.innerHTML = optionsHtml;
+      pic2Select.innerHTML = `<option value="">-- Tanpa PIC 2 --</option>` + listUserGlobal.map(nama => `<option value="${nama}">${nama}</option>`).join('');
+
+      // Kembalikan ke pilihan user yang login sebagai default jika tersedia
+      const activeUser = localStorage.getItem('APJ_USER_NAME') || '';
+      supSelect.value = currentSup || activeUser;
+      pic1Select.value = currentPic1 || activeUser;
+      pic2Select.value = currentPic2;
+
+      document.getElementById('modalPrint').classList.remove('hidden');
+    }
 
     async function loadStokData() {
       const sh = document.getElementById('kategoriSelect').value;
@@ -165,7 +233,7 @@
                 <td class="p-4 text-sm text-slate-400 text-center">${b.id}</td>
                 <td class="p-4 text-sm text-white text-left">${b.nama}</td>
                 <td class="p-4 text-center font-bold text-emerald-400">${b.stokTersedia}</td>
-                <td class="p-4 text-center text-sm text-slate-400">${b.satuanStok}</td>
+                <td class="p-4 text-center text-sm text-slate-400 text-center">${b.satuanStok}</td>
             </tr>`).join('');
           }
         }
@@ -175,34 +243,49 @@
     }
 
     function processPrint() {
-      // 1. Ambil Data
       const sup = document.getElementById('modalSup').value;
       const pic1 = document.getElementById('modalPic1').value;
       const pic2 = document.getElementById('modalPic2').value;
+      
+      if(!sup || !pic1) { alert("Supervisor dan PIC 1 wajib dipilih!"); return; }
+      
       const selKategori = document.getElementById('kategoriSelect');
       const katText = selKategori.options[selKategori.selectedIndex].text;
+      const prefix = selKategori.value.replace("MASTER_", "").substring(0, 2); // Ambil inisial kategori (BM, BB, KM, MN)
       
-      // 2. Isi Area Cetak
+      // 1. Generate Format Nomor Surat Profesional & Resmi
+      const romanMonths = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+      const now = new Date();
+      const bRomawi = romanMonths[now.getMonth()];
+      const tahun = now.getFullYear();
+      const timeCode = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0');
+      
+      document.getElementById('printNomorSurat').innerText = `No: APJ-INV/REKAP/${prefix}/${bRomawi}/${tahun}/${timeCode}`;
+      
+      // 2. Isi Area Informasi Cetak
       document.getElementById('printSub').innerText = "Rekap Bulanan Stok " + katText + " Akhir";
-      document.getElementById('printLocDate').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+      document.getElementById('printLocDate').innerText = now.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
       
-      // Meng-copy tabel dari web ke kertas cetak
-      document.getElementById('printTbody').innerHTML = document.getElementById('tbodyStok').innerHTML;
+      // 3. Copy Data Tabel & Normalisasi Gaya (Hapus bold & warna)
+      let rowsHtml = document.getElementById('tbodyStok').innerHTML;
+      rowsHtml = rowsHtml.replace(/text-emerald-400/g, 'text-black')
+                         .replace(/text-slate-400/g, 'text-black')
+                         .replace(/text-white/g, 'text-black')
+                         .replace(/bg-slate-950/g, 'bg-white')
+                         .replace(/font-bold/g, 'font-normal'); // Garansi isi tidak tebal
+      document.getElementById('printTbody').innerHTML = rowsHtml;
       
-      // 3. Susun Tanda Tangan
+      // 4. Susun Tanda Tangan Kompak
       const signers = [{r: "Supervisor", n: sup}, {r: "PIC 1", n: pic1}, {r: "PIC 2", n: pic2}].filter(s => s.n.trim() !== "");
       let ttdHtml = '';
       signers.forEach(s => { 
-          ttdHtml += `<div class="ttd-box"><p class="role-label">${s.r}</p><p class="name-label">${s.n}</p></div>`; 
+          ttdHtml += `<div class="ttd-box"><p class="role-label">${s.r}</p><p class="name-label">(${s.n})</p></div>`; 
       });
       document.getElementById('printTTD').innerHTML = ttdHtml;
       
-      // 4. Proses Print
+      // 5. Eksekusi Cetak
       document.getElementById('modalPrint').classList.add('hidden');
-      
-      setTimeout(() => {
-        window.print();
-      }, 100);
+      setTimeout(() => { window.print(); }, 150);
     }
   </script>
 </body>
