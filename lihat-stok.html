@@ -12,48 +12,49 @@
       /* Sembunyikan UI Web secara Total */
       .web-ui, #modalPrint { display: none !important; }
       
-      /* Hapus Header & Footer Bawaan Browser (URL, Jam, Tanggal) */
+      /* Hapus Header & Footer Bawaan Browser */
       @page { size: A4 portrait; margin: 0; }
       
       body { background: white !important; color: black !important; }
       
-      /* Pembungkus Halaman Cetak */
+      /* Pembungkus Halaman Cetak (Margin lebih tipis) */
       #printArea { 
         display: flex !important; 
         flex-direction: column; 
-        min-height: 100vh;
-        padding: 1.5cm;
+        height: 100vh; /* Memaksa maksimal 1 layar */
+        padding: 1cm 1.5cm; /* Atas/bawah 1cm, Kiri/kanan 1.5cm */
         box-sizing: border-box;
         font-family: 'Times New Roman', serif;
       }
       
-      /* Kop Surat: Tanpa Logo, Judul Center */
-      .kop-surat { text-align: center; border-bottom: 3px solid black; padding-bottom: 10px; margin-bottom: 20px; }
-      .kop-title { font-weight: bold; font-size: 22pt; color: black !important; margin-bottom: 5px; }
-      .kop-sub { font-style: italic; font-size: 14pt; color: black !important; margin-bottom: 5px; }
-      .kop-nomor { font-size: 11pt; font-weight: normal; color: black !important; }
+      /* Kop Surat: Diperpadat agar hemat ruang */
+      .kop-surat { text-align: center; border-bottom: 3px solid black; padding-bottom: 8px; margin-bottom: 10px; }
+      .kop-title { font-weight: bold; font-size: 20pt; color: black !important; margin-bottom: 2px; }
+      .kop-sub { font-style: italic; font-size: 12pt; color: black !important; margin-bottom: 2px; }
+      .kop-nomor { font-size: 10pt; font-weight: normal; color: black !important; }
       
-      /* WADAH TABEL (Agar dinamis mengalir ke bawah) */
-      #printTableContainer { flex-grow: 1; margin-bottom: 30px; }
+      /* WADAH TABEL */
+      #printTableContainer { flex-grow: 1; margin-bottom: 10px; }
       
-      table { width: 100%; border-collapse: collapse; font-size: 11pt; color: black !important; }
-      th, td { border: 1px solid black !important; padding: 6px !important; color: black !important; }
+      /* TABEL: Font lebih kecil & padding lebih rapat */
+      table { width: 100%; border-collapse: collapse; font-size: 10pt; color: black !important; }
+      th, td { border: 1px solid black !important; padding: 4px !important; color: black !important; }
       th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       
-      /* Aturan Isi Tabel (Tidak Bold, Nama Kiri, Lainnya Tengah) */
+      /* Aturan Isi Tabel */
       #printTbody td { font-weight: normal !important; text-align: center !important; background: transparent !important; }
       #printTbody td:nth-child(2) { text-align: left !important; }
       
       /* FOOTER / AREA TTD */
       #printFooter { 
-        margin-top: auto; /* Mendorong ke bawah jika data sedikit, tapi tetap mengalah jika data panjang */
+        margin-top: auto; 
         page-break-inside: avoid; 
       }
-      .print-loc { text-align: center; margin-bottom: 25px; font-size: 11pt; color: black !important; }
+      .print-loc { text-align: center; margin-bottom: 15px; font-size: 10pt; color: black !important; }
       .ttd-container { display: flex; justify-content: space-around; width: 100%; }
       .ttd-box { text-align: center; width: 33%; color: black !important; }
-      .role-label { font-weight: bold; color: black !important; font-size: 11pt; text-transform: uppercase; }
-      .name-label { font-weight: bold; text-decoration: underline; margin-top: 65px; color: black !important; font-size: 11pt;}
+      .role-label { font-weight: bold; color: black !important; font-size: 10pt; text-transform: uppercase; }
+      .name-label { font-weight: bold; text-decoration: underline; margin-top: 50px; color: black !important; font-size: 10pt;}
     }
   </style>
 </head>
@@ -158,7 +159,7 @@
     let listUserGlobal = [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Proteksi Hak Akses & Disable Tombol PDF Jika Role Admin
+      // 1. Proteksi Hak Akses Role Admin
       const userLevel = localStorage.getItem('APJ_USER_LEVEL') || '';
       if(userLevel.toLowerCase() === 'admin') {
         const btn = document.getElementById('btnSimpanPDF');
@@ -168,12 +169,12 @@
         btn.title = "Role Admin tidak diizinkan mendownload/mencetak dokumen stok.";
       }
 
-      // 2. Memuat Kategori Berdasarkan Hak Akses
+      // 2. Load Kategori
       const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
       kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
 
-      // 3. Tarik Data User secara Asynchronous untuk Dropdown TTD
+      // 3. Tarik Daftar Nama User
       ambilDataUser();
     });
 
@@ -191,7 +192,6 @@
       const selKategori = document.getElementById('kategoriSelect').value;
       if(!selKategori) { alert("Pilih kategori stok terlebih dahulu!"); return; }
 
-      // Isi Opsi Dropdown di Modal
       const supSelect = document.getElementById('modalSup');
       const pic1Select = document.getElementById('modalPic1');
       const pic2Select = document.getElementById('modalPic2');
@@ -207,7 +207,6 @@
       pic1Select.innerHTML = optionsHtml;
       pic2Select.innerHTML = `<option value="">-- Tanpa PIC 2 --</option>` + listUserGlobal.map(nama => `<option value="${nama}">${nama}</option>`).join('');
 
-      // Kembalikan ke pilihan user yang login sebagai default jika tersedia
       const activeUser = localStorage.getItem('APJ_USER_NAME') || '';
       supSelect.value = currentSup || activeUser;
       pic1Select.value = currentPic1 || activeUser;
@@ -251,9 +250,9 @@
       
       const selKategori = document.getElementById('kategoriSelect');
       const katText = selKategori.options[selKategori.selectedIndex].text;
-      const prefix = selKategori.value.replace("MASTER_", "").substring(0, 2); // Ambil inisial kategori (BM, BB, KM, MN)
+      const prefix = selKategori.value.replace("MASTER_", "").substring(0, 2); 
       
-      // 1. Generate Format Nomor Surat Profesional & Resmi
+      // Nomor Surat
       const romanMonths = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
       const now = new Date();
       const bRomawi = romanMonths[now.getMonth()];
@@ -261,21 +260,19 @@
       const timeCode = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0');
       
       document.getElementById('printNomorSurat').innerText = `No: APJ-INV/REKAP/${prefix}/${bRomawi}/${tahun}/${timeCode}`;
-      
-      // 2. Isi Area Informasi Cetak
       document.getElementById('printSub').innerText = "Rekap Bulanan Stok " + katText + " Akhir";
       document.getElementById('printLocDate').innerText = now.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
       
-      // 3. Copy Data Tabel & Normalisasi Gaya (Hapus bold & warna)
+      // Format Ulang Tabel untuk Cetak
       let rowsHtml = document.getElementById('tbodyStok').innerHTML;
       rowsHtml = rowsHtml.replace(/text-emerald-400/g, 'text-black')
                          .replace(/text-slate-400/g, 'text-black')
                          .replace(/text-white/g, 'text-black')
                          .replace(/bg-slate-950/g, 'bg-white')
-                         .replace(/font-bold/g, 'font-normal'); // Garansi isi tidak tebal
+                         .replace(/font-bold/g, 'font-normal'); 
       document.getElementById('printTbody').innerHTML = rowsHtml;
       
-      // 4. Susun Tanda Tangan Kompak
+      // TTD
       const signers = [{r: "Supervisor", n: sup}, {r: "PIC 1", n: pic1}, {r: "PIC 2", n: pic2}].filter(s => s.n.trim() !== "");
       let ttdHtml = '';
       signers.forEach(s => { 
@@ -283,7 +280,7 @@
       });
       document.getElementById('printTTD').innerHTML = ttdHtml;
       
-      // 5. Eksekusi Cetak
+      // Print
       document.getElementById('modalPrint').classList.add('hidden');
       setTimeout(() => { window.print(); }, 150);
     }
