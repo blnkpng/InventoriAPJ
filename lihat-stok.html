@@ -399,7 +399,7 @@
           }
           document.getElementById('infoBox').innerHTML = 'Mode <b>Produksi</b>: laporan dibuat 1 baris per lauk/jadi. Jika sumber masih <b>TRANSAKSI_OUTPUT_PRODUKSI</b>, sebaiknya STOK_AKHIR produksi juga dibuat agar stok akhir benar-benar final.';
         } else {
-          result = await fetchApi({ action: 'getBarang', sheetName: select.value });
+          result = await fetchApi({ action: 'getBarang', sheetName: select.value, context: 'operasional' });
           document.getElementById('infoBox').innerHTML = 'Mode <b>General</b>: stok dibaca dari master kategori dan dicocokkan ke <b>STOK_AKHIR</b> berdasarkan ID/Nama barang.';
         }
 
