@@ -51,7 +51,7 @@
         </div>
 
         <div id="modeInfo" class="mb-4 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg p-3">
-          Pilih kategori terlebih dahulu. Mode <b>Produksi</b> akan membuka tabel bahan baku otomatis.
+          Pilih kategori terlebih dahulu. Mode <b>Produksi</b> akan mencatat lauk jadi dan otomatis mengurangi bahan mentah yang dipakai.
         </div>
 
         <div class="border border-slate-800 rounded-lg overflow-x-auto mb-6">
@@ -202,7 +202,7 @@
     }
 
     async function loadProduksiMode() {
-      document.getElementById('modeInfo').innerHTML = 'Mode <b>Produksi</b>: pilih satu Produksi, sistem otomatis menampilkan semua bahan baku terkait. Qty Produksi hanya muncul satu kali per grup produksi.';
+      document.getElementById('modeInfo').innerHTML = 'Mode <b>Produksi</b>: pilih satu Produksi/lauk, sistem menampilkan bahan baku otomatis. Saat disimpan, lauk jadi masuk ke <b>TRANSAKSI_OUTPUT_PRODUKSI</b>, bahan yang dipakai masuk sebagai pengeluaran ke <b>TRANSAKSI_OUTPUT_STOK</b>.';
       renderProduksiHeader();
       setLoadingRow(8, 'Memuat master produksi...');
 
@@ -381,7 +381,7 @@
         const rowSpan = Math.max(bahanList.length, 1);
 
         bahanList.forEach((bahan, index) => {
-          const bahanKey = bahan.idBarang + '|' + bahan.bahanBaku;
+          const bahanKey = (bahan.idBahan || bahan.bahanBaku) + '|' + bahan.bahanBaku;
           const tr = document.createElement('tr');
           tr.className = 'border-b border-slate-800/50 bg-slate-950 produksi-row';
 
@@ -400,7 +400,7 @@
 
           tr.innerHTML = `
             ${firstCells}
-            <td class="p-3 text-sm text-white"><div class="font-semibold">${escapeHtml(bahan.bahanBaku)}</div><div class="text-[10px] text-slate-500">ID: ${escapeHtml(bahan.idBarang)}</div></td>
+            <td class="p-3 text-sm text-white"><div class="font-semibold">${escapeHtml(bahan.bahanBaku)}</div><div class="text-[10px] text-slate-500">ID Bahan: ${escapeHtml(bahan.idBahan || 'Tidak ditemukan')}</div></td>
             <td class="p-3 text-center text-sm font-bold text-emerald-400">${escapeHtml(bahan.stokTersedia)}</td>
             <td class="p-3 text-center text-sm font-bold text-slate-500">${escapeHtml(bahan.satuanBahan)}</td>
             <td class="p-3"><input type="number" min="0.001" step="any" value="${escapeHtml(group.bahanQty[bahanKey] || '')}" oninput="updateQtyBahan('${group.key}', '${escapeJs(bahanKey)}', this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty-keluar" placeholder="0"></td>
@@ -460,7 +460,8 @@
     async function simpanProduksi() {
       const tanggal = document.getElementById('tanggalInput').value;
       const petugas = localStorage.getItem('APJ_USER_NAME') || '';
-      let data = [];
+      let produksiRows = [];
+      let bahanRows = [];
       let errorMessage = '';
 
       if (!tanggal) return showToast('Tanggal wajib diisi.', 'error');
@@ -472,37 +473,57 @@
           return;
         }
 
+        if (!produksiData.idProduksi) {
+          errorMessage = `ID produksi untuk ${produksiData.produksi} belum ada di MASTER_BARANG_PRODUKSI kolom A.`;
+          return;
+        }
+
         if (!(parseNumber(group.qtyProduksi) > 0)) {
           errorMessage = 'Qty Produksi wajib lebih dari 0.';
           return;
         }
 
+        // REVISI v2: satu baris saja untuk lauk/barang jadi.
+        produksiRows.push({
+          tanggal,
+          petugas,
+          idProduksi: produksiData.idProduksi,
+          produksi: produksiData.produksi,
+          qtyProduksi: group.qtyProduksi,
+          satuanProduksi: produksiData.satuanProduksi
+        });
+
+        // REVISI v2: bahan mentah/bahan baku dipakai sebagai pengeluaran stok.
         produksiData.bahan.forEach(bahan => {
-          const bahanKey = bahan.idBarang + '|' + bahan.bahanBaku;
+          const bahanKey = (bahan.idBahan || bahan.bahanBaku) + '|' + bahan.bahanBaku;
           const qtyKeluar = group.bahanQty[bahanKey];
+
+          if (!bahan.idBahan) {
+            errorMessage = `ID bahan untuk "${bahan.bahanBaku}" tidak ditemukan di STOK_AKHIR. Samakan nama bahan di MASTER_BARANG_PRODUKSI dengan STOK_AKHIR.`;
+            return;
+          }
 
           if (!(parseNumber(qtyKeluar) > 0)) {
             errorMessage = 'Semua Qty Keluar bahan baku produksi wajib diisi.';
             return;
           }
 
-          data.push([
+          bahanRows.push({
             tanggal,
             petugas,
-            bahan.idBarang,
-            produksiData.produksi,
+            idBahan: bahan.idBahan,
+            bahanBaku: bahan.bahanBaku,
             qtyKeluar,
-            bahan.satuanBahan,
-            group.qtyProduksi,
-            produksiData.satuanProduksi
-          ]);
+            satuanBahan: bahan.satuanBahan
+          });
         });
       });
 
-      if (!produksiGroups.length || !data.length) return showToast('Pilih minimal 1 item produksi.', 'error');
+      if (!produksiGroups.length || !produksiRows.length) return showToast('Pilih minimal 1 item produksi.', 'error');
+      if (!bahanRows.length) return showToast('Isi pemakaian bahan untuk produksi.', 'error');
       if (errorMessage) return showToast(errorMessage, 'error');
 
-      await submitData({ action: 'simpanOutputProduksi', data }, 'Simpan Output Stok');
+      await submitData({ action: 'simpanOutputProduksi', produksiRows, bahanRows }, 'Simpan Output Stok');
     }
 
     async function submitData(payload, defaultButtonText) {
