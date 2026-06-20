@@ -176,13 +176,33 @@
       updateSummary();
     });
 
-    function buildKategoriOptions() {
+    
+    function normPermValue(value) {
+      return String(value ?? '').trim().toLowerCase();
+    }
+
+    function isOwnerLevel() {
+      const level = normPermValue(localStorage.getItem('APJ_USER_LEVEL'));
+      return level === 'owner' || level === 'superadmin' || level === 'super admin';
+    }
+
+    function hasPerm(permissions, key) {
+      return isOwnerLevel() || normPermValue(permissions && permissions[key]) === 'y';
+    }
+function buildKategoriOptions() {
       const permissions = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kategoriSelect = document.getElementById('kategoriSelect');
       let count = 0;
 
+      // Opname adalah izin aksi. Kalau Opname = N, kategori tidak dibuka sama sekali.
+      if (!hasPerm(permissions, 'opname')) {
+        showToast('Role ini belum punya akses Stok Opname.', 'error');
+        return;
+      }
+
       KATEGORI_GENERAL.forEach(kat => {
-        if (permissions[kat.key] === 'Y') {
+        // Opname tetap mengikuti izin kategori supaya PIC hanya koreksi area masing-masing.
+        if (hasPerm(permissions, kat.key)) {
           const option = document.createElement('option');
           option.value = kat.sheet;
           option.textContent = kat.label;
@@ -191,7 +211,7 @@
         }
       });
 
-      if (!count) showToast('Role Anda belum punya akses kategori stok opname.', 'error');
+      if (!count) showToast('Opname aktif, tapi belum ada kategori yang dibuka untuk role ini.', 'error');
     }
 
     function showToast(message, type = 'success') {
