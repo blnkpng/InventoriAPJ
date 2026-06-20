@@ -103,7 +103,7 @@
         </div>
 
         <div class="mb-4 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg p-3">
-          Input stok dipakai untuk barang masuk dari pembelian atau penambahan awal. Kolom <b>Qty Masuk</b> mengikuti satuan beli, sedangkan <b>Qty Stok</b> adalah angka riil yang masuk ke stok akhir.
+          Input stok dipakai untuk barang masuk dari pembelian atau penambahan awal. Khusus item parent seperti <b>Ayam Potong 8/11</b>, sistem membuka hasil preparasi otomatis seperti Ayam Kremes/Premix.
         </div>
 
         <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll mb-6">
@@ -157,6 +157,7 @@
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
 
     let globalListBarang = [];
+    let globalBarangById = {};
 
     const KATEGORI_GENERAL = [
       { key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' },
@@ -233,7 +234,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getBarang', sheetName: selectedSheet })
+          body: JSON.stringify({ action: 'getBarang', sheetName: selectedSheet, context: 'input' })
         });
 
         const result = await response.json();
@@ -245,6 +246,8 @@
         }
 
         globalListBarang = result.data || [];
+        globalBarangById = {};
+        globalListBarang.forEach(b => { globalBarangById[String(b.id)] = b; });
         if (!globalListBarang.length) {
           document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-rose-500">Master barang kategori ini masih kosong.</td></tr>';
           document.getElementById('statusInfo').textContent = 'Master kosong.';
@@ -253,7 +256,7 @@
 
         document.getElementById('itemTableBody').innerHTML = '';
         document.getElementById('btnTambahBaris').disabled = false;
-        document.getElementById('statusInfo').textContent = `${globalListBarang.length} barang siap dipilih.`;
+        document.getElementById('statusInfo').textContent = `${globalListBarang.length} barang utama siap dipilih. Item preparasi muncul otomatis.`;
         tambahBarisBaru();
         showToast(`Berhasil memuat ${globalListBarang.length} barang.`, 'success');
       } catch (error) {
@@ -269,7 +272,8 @@
           data-nama="${escapeHtml(b.nama)}"
           data-satuan-beli="${escapeHtml(b.satuanBeli || '-')}"
           data-satuan-stok="${escapeHtml(b.satuanStok || '-')}"
-          data-stok="${escapeHtml(b.stokTersedia ?? 0)}">
+          data-stok="${escapeHtml(b.stokTersedia ?? 0)}"
+          data-has-children="${(b.children || []).length ? 'Y' : 'N'}">
           [${escapeHtml(b.id)}] ${escapeHtml(b.nama)}
         </option>
       `).join('');
@@ -281,6 +285,7 @@
       const tbody = document.getElementById('itemTableBody');
       const tr = document.createElement('tr');
       tr.className = 'border-b border-slate-800/50 bg-slate-950 item-row hover:bg-slate-900/50 transition-colors';
+      tr.dataset.rowUid = 'row-' + Date.now() + '-' + Math.random().toString(16).slice(2);
       tr.innerHTML = `
         <td class="p-3">
           <select onchange="updateSatuan(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang focus:border-blue-500 focus:outline-none">
@@ -291,7 +296,7 @@
         <td class="p-3 text-center text-sm font-bold text-emerald-400 label-stok">0</td>
         <td class="p-3"><input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-masuk text-center focus:border-blue-500 focus:outline-none" placeholder="0"></td>
         <td class="p-3 text-center text-sm font-semibold text-slate-500 label-satuan-beli">-</td>
-        <td class="p-3"><input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-stok text-center focus:border-blue-500 focus:outline-none" placeholder="0"></td>
+        <td class="p-3"><input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-stok text-center focus:border-blue-500 focus:outline-none" placeholder="0" oninput="refreshPreparasiTarget(this)"></td>
         <td class="p-3 text-center text-sm font-bold text-blue-400 label-satuan-stok">-</td>
         <td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="hapusBaris(this)">Hapus</button></td>
       `;
@@ -299,7 +304,9 @@
     }
 
     function hapusBaris(btn) {
-      btn.closest('tr').remove();
+      const row = btn.closest('tr');
+      removePreparasiRow(row);
+      row.remove();
       const rows = document.querySelectorAll('.item-row');
       if (!rows.length) tambahBarisBaru();
     }
@@ -307,9 +314,78 @@
     function updateSatuan(selectElement) {
       const selectedOption = selectElement.options[selectElement.selectedIndex];
       const row = selectElement.closest('tr');
+      const item = globalBarangById[selectElement.value];
       row.querySelector('.label-stok').textContent = selectedOption.getAttribute('data-stok') || '0';
       row.querySelector('.label-satuan-beli').textContent = selectedOption.getAttribute('data-satuan-beli') || '-';
       row.querySelector('.label-satuan-stok').textContent = selectedOption.getAttribute('data-satuan-stok') || '-';
+      renderPreparasiRow(row, item);
+    }
+
+    function removePreparasiRow(row) {
+      const uid = row?.dataset?.rowUid;
+      if (!uid) return;
+      document.querySelectorAll(`tr.prep-row[data-parent-uid="${uid}"]`).forEach(el => el.remove());
+    }
+
+    function renderPreparasiRow(row, item) {
+      removePreparasiRow(row);
+      if (!item || !item.children || !item.children.length) return;
+
+      const tr = document.createElement('tr');
+      tr.className = 'prep-row bg-slate-900/70 border-b border-slate-800/70';
+      tr.dataset.parentUid = row.dataset.rowUid;
+      tr.innerHTML = `
+        <td colspan="7" class="p-4">
+          <div class="rounded-xl border border-blue-500/20 bg-blue-950/20 p-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
+              <div>
+                <p class="text-sm font-bold text-blue-300">Hasil Preparasi ${escapeHtml(item.nama)}</p>
+                <p class="text-xs text-slate-400">Total hasil preparasi wajib sama dengan Qty Stok parent. Jadi Ayam Potong 8/11 tidak nyangkut sebagai stok tersembunyi.</p>
+              </div>
+              <div class="text-xs text-slate-400">Total: <span class="prep-total font-bold text-blue-300">0</span> / <span class="prep-target">0</span> <span>${escapeHtml(item.satuanStok || '-')}</span></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${item.children.map(child => `
+                <label class="block bg-slate-950/70 border border-slate-800 rounded-lg p-3">
+                  <span class="block text-xs text-slate-400 mb-1">${escapeHtml(child.nama)}</span>
+                  <div class="flex items-center gap-2">
+                    <input type="number" min="0" step="any" class="prep-child-qty w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center focus:border-blue-500 focus:outline-none" placeholder="0"
+                      data-id="${escapeHtml(child.id)}"
+                      data-nama="${escapeHtml(child.nama)}"
+                      data-satuan-stok="${escapeHtml(child.satuanStok || '-')}"
+                      oninput="updatePreparasiTotal(this)">
+                    <span class="text-xs font-bold text-blue-300 min-w-[42px]">${escapeHtml(child.satuanStok || '-')}</span>
+                  </div>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        </td>
+      `;
+      row.insertAdjacentElement('afterend', tr);
+      updatePreparasiTotal(tr.querySelector('.prep-child-qty'));
+    }
+
+    function refreshPreparasiTarget(input) {
+      const row = input.closest('tr');
+      const prep = row?.nextElementSibling?.classList.contains('prep-row') ? row.nextElementSibling : null;
+      if (prep) updatePreparasiTotal(prep.querySelector('.prep-child-qty'));
+    }
+
+    function updatePreparasiTotal(el) {
+      const prepRow = el?.closest('.prep-row');
+      if (!prepRow) return;
+      const parentRow = document.querySelector(`tr.item-row[data-row-uid="${prepRow.dataset.parentUid}"]`);
+      const target = parseNumber(parentRow?.querySelector('.input-qty-stok')?.value || 0);
+      const total = Array.from(prepRow.querySelectorAll('.prep-child-qty')).reduce((sum, input) => sum + parseNumber(input.value), 0);
+      prepRow.querySelector('.prep-total').textContent = formatNumber(total);
+      prepRow.querySelector('.prep-target').textContent = formatNumber(target);
+      prepRow.querySelector('.prep-total').className = `prep-total font-bold ${Math.abs(total - target) < 0.0001 ? 'text-emerald-300' : 'text-amber-300'}`;
+    }
+
+    function formatNumber(value) {
+      const n = Number(value || 0);
+      return Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
     }
 
     document.getElementById('btnSimpan').addEventListener('click', async () => {
@@ -321,7 +397,8 @@
 
       const kategori = kategoriSelect.options[kategoriSelect.selectedIndex].text;
       const selectedIds = new Set();
-      const dataToSave = [];
+      const inputRows = [];
+      const outputRows = [];
       let hasError = false;
       let errorMessage = '';
 
@@ -340,27 +417,59 @@
 
         if (selectedIds.has(select.value)) {
           hasError = true;
-          errorMessage = 'Barang tidak boleh dobel dalam satu transaksi.';
+          errorMessage = 'Barang utama tidak boleh dobel dalam satu transaksi.';
           return;
         }
         selectedIds.add(select.value);
 
         const opt = select.options[select.selectedIndex];
-        dataToSave.push([
-          tanggal,
-          petugas,
-          kategori,
-          select.value,
-          opt.getAttribute('data-nama') || opt.textContent.split('] ')[1] || '',
-          qtyBeliRaw,
-          row.querySelector('.label-satuan-beli').innerText,
-          qtyStokRaw,
-          row.querySelector('.label-satuan-stok').innerText
-        ]);
+        const item = globalBarangById[select.value] || {};
+        const namaBarang = opt.getAttribute('data-nama') || opt.textContent.split('] ')[1] || '';
+        const satuanBeli = row.querySelector('.label-satuan-beli').innerText;
+        const satuanStok = row.querySelector('.label-satuan-stok').innerText;
+
+        inputRows.push([tanggal, petugas, kategori, select.value, namaBarang, qtyBeliRaw, satuanBeli, qtyStokRaw, satuanStok]);
+
+        if (item.children && item.children.length) {
+          const prepRow = document.querySelector(`tr.prep-row[data-parent-uid="${row.dataset.rowUid}"]`);
+          const childInputs = Array.from(prepRow?.querySelectorAll('.prep-child-qty') || []);
+          const totalChild = childInputs.reduce((sum, input) => sum + parseNumber(input.value), 0);
+          const qtyStok = parseNumber(qtyStokRaw);
+
+          if (!childInputs.length) {
+            hasError = true;
+            errorMessage = `Hasil preparasi untuk ${namaBarang} belum muncul.`;
+            return;
+          }
+
+          if (Math.abs(totalChild - qtyStok) > 0.0001) {
+            hasError = true;
+            errorMessage = `Total hasil preparasi ${namaBarang} harus sama dengan Qty Stok (${formatNumber(qtyStok)} ${satuanStok}).`;
+            return;
+          }
+
+          outputRows.push([tanggal, petugas, kategori, select.value, namaBarang, qtyStokRaw, satuanStok, 'Preparasi', '', '']);
+
+          childInputs.forEach(input => {
+            const qtyChild = parseNumber(input.value);
+            if (qtyChild <= 0) return;
+            inputRows.push([
+              tanggal,
+              petugas,
+              kategori,
+              input.getAttribute('data-id'),
+              input.getAttribute('data-nama'),
+              input.value,
+              input.getAttribute('data-satuan-stok') || satuanStok,
+              input.value,
+              input.getAttribute('data-satuan-stok') || satuanStok
+            ]);
+          });
+        }
       });
 
       if (hasError) return showToast(errorMessage, 'error');
-      if (!dataToSave.length) return showToast('Belum ada data valid untuk disimpan.', 'error');
+      if (!inputRows.length) return showToast('Belum ada data valid untuk disimpan.', 'error');
 
       const btnSimpan = document.getElementById('btnSimpan');
       btnSimpan.disabled = true;
@@ -372,7 +481,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'simpanTransaksi', sheetName: 'TRANSAKSI_INPUT_STOK', data: dataToSave })
+          body: JSON.stringify({ action: 'simpanInputStokPreparasi', inputRows, outputRows })
         });
         const result = await response.json();
         if (result.success) {
