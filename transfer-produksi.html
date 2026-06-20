@@ -44,56 +44,53 @@
       <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
     </nav>
     <div class="p-4 border-t border-slate-800">
-      <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-        Logout Sistem
-      </button>
+      <button onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">Logout Sistem</button>
     </div>
   </aside>
 
   <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
-    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
+    <header class="min-h-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-5 sm:px-8 py-4 border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-20 pl-16 lg:pl-8">
       <div>
-        <h2 class="text-base sm:text-lg font-semibold text-violet-300">Transfer Produksi</h2>
-        <p class="hidden sm:block text-xs text-slate-500">Kirim lauk/produk dari PUSAT ke outlet.</p>
+        <h2 class="text-lg font-semibold text-violet-300">Transfer Produksi</h2>
+        <p class="hidden sm:block text-xs text-slate-500">Pilih outlet, semua produk otomatis muncul. Isi qty yang dikirim saja.</p>
       </div>
-      <div class="hidden sm:block text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-violet-300">Memuat...</span></div>
+      <div class="text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-violet-300">Memuat...</span></div>
     </header>
 
-    <div class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto w-full">
-      <div id="accessDeniedBox" class="hidden bg-rose-950/40 border border-rose-800 rounded-xl p-5 mb-6">
-        <h3 class="text-rose-300 font-bold mb-1">Akses Ditolak</h3>
-        <p class="text-sm text-rose-200/80">Menu ini hanya untuk role yang punya izin Produksi atau Transfer Produksi.</p>
-      </div>
+    <div id="accessDeniedBox" class="hidden m-4 sm:m-8 rounded-xl border border-rose-800 bg-rose-950/30 p-5 text-rose-300">
+      <h3 class="font-bold text-white mb-1">Akses Ditolak</h3>
+      <p class="text-sm">Menu ini hanya tersedia untuk role yang memiliki izin Produksi / Transfer Produksi.</p>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="p-4 sm:p-8 max-w-[1500px] mx-auto w-full">
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
           <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Produk Siap Transfer</p>
           <h3 id="kpiProduk" class="text-2xl font-bold text-white mt-1">0</h3>
         </div>
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
           <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Total Stok PUSAT</p>
-          <h3 id="kpiQty" class="text-2xl font-bold text-violet-300 mt-1">0</h3>
+          <h3 id="kpiQty" class="text-2xl font-bold text-emerald-300 mt-1">0</h3>
         </div>
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
-          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Outlet Tujuan</p>
-          <h3 id="kpiOutlet" class="text-2xl font-bold text-white mt-1">0</h3>
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Sisa Outlet Dipilih</p>
+          <h3 id="kpiOutletStock" class="text-2xl font-bold text-sky-300 mt-1">0</h3>
         </div>
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
           <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Status</p>
-          <h3 id="kpiStatus" class="text-lg font-bold text-emerald-300 mt-2">Siap</h3>
+          <h3 id="kpiStatus" class="text-lg font-bold text-amber-300 mt-2">Pilih Outlet</h3>
         </div>
       </div>
 
       <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 sm:gap-6 mb-6">
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Transfer</label>
             <input type="date" id="tanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Outlet Tujuan</label>
-            <select id="outletSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
+            <select id="outletSelect" onchange="handleOutletChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
               <option value="" selected disabled>Memuat outlet...</option>
             </select>
           </div>
@@ -104,38 +101,40 @@
             </select>
           </div>
           <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cari Produk</label>
+            <input type="text" id="searchProduk" oninput="renderProductRows()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none" placeholder="Ayam, bebek, dll...">
+          </div>
+          <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Catatan Umum</label>
             <input type="text" id="catatanUmum" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none" placeholder="Opsional...">
           </div>
         </div>
 
         <div class="mb-4 text-xs text-slate-400 bg-violet-950/20 border border-violet-900/50 rounded-lg p-3">
-          Transfer produksi akan mengurangi stok <b>PUSAT</b> dan menambah stok outlet di <b>STOK_AKHIR</b> lewat rumus transfer yang sudah dipasang.
+          Setelah outlet dipilih, tabel otomatis menampilkan semua produk. Kolom <b>Stok Outlet Sebelumnya</b> diambil dari `STOK_AKHIR` lokasi outlet tersebut, jadi tim tinggal isi <b>Qty Transfer</b>.
         </div>
 
         <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll mb-6">
-          <table class="w-full text-left border-collapse min-w-[1000px]">
+          <table class="w-full text-left border-collapse min-w-[1180px]">
             <thead>
               <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
-                <th class="p-4 w-4/12">Produk / Lauk</th>
+                <th class="p-4 w-3/12">Produk / Lauk</th>
                 <th class="p-4 w-1/12 text-center">Stok PUSAT</th>
+                <th class="p-4 w-1/12 text-center">Stok Outlet Sebelumnya</th>
                 <th class="p-4 w-1/12 text-center">Satuan</th>
                 <th class="p-4 w-2/12 text-center">Qty Transfer</th>
+                <th class="p-4 w-1/12 text-center">Estimasi Outlet</th>
                 <th class="p-4 w-3/12">Catatan Baris</th>
-                <th class="p-4 w-1/12 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody id="itemTableBody">
-              <tr><td colspan="6" class="p-8 text-center text-slate-500">Memuat produk dari stok PUSAT...</td></tr>
+              <tr><td colspan="7" class="p-8 text-center text-slate-500">Pilih outlet tujuan terlebih dahulu.</td></tr>
             </tbody>
           </table>
-          <div class="bg-slate-900 p-3 text-center border-t border-slate-800">
-            <button type="button" id="btnTambahBaris" onclick="tambahBarisBaru()" class="text-violet-400 hover:text-violet-300 text-sm font-medium flex items-center justify-center gap-2 w-full" disabled>+ Tambah Produk</button>
-          </div>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p id="ringkasanTransfer" class="text-xs text-slate-500">Belum ada produk dipilih.</p>
+          <p id="ringkasanTransfer" class="text-xs text-slate-500">Belum ada qty transfer.</p>
           <button type="button" id="btnSimpan" onclick="simpanTransfer()" class="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-violet-600/20 w-full sm:w-auto">Simpan Transfer Produksi</button>
         </div>
       </div>
@@ -200,17 +199,13 @@
         renderDropdowns();
         renderKpi();
 
-        const tbody = document.getElementById('itemTableBody');
-        tbody.innerHTML = '';
         if (!globalProduk.length) {
-          tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-rose-400">Belum ada stok produksi di PUSAT. Buat produksi dulu di menu Output Stok → Produksi.</td></tr>';
+          document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-rose-400">Belum ada stok produksi di PUSAT. Buat produksi dulu di menu Output Stok → Produksi.</td></tr>';
           return;
         }
-        document.getElementById('btnTambahBaris').disabled = false;
-        tambahBarisBaru();
-        showToast('Data transfer siap digunakan.', 'success');
+        showToast('Data transfer siap. Pilih outlet tujuan.', 'success');
       } catch (error) {
-        document.getElementById('itemTableBody').innerHTML = `<tr><td colspan="6" class="p-8 text-center text-rose-400">${escapeHtml(error.message || 'Koneksi gagal.')}</td></tr>`;
+        document.getElementById('itemTableBody').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-rose-400">${escapeHtml(error.message || 'Koneksi gagal.')}</td></tr>`;
         showToast(error.message || 'Koneksi gagal.', 'error');
       }
     }
@@ -223,57 +218,86 @@
     }
 
     function renderKpi() {
-      const totalQty = globalProduk.reduce((sum, p) => sum + parseNumber(p.stokTersedia), 0);
+      const totalPusat = globalProduk.reduce((sum, p) => sum + getPusatStock(p), 0);
+      const outlet = document.getElementById('outletSelect')?.value || '';
+      const totalOutlet = outlet ? globalProduk.reduce((sum, p) => sum + getOutletStock(p, outlet), 0) : 0;
       document.getElementById('kpiProduk').textContent = globalProduk.length;
-      document.getElementById('kpiQty').textContent = formatNumber(totalQty);
-      document.getElementById('kpiOutlet').textContent = globalOutlets.length;
-      document.getElementById('kpiStatus').textContent = globalProduk.length ? 'Siap' : 'Belum Ada Produk';
+      document.getElementById('kpiQty').textContent = formatNumber(totalPusat);
+      document.getElementById('kpiOutletStock').textContent = outlet ? formatNumber(totalOutlet) : '-';
+      document.getElementById('kpiStatus').textContent = outlet ? 'Siap Transfer' : 'Pilih Outlet';
     }
 
-    function tambahBarisBaru() {
-      const tbody = document.getElementById('itemTableBody');
-      const tr = document.createElement('tr');
-      tr.className = 'border-b border-slate-800/50 bg-slate-950 item-row';
-      const optionsHtml = globalProduk.map((p, idx) => {
-        const disabled = parseNumber(p.stokTersedia) <= 0 ? ' disabled' : '';
-        return `<option value="${idx}"${disabled}>[${escapeHtml(p.id || '-')}] ${escapeHtml(p.nama)} — stok ${escapeHtml(formatNumber(p.stokTersedia))} ${escapeHtml(p.satuan || '')}</option>`;
-      }).join('');
-
-      tr.innerHTML = `
-        <td class="p-3"><select onchange="updateProdukRow(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-produk"><option value="">-- Pilih Produk --</option>${optionsHtml}</select></td>
-        <td class="p-3 text-center text-sm font-bold text-emerald-400 label-stok">0</td>
-        <td class="p-3 text-center text-sm font-bold text-violet-300 label-satuan">-</td>
-        <td class="p-3"><input type="number" step="any" min="0" oninput="updateRingkasan()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty" placeholder="0"></td>
-        <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-catatan" placeholder="Opsional..."></td>
-        <td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="this.closest('tr').remove(); updateRingkasan();">Hapus</button></td>
-      `;
-      tbody.appendChild(tr);
-    }
-
-    function updateProdukRow(selectEl) {
-      const row = selectEl.closest('tr');
-      const item = globalProduk[Number(selectEl.value)] || null;
-      row.querySelector('.label-stok').textContent = item ? formatNumber(item.stokTersedia) : '0';
-      row.querySelector('.label-satuan').textContent = item ? (item.satuan || '-') : '-';
+    function handleOutletChange() {
+      renderKpi();
+      renderProductRows();
       updateRingkasan();
+    }
+
+    function renderProductRows() {
+      const tbody = document.getElementById('itemTableBody');
+      const outlet = document.getElementById('outletSelect').value;
+      const keyword = (document.getElementById('searchProduk').value || '').toLowerCase().trim();
+
+      if (!outlet) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500">Pilih outlet tujuan terlebih dahulu.</td></tr>';
+        return;
+      }
+
+      const filtered = globalProduk.filter(p => {
+        const text = `${p.id || ''} ${p.nama || ''}`.toLowerCase();
+        return !keyword || text.includes(keyword);
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500">Produk tidak ditemukan.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((p) => {
+        const idx = globalProduk.indexOf(p);
+        const stokPusat = getPusatStock(p);
+        const stokOutlet = getOutletStock(p, outlet);
+        const disabled = stokPusat <= 0 ? 'disabled' : '';
+        const opacity = stokPusat <= 0 ? 'opacity-60' : '';
+        return `
+          <tr class="border-b border-slate-800/50 bg-slate-950 item-row ${opacity}" data-index="${idx}">
+            <td class="p-3">
+              <div class="font-semibold text-white text-sm">${escapeHtml(p.nama || '-')}</div>
+              <div class="text-[11px] text-slate-500">${escapeHtml(p.id || '-')}</div>
+            </td>
+            <td class="p-3 text-center text-sm font-bold text-emerald-400 label-stok-pusat">${escapeHtml(formatNumber(stokPusat))}</td>
+            <td class="p-3 text-center text-sm font-bold text-sky-300 label-stok-outlet">${escapeHtml(formatNumber(stokOutlet))}</td>
+            <td class="p-3 text-center text-sm font-bold text-violet-300 label-satuan">${escapeHtml(p.satuan || '-')}</td>
+            <td class="p-3"><input type="number" step="any" min="0" ${disabled} oninput="updateRowEstimate(this); updateRingkasan();" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-qty ${stokPusat <= 0 ? 'cursor-not-allowed text-slate-500' : ''}" placeholder="0"></td>
+            <td class="p-3 text-center text-sm font-bold text-white label-estimasi">${escapeHtml(formatNumber(stokOutlet))}</td>
+            <td class="p-3"><input type="text" ${disabled} class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-catatan" placeholder="Opsional..."></td>
+          </tr>`;
+      }).join('');
+    }
+
+    function updateRowEstimate(inputEl) {
+      const row = inputEl.closest('.item-row');
+      const outletStock = parseNumber(row.querySelector('.label-stok-outlet').textContent);
+      const qty = parseNumber(inputEl.value);
+      row.querySelector('.label-estimasi').textContent = formatNumber(outletStock + qty);
     }
 
     function updateRingkasan() {
       const rows = collectRows(false);
       const totalQty = rows.reduce((sum, r) => sum + parseNumber(r.qtyTransfer), 0);
       document.getElementById('ringkasanTransfer').textContent = rows.length
-        ? `${rows.length} produk dipilih, total qty transfer ${formatNumber(totalQty)}.`
-        : 'Belum ada produk dipilih.';
+        ? `${rows.length} produk diisi, total qty transfer ${formatNumber(totalQty)}.`
+        : 'Belum ada qty transfer.';
     }
 
     function collectRows(strict) {
       const rows = [];
       document.querySelectorAll('.item-row').forEach(row => {
-        const select = row.querySelector('.select-produk');
-        const item = globalProduk[Number(select.value)] || null;
-        const qty = parseNumber(row.querySelector('.input-qty').value);
+        const idx = Number(row.dataset.index);
+        const item = globalProduk[idx] || null;
         if (!item) return;
-        if (strict && qty <= 0) throw new Error(`Qty transfer ${item.nama} harus lebih dari 0.`);
+        const qty = parseNumber(row.querySelector('.input-qty').value);
+        if (strict && qty < 0) throw new Error(`Qty transfer ${item.nama} tidak boleh minus.`);
         if (qty > 0) {
           rows.push({
             idProduk: item.id,
@@ -281,7 +305,7 @@
             qtyTransfer: qty,
             satuan: item.satuan || '-',
             catatan: row.querySelector('.input-catatan').value.trim() || document.getElementById('catatanUmum').value.trim(),
-            stokTersedia: parseNumber(item.stokTersedia)
+            stokTersedia: getPusatStock(item)
           });
         }
       });
@@ -289,19 +313,15 @@
     }
 
     function validateStock(rows) {
-      const agg = {};
       rows.forEach(r => {
-        const key = r.idProduk || r.namaProduk;
-        if (!agg[key]) agg[key] = { nama: r.namaProduk, qty: 0, stok: r.stokTersedia, satuan: r.satuan };
-        agg[key].qty += parseNumber(r.qtyTransfer);
-      });
-      Object.keys(agg).forEach(key => {
-        const a = agg[key];
-        if (a.qty > a.stok) throw new Error(`Qty transfer ${a.nama} melebihi stok PUSAT. Stok tersedia ${formatNumber(a.stok)} ${a.satuan}.`);
+        if (parseNumber(r.qtyTransfer) > parseNumber(r.stokTersedia)) {
+          throw new Error(`Qty transfer ${r.namaProduk} melebihi stok PUSAT. Stok tersedia ${formatNumber(r.stokTersedia)} ${r.satuan}.`);
+        }
       });
     }
 
     async function simpanTransfer() {
+      const btn = document.getElementById('btnSimpan');
       try {
         const tanggal = document.getElementById('tanggalInput').value;
         const outlet = document.getElementById('outletSelect').value;
@@ -312,10 +332,9 @@
         if (!pic) throw new Error('PIC penerima wajib dipilih.');
 
         const rows = collectRows(true);
-        if (!rows.length) throw new Error('Pilih minimal 1 produk dan isi qty transfer.');
+        if (!rows.length) throw new Error('Isi minimal 1 qty transfer.');
         validateStock(rows);
 
-        const btn = document.getElementById('btnSimpan');
         btn.disabled = true;
         btn.textContent = 'Menyimpan transfer...';
 
@@ -331,10 +350,22 @@
         setTimeout(() => location.reload(), 1800);
       } catch (error) {
         showToast(error.message || 'Data belum valid.', 'error');
-        const btn = document.getElementById('btnSimpan');
         btn.disabled = false;
         btn.textContent = 'Simpan Transfer Produksi';
       }
+    }
+
+    function getPusatStock(item) {
+      return parseNumber(item.stokPusat ?? item.stokTersedia ?? 0);
+    }
+
+    function getOutletStock(item, outlet) {
+      if (!item || !outlet) return 0;
+      const stocks = item.outletStocks || {};
+      if (Object.prototype.hasOwnProperty.call(stocks, outlet)) return parseNumber(stocks[outlet]);
+      const target = normalizeText(outlet);
+      const found = Object.keys(stocks).find(k => normalizeText(k) === target);
+      return found ? parseNumber(stocks[found]) : 0;
     }
 
     function showToast(message, type = 'success') {
@@ -354,6 +385,10 @@
     function formatNumber(value) {
       const n = parseNumber(value);
       return Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
+    }
+
+    function normalizeText(value) {
+      return String(value ?? '').toLowerCase().trim().replace(/\s+/g, '');
     }
 
     function escapeHtml(value) {
