@@ -101,6 +101,26 @@
           <div id="kpiGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
 
           <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <h3 class="text-base font-bold text-white mb-1">Prioritas Hari Ini</h3>
+              <p class="text-xs text-slate-500 mb-4">Kesimpulan cepat dari stok dan aktivitas.</p>
+              <div id="insightList" class="space-y-3"></div>
+            </div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <h3 class="text-base font-bold text-white mb-1">Ringkasan Lokasi</h3>
+              <p class="text-xs text-slate-500 mb-4">Stok per PUSAT/outlet dari STOK_AKHIR.</p>
+              <div id="locationList" class="space-y-3"></div>
+            </div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <h3 class="text-base font-bold text-white mb-1">Pergerakan Hari Ini</h3>
+              <p class="text-xs text-slate-500 mb-4">Item dengan qty transaksi terbesar hari ini.</p>
+              <div id="movementList" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div class="xl:col-span-2 bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
               <div class="flex items-center justify-between gap-3 mb-4">
                 <div>
@@ -203,7 +223,7 @@
         renderDashboard(result);
       } catch (error) {
         document.getElementById('loadingState').innerHTML = `<div class="text-rose-400 font-semibold mb-1">Dashboard gagal dimuat.</div><div class="text-xs text-slate-500">${escapeHtml(error.message || 'Periksa deploy Code.gs terbaru.')}</div>`;
-        showToast('Gagal memuat data dashboard. Pastikan Code.gs v4 sudah dideploy.', 'error');
+        showToast('Gagal memuat data dashboard. Pastikan Code.gs v9 sudah dideploy.', 'error');
       }
     }
 
@@ -223,10 +243,13 @@
       document.getElementById('attentionTitle').textContent = isOwner ? 'Stok Perlu Perhatian' : 'Perhatian Operasional';
       document.getElementById('attentionDesc').textContent = isOwner ? 'Prioritas owner: habis/kritis dulu, baru waspada.' : 'Item kritis dari kategori yang boleh diakses.';
       document.getElementById('activityTitle').textContent = isOwner ? 'Aktivitas Terbaru Semua Tim' : 'Aktivitas Saya Terbaru';
-      document.getElementById('activityDesc').textContent = isOwner ? 'Gabungan input, output, produksi, dan opname.' : 'Hanya transaksi dengan nama petugas login.';
+      document.getElementById('activityDesc').textContent = isOwner ? 'Gabungan input, output, produksi, transfer, dan opname.' : 'Hanya transaksi dengan nama petugas login.';
       document.getElementById('quickMenuDesc').textContent = isOwner ? 'Semua modul terbuka untuk owner.' : 'Menu disaring berdasarkan permission role.';
 
       renderKpis(data);
+      renderInsights(data.insights || []);
+      renderLocations(data.locationSummary || []);
+      renderMovements(data.topMovements || []);
       renderCategories(data.categorySummary || []);
       renderCriticalItems(data.criticalItems || []);
       renderQuickMenus(data.quickMenus || []);
@@ -238,23 +261,23 @@
       const k = data.kpi || {};
       const isOwner = data.mode === 'owner';
       const cards = isOwner ? [
-        { label: 'Transaksi Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Dokumen', tone: 'blue' },
-        { label: 'Input Hari Ini', value: k.inputHariIni || 0, suffix: 'Baris', tone: 'emerald' },
-        { label: 'Output Hari Ini', value: k.outputHariIni || 0, suffix: 'Baris', tone: 'rose' },
-        { label: 'Produksi Hari Ini', value: k.produksiHariIni || 0, suffix: 'Lauk', tone: 'amber' },
-        { label: 'Total Item Stok', value: k.totalItem || 0, suffix: 'Item', tone: 'slate' },
-        { label: 'Stok Kritis', value: k.stokKritis || 0, suffix: 'Item', tone: 'rose' },
-        { label: 'Stok Waspada', value: k.stokWaspada || 0, suffix: 'Item', tone: 'amber' },
-        { label: 'Opname Bulan Ini', value: k.opnameBulanIni || 0, suffix: 'Baris', tone: 'violet' }
+        { label: 'Transaksi Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue' },
+        { label: 'Input Hari Ini', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald' },
+        { label: 'Output Hari Ini', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose' },
+        { label: 'Produksi Hari Ini', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber' },
+        { label: 'Transfer Hari Ini', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet' },
+        { label: 'Stok Kosong', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose' },
+        { label: 'Stok Kritis', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber' },
+        { label: 'Lokasi Aktif', value: k.lokasiAktif || 0, suffix: 'Lokasi', tone: 'slate' }
       ] : [
-        { label: 'Aktivitas Saya Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Dokumen', tone: 'blue' },
-        { label: 'Input Saya', value: k.inputHariIni || 0, suffix: 'Baris', tone: 'emerald' },
-        { label: 'Output Saya', value: k.outputHariIni || 0, suffix: 'Baris', tone: 'rose' },
-        { label: 'Produksi Saya', value: k.produksiHariIni || 0, suffix: 'Lauk', tone: 'amber' },
-        { label: 'Menu Aktif', value: k.aksesAktif || 0, suffix: 'Akses', tone: 'slate' },
-        { label: 'Stok Kritis Aksesku', value: k.stokKritis || 0, suffix: 'Item', tone: 'rose' },
-        { label: 'Stok Waspada Aksesku', value: k.stokWaspada || 0, suffix: 'Item', tone: 'amber' },
-        { label: 'Opname Saya Bulan Ini', value: k.opnameBulanIni || 0, suffix: 'Baris', tone: 'violet' }
+        { label: 'Aktivitas Saya Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue' },
+        { label: 'Input Saya', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald' },
+        { label: 'Output Saya', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose' },
+        { label: 'Produksi Saya', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber' },
+        { label: 'Transfer Saya', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet' },
+        { label: 'Stok Kosong Aksesku', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose' },
+        { label: 'Stok Kritis Aksesku', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber' },
+        { label: 'Menu Aktif', value: k.aksesAktif || 0, suffix: 'Akses', tone: 'slate' }
       ];
 
       document.getElementById('kpiGrid').innerHTML = cards.map(card => `
@@ -262,6 +285,62 @@
           <div class="absolute right-0 top-0 w-24 h-24 ${toneBg(card.tone)} rounded-full blur-3xl opacity-40"></div>
           <p class="relative text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">${escapeHtml(card.label)}</p>
           <h4 class="relative text-3xl font-extrabold ${toneText(card.tone)}">${escapeHtml(String(card.value))} <span class="text-sm font-normal text-slate-500 ml-1">${escapeHtml(card.suffix)}</span></h4>
+        </div>
+      `).join('');
+    }
+
+    function renderInsights(items) {
+      const el = document.getElementById('insightList');
+      if (!items.length) {
+        el.innerHTML = `<div class="rounded-lg border border-slate-800 bg-slate-900 p-4 text-sm text-slate-500">Belum ada insight yang bisa ditampilkan.</div>`;
+        return;
+      }
+      el.innerHTML = items.map(item => `
+        <div class="rounded-lg border ${toneBorder(item.tone)} ${toneSoftBg(item.tone)} p-3">
+          <p class="text-sm font-bold ${toneText(item.tone)}">${escapeHtml(item.title || '-')}</p>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">${escapeHtml(item.text || '')}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderLocations(rows) {
+      const el = document.getElementById('locationList');
+      if (!rows.length) {
+        el.innerHTML = `<div class="rounded-lg border border-slate-800 bg-slate-900 p-4 text-sm text-slate-500">Belum ada data lokasi.</div>`;
+        return;
+      }
+      el.innerHTML = rows.slice(0, 8).map(r => `
+        <div class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <p class="text-sm font-bold text-white">${escapeHtml(r.lokasi || 'PUSAT')}</p>
+            <span class="text-[11px] text-slate-400">${escapeHtml(String(r.totalItem || 0))} item</span>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-center">
+            <div><p class="text-[10px] text-slate-500">Aman</p><p class="text-sm font-bold text-emerald-400">${escapeHtml(String(r.aman || 0))}</p></div>
+            <div><p class="text-[10px] text-slate-500">Waspada</p><p class="text-sm font-bold text-amber-400">${escapeHtml(String(r.waspada || 0))}</p></div>
+            <div><p class="text-[10px] text-slate-500">Kritis</p><p class="text-sm font-bold text-rose-400">${escapeHtml(String(r.kritis || 0))}</p></div>
+            <div><p class="text-[10px] text-slate-500">Kosong</p><p class="text-sm font-bold text-rose-300">${escapeHtml(String(r.kosong || 0))}</p></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderMovements(items) {
+      const el = document.getElementById('movementList');
+      if (!items.length) {
+        el.innerHTML = `<div class="rounded-lg border border-slate-800 bg-slate-900 p-4 text-sm text-slate-500">Belum ada pergerakan transaksi hari ini.</div>`;
+        return;
+      }
+      el.innerHTML = items.map(item => `
+        <div class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <span class="rounded-full px-2 py-0.5 text-[10px] font-bold ${activityBadge(item.jenis)}">${escapeHtml(item.jenis || '-')}</span>
+              <p class="mt-2 text-sm font-bold text-white truncate">${escapeHtml(item.nama || '-')}</p>
+              <p class="text-xs text-slate-500 mt-1">${escapeHtml(item.lokasi || 'PUSAT')}</p>
+            </div>
+            <p class="text-sm font-bold text-slate-200 text-right flex-shrink-0">${escapeHtml(String(item.qty || 0))}<br><span class="text-xs font-normal text-slate-500">${escapeHtml(item.satuan || '')}</span></p>
+          </div>
         </div>
       `).join('');
     }
@@ -292,7 +371,7 @@
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
               <p class="text-sm font-bold text-white truncate">${escapeHtml(item.nama || '-')}</p>
-              <p class="text-xs text-slate-500 mt-1">${escapeHtml(item.lokasi || 'PUSAT')} • ${escapeHtml(item.kategori || '-')} • ${escapeHtml(item.id || '-')}</p>
+              <p class="text-xs text-slate-500 mt-1">${escapeHtml(item.kategori || '-')} • ${escapeHtml(item.id || '-')}</p>
             </div>
             <span class="text-xs font-bold ${item.level === 'kritis' ? 'text-rose-300' : 'text-amber-300'}">${escapeHtml(item.status || '-')}</span>
           </div>
@@ -302,21 +381,28 @@
     }
 
     function renderQuickMenus(menus) {
-      document.getElementById('quickMenuGrid').innerHTML = menus.map(menu => `
-        <a href="${escapeHtml(menu.href)}" class="block rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800/70 p-4 transition-colors">
-          <div class="flex items-center justify-between gap-3">
-            <div>
-              <p class="text-sm font-bold text-white">${escapeHtml(menu.label)}</p>
-              <p class="text-xs text-slate-500 mt-1">${escapeHtml(menu.desc || '')}</p>
+      document.getElementById('quickMenuGrid').innerHTML = menus.map(menu => {
+        const disabled = !!menu.disabled;
+        const tag = disabled ? 'div' : 'a';
+        const href = disabled ? '' : ` href="${escapeHtml(menu.href)}"`;
+        const disabledClass = disabled ? ' opacity-60 cursor-not-allowed' : ' hover:bg-slate-800/70';
+        const badge = disabled ? '<span class="ml-2 rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[10px] text-slate-500">Segera</span>' : '';
+        return `
+          <${tag}${href} class="block rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors${disabledClass}">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-bold text-white">${escapeHtml(menu.label)}${badge}</p>
+                <p class="text-xs text-slate-500 mt-1">${escapeHtml(menu.desc || '')}</p>
+              </div>
+              <span class="w-2.5 h-2.5 rounded-full ${toneDot(menu.tone)}"></span>
             </div>
-            <span class="w-2.5 h-2.5 rounded-full ${toneDot(menu.tone)}"></span>
-          </div>
-        </a>
-      `).join('');
+          </${tag}>
+        `;
+      }).join('');
     }
 
     function renderMiniActions(menus) {
-      const visible = menus.filter(m => m.href !== 'dashboard.html').slice(0, 3);
+      const visible = menus.filter(m => m.href !== 'dashboard.html' && !m.disabled).slice(0, 3);
       document.getElementById('quickActionMini').innerHTML = visible.map(menu => `<a href="${escapeHtml(menu.href)}" class="rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-800 transition">${escapeHtml(menu.label)}</a>`).join('');
     }
 
@@ -400,6 +486,12 @@
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>'"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[ch]));
     }
+    function toneSoftBg(tone) {
+      return { blue:'bg-blue-500/10', emerald:'bg-emerald-500/10', rose:'bg-rose-500/10', amber:'bg-amber-500/10', violet:'bg-violet-500/10', slate:'bg-slate-900' }[tone] || 'bg-slate-900';
+    }
+    function toneBorder(tone) {
+      return { blue:'border-blue-500/20', emerald:'border-emerald-500/20', rose:'border-rose-500/20', amber:'border-amber-500/20', violet:'border-violet-500/20', slate:'border-slate-800' }[tone] || 'border-slate-800';
+    }
     function toneText(tone) {
       return { blue:'text-blue-400', emerald:'text-emerald-400', rose:'text-rose-400', amber:'text-amber-400', violet:'text-violet-400', slate:'text-white' }[tone] || 'text-white';
     }
@@ -415,6 +507,7 @@
       if (j.includes('output')) return 'bg-rose-500/10 text-rose-300 border border-rose-500/20';
       if (j.includes('produksi')) return 'bg-amber-500/10 text-amber-300 border border-amber-500/20';
       if (j.includes('opname')) return 'bg-violet-500/10 text-violet-300 border border-violet-500/20';
+      if (j.includes('transfer')) return 'bg-blue-500/10 text-blue-300 border border-blue-500/20';
       return 'bg-slate-500/10 text-slate-300 border border-slate-500/20';
     }
   </script>
