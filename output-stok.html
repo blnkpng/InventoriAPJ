@@ -233,7 +233,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getBarang', sheetName })
+          body: JSON.stringify({ action: 'getBarang', sheetName, context: 'operasional' })
         });
         const result = await response.json();
         if (result.success) {
