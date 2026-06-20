@@ -151,30 +151,47 @@
       await loadOutputInit();
     });
 
-    function buildKategoriOptions() {
+    
+    function normPermValue(value) {
+      return String(value ?? '').trim().toLowerCase();
+    }
+
+    function isOwnerLevel() {
+      const level = normPermValue(localStorage.getItem('APJ_USER_LEVEL'));
+      return level === 'owner' || level === 'superadmin' || level === 'super admin';
+    }
+
+    function hasPerm(permissions, key) {
+      return isOwnerLevel() || normPermValue(permissions && permissions[key]) === 'y';
+    }
+function buildKategoriOptions() {
       const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
-      const level = (localStorage.getItem('APJ_USER_LEVEL') || '').toLowerCase();
       const kategoriSelect = document.getElementById('kategoriSelect');
+      let count = 0;
 
       KATEGORI_GENERAL.forEach(kat => {
-        if (perms[kat.key] === 'Y') {
+        // Output general mengikuti izin kategori.
+        if (hasPerm(perms, kat.key)) {
           const op = document.createElement('option');
           op.value = kat.sheet;
           op.dataset.mode = 'general';
           op.textContent = kat.label;
           kategoriSelect.appendChild(op);
+          count++;
         }
       });
 
-      // BARU: kategori Produksi. Jika nanti LEVEL_PERMISSION punya kolom produksi, isi dengan Y.
-      const bolehProduksi = perms.produksi === 'Y' || ['owner', 'gudang', 'produksi'].includes(level);
-      if (bolehProduksi) {
+      // Produksi hanya muncul jika Produksi = Y atau Owner/SuperAdmin.
+      if (hasPerm(perms, 'produksi')) {
         const op = document.createElement('option');
         op.value = 'PRODUKSI';
         op.dataset.mode = 'produksi';
         op.textContent = 'Produksi';
         kategoriSelect.appendChild(op);
+        count++;
       }
+
+      if (!count) showToast('Role ini belum punya akses output/produksi.', 'error');
     }
 
     async function loadOutputInit() {
