@@ -178,13 +178,28 @@
       buildKategoriOptions();
     });
 
-    function buildKategoriOptions() {
+    
+    function normPermValue(value) {
+      return String(value ?? '').trim().toLowerCase();
+    }
+
+    function isOwnerLevel() {
+      const level = normPermValue(localStorage.getItem('APJ_USER_LEVEL'));
+      return level === 'owner' || level === 'superadmin' || level === 'super admin';
+    }
+
+    function hasPerm(permissions, key) {
+      return isOwnerLevel() || normPermValue(permissions && permissions[key]) === 'y';
+    }
+function buildKategoriOptions() {
       const permissions = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kategoriSelect = document.getElementById('kategoriSelect');
       let count = 0;
 
       KATEGORI_GENERAL.forEach(kat => {
-        if (permissions[kat.key] === 'Y') {
+        // Input stok tetap memakai izin kategori masing-masing.
+        // Owner/SuperAdmin otomatis full access via hasPerm().
+        if (hasPerm(permissions, kat.key)) {
           const option = document.createElement('option');
           option.value = kat.sheet;
           option.textContent = kat.label;
@@ -194,8 +209,8 @@
       });
 
       if (!count) {
-        document.getElementById('statusInfo').textContent = 'Tidak ada kategori yang dibuka untuk role ini.';
-        showToast('Role Anda belum punya akses kategori input stok.', 'error');
+        document.getElementById('statusInfo').textContent = 'Tidak ada kategori input stok yang dibuka untuk role ini.';
+        showToast('Role ini belum punya akses input kategori stok.', 'error');
       }
     }
 
