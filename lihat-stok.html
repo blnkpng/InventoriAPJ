@@ -271,36 +271,49 @@
       await ambilDataUser();
     });
 
-    function buildKategoriOptions() {
+    
+    function normPermValue(value) {
+      return String(value ?? '').trim().toLowerCase();
+    }
+
+    function isOwnerLevel() {
+      const level = normPermValue(localStorage.getItem('APJ_USER_LEVEL'));
+      return level === 'owner' || level === 'superadmin' || level === 'super admin';
+    }
+
+    function hasPerm(permissions, key) {
+      return isOwnerLevel() || normPermValue(permissions && permissions[key]) === 'y';
+    }
+function buildKategoriOptions() {
       const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
-      const level = (localStorage.getItem('APJ_USER_LEVEL') || '').toLowerCase();
       const select = document.getElementById('kategoriSelect');
       let count = 0;
 
-      KATEGORI_GENERAL.forEach(k => {
-        if (perms[k.key] === 'Y') {
-          const option = document.createElement('option');
-          option.value = k.sheet;
-          option.dataset.mode = 'general';
-          option.textContent = k.label;
-          select.appendChild(option);
-          count++;
-        }
-      });
+      // REVISI v7:
+      // Lihat Stok adalah izin baca global. Jadi LEVEL_1 yang semua kategori N tetapi Lihat Stok = Y
+      // tetap bisa membuka laporan stok. Kolom kategori dipakai untuk input/output/opname, bukan untuk memblokir laporan baca.
+      if (!hasPerm(perms, 'lihatStok')) {
+        setEmpty('Role ini belum memiliki akses Lihat Stok.', 'error');
+        return;
+      }
 
-      const bolehProduksi = perms.produksi === 'Y' || ['owner', 'gudang', 'produksi'].includes(level);
-      if (bolehProduksi) {
+      KATEGORI_GENERAL.forEach(k => {
         const option = document.createElement('option');
-        option.value = 'PRODUKSI';
-        option.dataset.mode = 'produksi';
-        option.textContent = 'Produksi';
+        option.value = k.sheet;
+        option.dataset.mode = 'general';
+        option.textContent = k.label;
         select.appendChild(option);
         count++;
-      }
+      });
 
-      if (!count) {
-        setEmpty('Role Anda belum memiliki akses lihat stok.', 'error');
-      }
+      const option = document.createElement('option');
+      option.value = 'PRODUKSI';
+      option.dataset.mode = 'produksi';
+      option.textContent = 'Produksi';
+      select.appendChild(option);
+      count++;
+
+      if (!count) setEmpty('Belum ada kategori stok yang tersedia.', 'error');
     }
 
     function setupAccessPrint() {
