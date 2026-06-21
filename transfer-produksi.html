@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transfer Produksi | APJ Inventori v12</title>
+  <title>Transfer Produk Outlet | APJ Inventori v14.1</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -39,7 +39,7 @@
       <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
       <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
       <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
-      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 bg-violet-600/10 text-violet-400 rounded-lg font-semibold text-sm transition-colors border border-violet-500/20">Transfer Produksi</a>
+      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 bg-violet-600/10 text-violet-400 rounded-lg font-semibold text-sm transition-colors border border-violet-500/20">Transfer Produk Outlet</a>
       <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
       <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
       <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
@@ -53,15 +53,15 @@
   <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
     <header class="min-h-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-5 sm:px-8 py-4 border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-20 pl-16 lg:pl-8">
       <div>
-        <h2 class="text-lg font-semibold text-violet-300">Transfer Produksi</h2>
-        <p class="hidden sm:block text-xs text-slate-500">Pilih outlet, produk aktif outlet muncul otomatis dari MASTER_PRODUK_OUTLET. Isi qty yang dikirim saja.</p>
+        <h2 class="text-lg font-semibold text-violet-300">Transfer Produk Outlet</h2>
+        <p class="hidden sm:block text-xs text-slate-500">Pilih outlet, produk aktif outlet muncul dari MASTER_PRODUK_OUTLET. Stok PUSAT bisa berasal dari produksi maupun barang siap jual seperti Minuman & Barang Dagang.</p>
       </div>
       <div class="text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-violet-300">Memuat...</span></div>
     </header>
 
     <div id="accessDeniedBox" class="hidden m-4 sm:m-8 rounded-xl border border-rose-800 bg-rose-950/30 p-5 text-rose-300">
       <h3 class="font-bold text-white mb-1">Akses Ditolak</h3>
-      <p class="text-sm">Menu ini hanya tersedia untuk role yang memiliki izin Produksi / Transfer Produksi.</p>
+      <p class="text-sm">Menu ini hanya tersedia untuk role yang memiliki izin Produksi / Transfer Produk Outlet.</p>
     </div>
 
     <div class="p-4 sm:p-8 max-w-[1500px] mx-auto w-full">
@@ -113,7 +113,7 @@
         </div>
 
         <div class="mb-4 text-xs text-slate-400 bg-violet-950/20 border border-violet-900/50 rounded-lg p-3">
-          Setelah outlet dipilih, tabel otomatis menampilkan produk aktif dari <b>MASTER_PRODUK_OUTLET</b>. Kolom <b>Stok Outlet Sebelumnya</b> diambil dari <b>STOK_AKHIR</b>. Qty Transfer boleh dikosongi; baris kosong tidak ikut disimpan.
+          Setelah outlet dipilih, tabel otomatis menampilkan produk aktif dari <b>MASTER_PRODUK_OUTLET</b>. Stok PUSAT diambil dari <b>STOK_AKHIR</b>, jadi produk siap jual seperti kerupuk/minuman bisa langsung ditransfer tanpa harus masuk proses produksi. Qty Transfer boleh dikosongi; baris kosong tidak ikut disimpan.
         </div>
 
         <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll mb-6">
@@ -137,7 +137,7 @@
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <p id="ringkasanTransfer" class="text-xs text-slate-500">Belum ada qty transfer.</p>
-          <button type="button" id="btnSimpan" onclick="simpanTransfer()" class="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-violet-600/20 w-full sm:w-auto">Simpan Transfer Produksi</button>
+          <button type="button" id="btnSimpan" onclick="simpanTransfer()" class="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-violet-600/20 w-full sm:w-auto">Simpan Transfer Produk Outlet</button>
         </div>
       </div>
     </div>
@@ -201,7 +201,7 @@
         renderDropdowns();
         renderKpi();
         document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500">Pilih outlet tujuan. Produk akan dimuat sesuai MASTER_PRODUK_OUTLET.</td></tr>';
-        showToast('Data transfer siap. Pilih outlet tujuan.', 'success');
+        showToast('Data transfer produk outlet siap. Pilih outlet tujuan.', 'success');
       } catch (error) {
         document.getElementById('itemTableBody').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-rose-400">${escapeHtml(error.message || 'Koneksi gagal.')}</td></tr>`;
         showToast(error.message || 'Koneksi gagal.', 'error');
@@ -382,7 +382,7 @@
       } catch (error) {
         showToast(error.message || 'Data belum valid.', 'error');
         btn.disabled = false;
-        btn.textContent = 'Simpan Transfer Produksi';
+        btn.textContent = 'Simpan Transfer Produk Outlet';
       }
     }
 
