@@ -1,16 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Sistem Inventori APJ</title>
-  <script>
-    (function(){
-      const saved = localStorage.getItem('APJ_THEME');
-      const theme = saved || 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-    })();
-  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -374,7 +367,6 @@
       </div>
 
       <div class="flex items-center gap-3 ml-auto">
-        <button type="button" onclick="toggleTheme()" id="themeToggle" class="icon-button" title="Ganti mode gelap/terang"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36-.7-.7M6.34 6.34l-.7-.7m12.02 0-.7.7M6.34 17.66l-.7.7M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path></svg></button>
         <button type="button" class="icon-button hide-xs" title="Notifikasi"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 0 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"></path></svg></button>
         <div class="user-chip">
           <div class="user-avatar"><span id="displayInisial">U</span></div>
@@ -523,12 +515,11 @@
     let dashboardMode = 'operator';
 
     document.addEventListener('DOMContentLoaded', () => {
-      applyThemeIcon();
       applySidebarState();
       renderMiniCalendar();
 
       const isSessionActive = localStorage.getItem('APJ_SESSION_ACTIVE');
-      if (isSessionActive !== 'true' || !localStorage.getItem('APJ_SESSION_TOKEN')) { window.location.href = 'index.html'; return; }
+      if (isSessionActive !== 'true') { window.location.href = 'index.html'; return; }
 
       const userName = localStorage.getItem('APJ_USER_NAME') || 'Pengguna';
       const userLevel = localStorage.getItem('APJ_USER_LEVEL') || 'Unknown Level';
