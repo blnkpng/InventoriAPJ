@@ -69,11 +69,12 @@
       <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
       <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
       <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
+      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 bg-amber-600/10 text-amber-500 rounded-lg font-medium text-sm transition-colors border border-amber-500/20">Stok Opname</a>
       <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
       <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
-      <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 bg-violet-600/10 text-violet-300 rounded-lg font-semibold text-sm transition-colors border border-violet-500/20">Admin Sistem</a>
+      <a id="adminMenuLink" href="admin.html" class="hidden flex items-center gap-3 px-3 py-2.5 text-violet-300 hover:text-white hover:bg-violet-950/40 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-violet-500/20">Admin Sistem</a>
     </nav>
+
     <div class="p-4 border-t border-slate-800">
       <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -573,5 +574,20 @@ function buildKategoriOptions() {
     })();
   </script>
 
+
+
+  <script>
+    (function showAdminMenuForAuthorizedRoles() {
+      const adminMenuLink = document.getElementById('adminMenuLink');
+      if (!adminMenuLink) return;
+
+      const level = String(localStorage.getItem('APJ_USER_LEVEL') || '').trim().toLowerCase();
+      const allowedLevels = ['owner', 'superadmin', 'super admin', 'supervisor'];
+
+      if (allowedLevels.includes(level)) {
+        adminMenuLink.classList.remove('hidden');
+      }
+    })();
+  </script>
 </body>
 </html>
