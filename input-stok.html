@@ -161,27 +161,44 @@
 
 
 
-  <!-- Modal Print Input Stok 58mm -->
+  <!-- Modal Print Input Stok 58mm Multi Barang -->
   <div id="inputPrintModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeInputPrintModal()"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-lg transform scale-95 opacity-0 modal-content pointer-events-auto">
+    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-2xl max-h-[92dvh] overflow-y-auto transform scale-95 opacity-0 modal-content pointer-events-auto">
       <div class="mb-5">
         <p class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Print Data Input 58mm</p>
         <h3 class="text-xl font-bold text-white">Cetak label stok masuk</h3>
-        <p class="text-sm text-slate-400 mt-1">Pilih tanggal dan nama barang dari data input stok yang sudah tersimpan.</p>
+        <p class="text-sm text-slate-400 mt-1">Pilih tanggal, lalu tambahkan satu atau banyak barang. Sekali print bisa langsung keluar berurutan ke bawah dan tinggal dipotong manual.</p>
       </div>
 
       <div class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Masuk</label>
-          <input type="date" id="printInputTanggal" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none">
+          <input type="date" id="printInputTanggal" onchange="handleInputPrintTanggalChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Nama Barang</label>
-          <select id="printInputBarang" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none">
-            <option value="" disabled selected>Memuat daftar barang...</option>
+          <select id="printInputBarang" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none disabled:opacity-50">
+            <option value="" disabled selected>Pilih tanggal dulu</option>
           </select>
-          <p id="printInputInfo" class="text-xs text-slate-500 mt-2">Daftar barang diambil dari transaksi input yang pernah disimpan.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+            <button type="button" id="btnTambahPrintBarang" onclick="addInputPrintBarang()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-lg transition-colors border border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed">+ Tambah Barang</button>
+            <button type="button" id="btnTambahSemuaPrintBarang" onclick="addAllInputPrintBarang()" class="px-4 py-2.5 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-300 text-sm font-semibold rounded-lg transition-colors border border-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed">+ Tambah Semua Tanggal Ini</button>
+          </div>
+          <p id="printInputInfo" class="text-xs text-slate-500 mt-2">Daftar barang mengikuti tanggal yang dipilih.</p>
+        </div>
+
+        <div class="rounded-xl border border-slate-700 bg-slate-950/70 p-4">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <div>
+              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Daftar yang akan dicetak</p>
+              <p class="text-xs text-slate-500">Urutan print mengikuti daftar ini.</p>
+            </div>
+            <button type="button" onclick="clearInputPrintBarang()" class="text-xs text-rose-400 hover:text-rose-300 font-semibold">Kosongkan</button>
+          </div>
+          <div id="printInputSelectedList" class="space-y-2">
+            <p class="text-sm text-slate-500 italic">Belum ada barang ditambahkan.</p>
+          </div>
         </div>
       </div>
 
@@ -556,7 +573,8 @@ function buildKategoriOptions() {
     });
 
 
-    let inputPrintOptionsLoaded = false;
+    let inputPrintAvailableItems = [];
+    let inputPrintSelectedItems = [];
 
     async function openInputPrintModal() {
       const modal = document.getElementById('inputPrintModal');
@@ -574,7 +592,7 @@ function buildKategoriOptions() {
       content.classList.add('scale-100', 'opacity-100');
       content.classList.remove('scale-95', 'opacity-0');
 
-      if (!inputPrintOptionsLoaded) await loadInputPrintOptions();
+      await loadInputPrintOptionsForDate();
     }
 
     function closeInputPrintModal() {
@@ -589,42 +607,126 @@ function buildKategoriOptions() {
       setTimeout(() => modal.classList.add('hidden'), 250);
     }
 
-    async function loadInputPrintOptions() {
+    async function handleInputPrintTanggalChange() {
+      inputPrintSelectedItems = [];
+      renderInputPrintSelectedList();
+      await loadInputPrintOptionsForDate();
+    }
+
+    function setInputPrintButtonsDisabled(disabled) {
+      const btnAdd = document.getElementById('btnTambahPrintBarang');
+      const btnAll = document.getElementById('btnTambahSemuaPrintBarang');
+      if (btnAdd) btnAdd.disabled = disabled;
+      if (btnAll) btnAll.disabled = disabled;
+    }
+
+    async function loadInputPrintOptionsForDate() {
+      const tanggal = document.getElementById('printInputTanggal')?.value || '';
       const select = document.getElementById('printInputBarang');
       const info = document.getElementById('printInputInfo');
       if (!select) return;
-      select.innerHTML = '<option value="" disabled selected>Memuat daftar barang...</option>';
-      if (info) info.textContent = 'Memuat daftar barang tersimpan...';
+
+      inputPrintAvailableItems = [];
+      select.disabled = true;
+      setInputPrintButtonsDisabled(true);
+
+      if (!tanggal) {
+        select.innerHTML = '<option value="" disabled selected>Pilih tanggal dulu</option>';
+        if (info) info.textContent = 'Pilih tanggal masuk terlebih dahulu.';
+        return;
+      }
+
+      select.innerHTML = '<option value="" disabled selected>Memuat barang tanggal ini...</option>';
+      if (info) info.textContent = 'Memuat barang dari transaksi input tersimpan...';
 
       try {
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getInputPrintOptions' })
+          body: JSON.stringify({ action: 'getInputPrintOptions', tanggal })
         });
         const result = await response.json();
         if (!result.success) throw new Error(result.message || 'Gagal memuat daftar barang.');
 
         const rows = result.data || [];
-        if (!rows.length) {
-          select.innerHTML = '<option value="" disabled selected>Belum ada data input stok</option>';
-          if (info) info.textContent = 'Simpan transaksi input stok dulu, baru print bisa dipakai.';
+        inputPrintAvailableItems = rows.map(item => ({
+          key: String(item.key || item.id || item.nama || '').trim(),
+          id: item.id || '',
+          nama: item.nama || '-',
+          satuan: item.satuan || '-',
+          kategori: item.kategori || '',
+          qtyMasuk: item.qtyMasuk || 0
+        })).filter(item => item.key);
+
+        if (!inputPrintAvailableItems.length) {
+          select.innerHTML = '<option value="" disabled selected>Tidak ada barang pada tanggal ini</option>';
+          select.disabled = true;
+          setInputPrintButtonsDisabled(true);
+          if (info) info.textContent = 'Tanggal ini belum punya data stok masuk yang bisa dicetak.';
           return;
         }
 
-        select.innerHTML = '<option value="" disabled selected>-- Pilih Barang --</option>' + rows.map(item => {
-          const value = escapeHtml(item.id || item.nama || '');
-          const label = `${item.nama || '-'}${item.satuan ? ' • ' + item.satuan : ''}${item.kategori ? ' • ' + item.kategori : ''}`;
-          return `<option value="${value}">${escapeHtml(label)}</option>`;
+        select.disabled = false;
+        setInputPrintButtonsDisabled(false);
+        select.innerHTML = '<option value="" disabled selected>-- Pilih Barang --</option>' + inputPrintAvailableItems.map(item => {
+          const label = `${item.nama || '-'} • ${formatNumber(item.qtyMasuk || 0)} ${item.satuan || '-'}${item.kategori ? ' • ' + item.kategori : ''}`;
+          return `<option value="${escapeHtml(item.key)}">${escapeHtml(label)}</option>`;
         }).join('');
-        inputPrintOptionsLoaded = true;
-        if (info) info.textContent = `${rows.length} barang tersedia untuk dicetak.`;
+        if (info) info.textContent = `${inputPrintAvailableItems.length} barang pada tanggal ini. Bisa tambah satu-satu atau tambah semua.`;
       } catch (error) {
         select.innerHTML = '<option value="" disabled selected>Gagal memuat daftar barang</option>';
+        select.disabled = true;
+        setInputPrintButtonsDisabled(true);
         if (info) info.textContent = 'Gagal mengambil daftar barang dari server.';
         showToast('Gagal memuat daftar barang print.', 'error');
       }
+    }
+
+    function addInputPrintBarang() {
+      const select = document.getElementById('printInputBarang');
+      const key = select?.value || '';
+      if (!key) return showToast('Pilih nama barang dulu.', 'error');
+      const item = inputPrintAvailableItems.find(x => x.key === key);
+      if (!item) return showToast('Barang tidak ditemukan di tanggal ini.', 'error');
+      if (inputPrintSelectedItems.some(x => x.key === key)) return showToast('Barang ini sudah masuk daftar print.', 'error');
+      inputPrintSelectedItems.push(item);
+      renderInputPrintSelectedList();
+    }
+
+    function addAllInputPrintBarang() {
+      if (!inputPrintAvailableItems.length) return showToast('Tidak ada barang pada tanggal ini.', 'error');
+      inputPrintSelectedItems = inputPrintAvailableItems.slice();
+      renderInputPrintSelectedList();
+      showToast(`${inputPrintSelectedItems.length} barang masuk daftar print.`, 'success');
+    }
+
+    function removeInputPrintBarang(key) {
+      inputPrintSelectedItems = inputPrintSelectedItems.filter(item => item.key !== key);
+      renderInputPrintSelectedList();
+    }
+
+    function clearInputPrintBarang() {
+      inputPrintSelectedItems = [];
+      renderInputPrintSelectedList();
+    }
+
+    function renderInputPrintSelectedList() {
+      const wrap = document.getElementById('printInputSelectedList');
+      if (!wrap) return;
+      if (!inputPrintSelectedItems.length) {
+        wrap.innerHTML = '<p class="text-sm text-slate-500 italic">Belum ada barang ditambahkan.</p>';
+        return;
+      }
+      wrap.innerHTML = inputPrintSelectedItems.map((item, idx) => `
+        <div class="flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-white truncate">${idx + 1}. ${escapeHtml(item.nama)}</p>
+            <p class="text-xs text-slate-500">Qty: ${escapeHtml(formatNumber(item.qtyMasuk || 0))} ${escapeHtml(item.satuan || '-')}</p>
+          </div>
+          <button type="button" onclick="removeInputPrintBarang('${escapeHtml(item.key)}')" class="text-xs font-semibold text-rose-400 hover:text-rose-300 shrink-0">Hapus</button>
+        </div>
+      `).join('');
     }
 
     function formatDateID(dateText) {
@@ -639,10 +741,24 @@ function buildKategoriOptions() {
     }
 
     function buildInput58PrintHtml(data) {
-      const nama = escapeHtml(data.namaBarang || '-');
-      const tanggal = escapeHtml(formatDateID(data.tanggal));
-      const qty = escapeHtml(formatNumber(data.qtyMasuk || 0));
-      const satuan = escapeHtml(data.satuan || '-');
+      const items = Array.isArray(data.items) && data.items.length ? data.items : [data];
+      const labelsHtml = items.map((item, idx) => {
+        const nama = escapeHtml(item.namaBarang || '-');
+        const tanggal = escapeHtml(formatDateID(item.tanggal || data.tanggal));
+        const qty = escapeHtml(formatNumber(item.qtyMasuk || 0));
+        const satuan = escapeHtml(item.satuan || '-');
+        return `
+          <section class="label-block">
+            <div class="brand">AMPERA PAK JENGGOT</div>
+            <div class="line"></div>
+            <div class="nama">${nama}</div>
+            <div class="row"><div class="label">Tanggal Masuk</div><div class="value">${tanggal}</div></div>
+            <div class="row"><div class="label">Qty Masuk</div><div class="value">${qty}</div></div>
+            <div class="row"><div class="label">Satuan</div><div class="value">${satuan}</div></div>
+            <div class="cut">${idx < items.length - 1 ? 'potong di sini' : ''}</div>
+          </section>`;
+      }).join('');
+
       return `
         <!DOCTYPE html>
         <html lang="id">
@@ -653,25 +769,19 @@ function buildKategoriOptions() {
             @page { size: 58mm auto; margin: 2mm; }
             * { box-sizing: border-box; }
             body { width: 54mm; margin: 0; padding: 0; font-family: Arial, sans-serif; color: #000; background: #fff; }
-            .paper { width: 54mm; padding: 1mm 0 2mm; }
-            .brand { text-align: center; font-size: 9px; font-weight: 700; letter-spacing: .2px; margin-bottom: 2mm; }
-            .nama { text-align: center; font-size: 13px; line-height: 1.15; font-weight: 800; margin: 1mm 0 3mm; word-break: break-word; }
-            .line { border-top: 1px dashed #000; margin: 2mm 0; }
-            .row { display: flex; justify-content: space-between; gap: 2mm; font-size: 10.5px; line-height: 1.35; margin: 1mm 0; }
+            .paper { width: 54mm; padding: 0; }
+            .label-block { width: 54mm; padding: 1mm 0 2mm; break-inside: avoid; page-break-inside: avoid; border-bottom: 1px dashed #000; margin-bottom: 2mm; }
+            .brand { text-align: center; font-size: 8px; font-weight: 700; letter-spacing: .15px; margin-bottom: 1.5mm; }
+            .nama { text-align: center; font-size: 12px; line-height: 1.12; font-weight: 800; margin: 1mm 0 2.5mm; word-break: break-word; }
+            .line { border-top: 1px dashed #000; margin: 1.5mm 0; }
+            .row { display: flex; justify-content: space-between; gap: 2mm; font-size: 10px; line-height: 1.3; margin: .8mm 0; }
             .label { white-space: nowrap; }
             .value { text-align: right; font-weight: 700; word-break: break-word; }
+            .cut { text-align: center; font-size: 7px; margin-top: 1.5mm; color: #000; min-height: 8px; }
           </style>
         </head>
         <body>
-          <div class="paper">
-            <div class="brand">AMPERA PAK JENGGOT</div>
-            <div class="line"></div>
-            <div class="nama">${nama}</div>
-            <div class="row"><div class="label">Tanggal Masuk</div><div class="value">${tanggal}</div></div>
-            <div class="row"><div class="label">Qty Masuk</div><div class="value">${qty}</div></div>
-            <div class="row"><div class="label">Satuan</div><div class="value">${satuan}</div></div>
-            <div class="line"></div>
-          </div>
+          <div class="paper">${labelsHtml}</div>
           <script>window.onload = function(){ window.print(); setTimeout(function(){ window.close(); }, 500); };<\/script>
         </body>
         </html>`;
@@ -679,8 +789,9 @@ function buildKategoriOptions() {
 
     async function printInputStok58mm() {
       const tanggal = document.getElementById('printInputTanggal')?.value || '';
-      const barangKey = document.getElementById('printInputBarang')?.value || '';
-      if (!tanggal || !barangKey) return showToast('Pilih tanggal dan nama barang dulu.', 'error');
+      const barangKeys = inputPrintSelectedItems.map(item => item.key);
+      if (!tanggal) return showToast('Pilih tanggal dulu.', 'error');
+      if (!barangKeys.length) return showToast('Tambahkan minimal 1 barang ke daftar print.', 'error');
 
       const btn = document.getElementById('btnPrintInput58');
       if (btn) { btn.disabled = true; btn.textContent = 'Memuat...'; }
@@ -690,7 +801,7 @@ function buildKategoriOptions() {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getInputPrintData', tanggal, barangKey })
+          body: JSON.stringify({ action: 'getInputPrintData', tanggal, barangKeys })
         });
         const result = await response.json();
         if (!result.success) {
@@ -698,7 +809,7 @@ function buildKategoriOptions() {
           return;
         }
 
-        const w = window.open('', '_blank', 'width=320,height=600');
+        const w = window.open('', '_blank', 'width=320,height=700');
         if (!w) return showToast('Popup print diblokir browser. Izinkan popup dulu.', 'error');
         w.document.open();
         w.document.write(buildInput58PrintHtml(result.data));
