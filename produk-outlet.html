@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Produk Outlet | APJ Inventori</title>
+  <title>Produk Outlet | APJ Inventori v14.4</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -26,28 +26,34 @@
     @media print {
       body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
       body > *:not(#printArea80) { display: none !important; }
-      #printArea80 { display: block !important; font-family: Arial, sans-serif; color: #000 !important; line-height: 1.25; }
-      body.print-produk-80 #printArea80 { width: 74mm; max-width: 74mm; font-size: 8.5px; }
-      body.print-produk-a4 #printArea80 { width: auto; max-width: none; font-size: 10pt; font-family: 'Times New Roman', serif; }
+      #printArea80 { display: block !important; font-family: Arial, sans-serif; color: #000 !important; line-height: 1.12; }
+      body.print-produk-80 #printArea80 { width: 72mm; max-width: 72mm; font-size: 7.2px; }
+      body.print-produk-a4 #printArea80 {
+        width: 190mm; max-width: 190mm; font-size: 7.6pt; font-family: 'Times New Roman', serif;
+        line-height: 1.12; zoom: var(--produk-print-zoom, .88); page-break-after: avoid; page-break-inside: avoid;
+      }
       .struk-center { text-align: center; }
-      .struk-title { font-size: 14px; font-weight: 800; letter-spacing: .3px; }
-      body.print-produk-a4 .struk-title { font-size: 20pt; }
-      .struk-sub { font-size: 11px; font-weight: 700; margin-top: 2px; }
-      body.print-produk-a4 .struk-sub { font-size: 12pt; }
-      .struk-line { border-top: 1px dashed #000; margin: 6px 0; }
-      body.print-produk-a4 .struk-line { border-top: 2px solid #000; margin: 10px 0; }
-      .struk-meta { display: grid; gap: 2px; margin: 5px 0; }
-      body.print-produk-a4 .struk-meta { grid-template-columns: 1fr 1fr; font-size: 10pt; gap: 4px 24px; }
-      .struk-row { display: flex; justify-content: space-between; gap: 6px; }
+      .struk-title { font-size: 11px; font-weight: 800; letter-spacing: .1px; }
+      body.print-produk-a4 .struk-title { font-size: 15pt; }
+      .struk-sub { font-size: 8px; font-weight: 700; margin-top: 1px; }
+      body.print-produk-a4 .struk-sub { font-size: 9pt; }
+      .struk-line { border-top: 1px dashed #000; margin: 3px 0; }
+      body.print-produk-a4 .struk-line { border-top: 1.5px solid #000; margin: 5px 0; }
+      .struk-meta { display: grid; gap: 1px; margin: 3px 0; }
+      body.print-produk-a4 .struk-meta { grid-template-columns: 1fr 1fr; font-size: 7.6pt; gap: 2px 14px; }
+      .struk-row { display: flex; justify-content: space-between; gap: 4px; }
       .struk-total { font-weight: 800; }
-      .struk-sign { margin-top: 18px; text-align: center; page-break-inside: avoid; }
+      .struk-sign { margin-top: 5px; text-align: center; page-break-inside: avoid; font-size: 7px; }
+      body.print-produk-a4 .struk-sign { margin-top: 8px; font-size: 8pt; }
+      .sign-blank { height: 10px; }
+      body.print-produk-a4 .sign-blank { height: 18px; }
       .produk-print-table { width: 100%; border-collapse: collapse; }
-      .produk-print-table th, .produk-print-table td { border: 1px solid #000; padding: 2px; color:#000 !important; }
+      .produk-print-table th, .produk-print-table td { border: 1px solid #000; color:#000 !important; }
       .produk-print-table th { font-weight: 800; text-align:center; background:#f2f2f2 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .produk-print-table td { text-align:center; }
       .produk-print-table td:first-child { text-align:left; }
-      body.print-produk-80 .produk-print-table th, body.print-produk-80 .produk-print-table td { padding: 1.5px; }
-      body.print-produk-a4 .produk-print-table th, body.print-produk-a4 .produk-print-table td { padding: 5px; }
+      body.print-produk-80 .produk-print-table th, body.print-produk-80 .produk-print-table td { padding: .7px; font-size: 6.6px; }
+      body.print-produk-a4 .produk-print-table th, body.print-produk-a4 .produk-print-table td { padding: 1.8px 2.2px; font-size: 7.4pt; }
     }
   </style>
 </head>
@@ -225,7 +231,7 @@
     </div>
     <div class="struk-sign">
       <div>Kasir / PIC Outlet</div>
-      <br><br><br>
+      <div class="sign-blank"></div>
       <div>( <span id="print80NamaPetugas">........................</span> )</div>
     </div>
   </div>
@@ -342,7 +348,15 @@
       }
       style.textContent = mode === '80'
         ? '@media print { @page { size: 80mm auto; margin: 3mm; } }'
-        : '@media print { @page { size: A4 portrait; margin: 10mm; } }';
+        : '@media print { @page { size: A4 portrait; margin: 6mm; } }';
+    }
+
+    function getProdukA4Zoom(rowCount) {
+      if (rowCount <= 22) return '.92';
+      if (rowCount <= 32) return '.84';
+      if (rowCount <= 44) return '.75';
+      if (rowCount <= 58) return '.66';
+      return '.58';
     }
 
     function printProdukOutlet(mode = '80') {
@@ -359,6 +373,7 @@
         const totalSisa = rows.reduce((sum, r) => sum + parseNumber(r.stokSisa), 0);
 
         setDynamicPrintPage(mode === '80' ? '80' : 'a4');
+        document.documentElement.style.setProperty('--produk-print-zoom', mode === '80' ? '1' : getProdukA4Zoom(rows.length));
         document.body.classList.remove('print-produk-80', 'print-produk-a4');
         document.body.classList.add(mode === '80' ? 'print-produk-80' : 'print-produk-a4');
 
@@ -383,7 +398,10 @@
           </tr>
         `).join('');
         window.print();
-        setTimeout(() => document.body.classList.remove('print-produk-80', 'print-produk-a4'), 500);
+        setTimeout(() => {
+          document.body.classList.remove('print-produk-80', 'print-produk-a4');
+          document.documentElement.style.removeProperty('--produk-print-zoom');
+        }, 500);
       } catch (error) {
         showToast(error.message || 'Laporan belum bisa dicetak.', 'error');
       }
