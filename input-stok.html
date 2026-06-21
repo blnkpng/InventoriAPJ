@@ -137,11 +137,43 @@
     .mini-stat p { color:var(--muted); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.06em; }
     .mini-stat strong { display:block; color:var(--text); font-size:14px; font-weight:900; margin-top:4px; }
     .info-card { border-radius:18px; border:1px solid rgba(96,165,250,.18); background:rgba(37,99,235,.09); padding:13px 14px; color:var(--muted); font-size:12px; line-height:1.55; }
-    .print-action-card { position:relative; overflow:hidden; min-height:126px; border-radius:20px; border:1px solid rgba(16,185,129,.24); background:linear-gradient(180deg, rgba(16,185,129,.12), rgba(2,6,23,.62)); padding:14px; box-shadow:var(--shadow-soft); backdrop-filter:blur(18px); }
-    .print-action-card::before { content:""; position:absolute; right:-56px; top:-62px; width:150px; height:150px; border-radius:999px; background:rgba(16,185,129,.20); filter:blur(28px); pointer-events:none; }
+    .print-action-card {
+      position:relative;
+      overflow:hidden;
+      min-height:126px;
+      border-radius:20px;
+      border:1px solid rgba(16,185,129,.24);
+      background:linear-gradient(180deg, rgba(16,185,129,.12), rgba(2,6,23,.62));
+      padding:14px;
+      box-shadow:var(--shadow-soft);
+      backdrop-filter:blur(18px);
+    }
+    .print-action-card::before {
+      content:"";
+      position:absolute;
+      right:-56px;
+      top:-62px;
+      width:150px;
+      height:150px;
+      border-radius:999px;
+      background:rgba(16,185,129,.20);
+      filter:blur(28px);
+      pointer-events:none;
+    }
     .print-action-inner { position:relative; z-index:1; display:flex; flex-direction:column; min-height:98px; }
     .print-action-head { display:flex; align-items:flex-start; gap:11px; min-width:0; }
-    .print-action-icon { width:40px; height:40px; border-radius:15px; display:flex; align-items:center; justify-content:center; color:#6ee7b7; background:rgba(16,185,129,.14); border:1px solid rgba(16,185,129,.25); flex:0 0 auto; }
+    .print-action-icon {
+      width:40px;
+      height:40px;
+      border-radius:15px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#6ee7b7;
+      background:rgba(16,185,129,.14);
+      border:1px solid rgba(16,185,129,.25);
+      flex:0 0 auto;
+    }
     .print-action-title { color:var(--text); font-size:13px; font-weight:950; line-height:1.2; }
     .print-action-desc { color:var(--muted); font-size:11px; font-weight:700; line-height:1.45; margin-top:3px; }
     .form-label { display:block; color:var(--muted); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
@@ -156,48 +188,8 @@
     .btn-primary:hover { filter:brightness(1.05); transform:translateY(-1px); }
     .btn-emerald { border-radius:16px; background:rgba(16,185,129,.14); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; font-weight:900; transition:all .16s ease; }
     .btn-emerald:hover { background:rgba(16,185,129,.20); transform:translateY(-1px); }
-    .toast {
-      position:fixed;
-      top:18px;
-      left:calc(50% + 143px);
-      transform:translate(-50%,-14px) scale(.98);
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .24s ease, transform .24s cubic-bezier(.16,1,.3,1), left .28s ease;
-      z-index:9999;
-      min-width:280px;
-      max-width:min(460px,calc(100vw - 32px));
-      border-radius:22px;
-    }
-    .toast.show { opacity:1; transform:translate(-50%,0) scale(1); pointer-events:auto; }
-    body.sidebar-collapsed-active .toast { left:calc(50% + 44px); }
-    .help-fab {
-      position:fixed;
-      right:22px;
-      bottom:22px;
-      z-index:35;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      min-height:52px;
-      padding:12px 16px 12px 13px;
-      border-radius:999px;
-      border:1px solid rgba(96,165,250,.26);
-      background:linear-gradient(135deg, rgba(37,99,235,.94), rgba(6,182,212,.88));
-      color:#fff;
-      font-size:13px;
-      font-weight:950;
-      box-shadow:0 18px 38px rgba(37,99,235,.30), inset 0 1px 0 rgba(255,255,255,.18);
-      backdrop-filter:blur(16px);
-      transition:transform .16s ease, filter .16s ease, box-shadow .16s ease;
-    }
-    .help-fab:hover { transform:translateY(-2px); filter:brightness(1.05); box-shadow:0 22px 44px rgba(37,99,235,.36), inset 0 1px 0 rgba(255,255,255,.18); }
-    .help-fab:active { transform:translateY(0) scale(.98); }
-    .help-fab-icon { width:30px; height:30px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.18); }
-    .help-modal-card { position:relative; overflow:hidden; border-radius:28px; border:1px solid rgba(96,165,250,.28); background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.96)); box-shadow:0 28px 88px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter:blur(22px); }
-    .help-modal-card::before { content:""; position:absolute; width:220px; height:220px; right:-90px; top:-110px; border-radius:999px; background:rgba(37,99,235,.24); filter:blur(34px); pointer-events:none; }
-    .help-step { border:1px solid rgba(51,65,85,.70); background:rgba(15,23,42,.58); border-radius:18px; padding:13px; }
-    .help-step-number { width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(37,99,235,.16); border:1px solid rgba(96,165,250,.24); color:#7dd3fc; font-weight:950; font-size:12px; flex:0 0 auto; }
+    .toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(.96); opacity:0; pointer-events:none; transition:all .28s cubic-bezier(.16,1,.3,1); z-index:9999; min-width:280px; max-width:min(460px,calc(100vw - 32px)); border-radius:22px; }
+    .toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); pointer-events:auto; }
     .modal-overlay { transition:opacity .25s ease-out; }
     .modal-content { transition:transform .25s ease-out, opacity .25s ease-out; }
     @media (max-width:1023px) {
@@ -208,16 +200,12 @@
       .page-scroll { height:calc(100dvh - 78px); padding:16px; }
       input,select,textarea{font-size:16px;}
       main { width:100%; }
-      .toast { top:14px; left:50%; max-width:calc(100vw - 24px); }
-      .help-fab { right:16px; bottom:16px; min-height:50px; padding:11px 13px; }
     }
     @media (max-width:640px) {
       .topbar-title-mark { display:none; }
       .hero-card { padding:18px; border-radius:24px; }
       .user-meta { display:none; }
       .panel { padding:15px; }
-      .help-fab span:last-child { display:none; }
-      .help-fab { width:54px; height:54px; justify-content:center; padding:0; }
     }
 
     @media screen and (max-width:768px) {
@@ -334,7 +322,9 @@
               <div class="print-action-inner">
                 <div class="print-action-head">
                   <div class="print-action-icon">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V4h12v5M6 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1M7 14h10v7H7v-7Z"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V4h12v5M6 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1M7 14h10v7H7v-7Z"></path>
+                    </svg>
                   </div>
                   <div class="min-w-0">
                     <p class="print-action-title">Print Data Stok Masuk</p>
@@ -342,7 +332,9 @@
                   </div>
                 </div>
                 <button type="button" onclick="openInputPrintModal()" class="btn-emerald mt-3 px-5 py-3 text-sm w-full inline-flex items-center justify-center gap-2">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V4h12v5M6 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1M7 14h10v7H7v-7Z"></path></svg>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V4h12v5M6 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1M7 14h10v7H7v-7Z"></path>
+                  </svg>
                   Print 58mm
                 </button>
               </div>
@@ -393,47 +385,6 @@
   </main>
 
 
-  <button id="inputHelpFab" type="button" onclick="openInputHelpModal(false)" class="help-fab" aria-label="Buka panduan input stok" title="Panduan Input Stok">
-    <span class="help-fab-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span>
-    <span>Panduan Input</span>
-  </button>
-
-  <div id="inputHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
-    <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeInputHelpModal()"></div>
-    <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
-      <div class="relative z-10">
-        <div class="flex items-start justify-between gap-4 mb-5">
-          <div>
-            <p class="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-blue-200">
-              <span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span> Panduan Modul
-            </p>
-            <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-tight text-white">Cara pakai Input Stok</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-400">Popup ini membantu petugas memahami alur input barang masuk supaya pencatatan stok APJ tetap rapi.</p>
-          </div>
-          <button type="button" onclick="closeInputHelpModal()" class="w-11 h-11 rounded-2xl border border-slate-700 bg-slate-950/70 text-slate-300 hover:text-white hover:bg-slate-800 transition" aria-label="Tutup panduan">×</button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
-          <div class="help-step flex gap-3"><div class="help-step-number">1</div><div><p class="text-sm font-black text-white">Pilih tanggal & kategori</p><p class="mt-1 text-xs leading-5 text-slate-400">Tanggal adalah tanggal barang masuk. Kategori menentukan master barang yang akan muncul.</p></div></div>
-          <div class="help-step flex gap-3"><div class="help-step-number">2</div><div><p class="text-sm font-black text-white">Tambah baris barang</p><p class="mt-1 text-xs leading-5 text-slate-400">Klik <b class="text-blue-200">+ Tambah Baris Barang</b>, lalu pilih nama barang yang dibeli/ditambahkan.</p></div></div>
-          <div class="help-step flex gap-3"><div class="help-step-number">3</div><div><p class="text-sm font-black text-white">Isi qty dengan benar</p><p class="mt-1 text-xs leading-5 text-slate-400"><b class="text-blue-200">Qty Masuk</b> = jumlah beli. <b class="text-cyan-200">Qty Stok/Riil</b> = jumlah yang masuk ke stok sistem.</p></div></div>
-          <div class="help-step flex gap-3"><div class="help-step-number">4</div><div><p class="text-sm font-black text-white">Cek item preparasi</p><p class="mt-1 text-xs leading-5 text-slate-400">Untuk item parent seperti ayam potong, sistem bisa membuka baris hasil preparasi otomatis.</p></div></div>
-        </div>
-
-        <div class="rounded-2xl border border-amber-500/22 bg-amber-500/10 p-4 mb-5">
-          <p class="text-sm font-black text-amber-100">Catatan penting</p>
-          <p class="mt-1 text-xs sm:text-sm leading-6 text-amber-100/75">Pastikan satuan beli dan satuan stok sudah sesuai sebelum menekan <b>Simpan Transaksi Input</b>. Tombol <b>Print 58mm</b> sekarang ada di card atas setelah kategori.</p>
-        </div>
-
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol mengambang di pojok kanan bawah.</p>
-          <button type="button" onclick="closeInputHelpModal()" class="btn-primary px-5 py-3 text-sm">Mengerti, lanjut input</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
   <!-- Modal konfirmasi logout, dibuat konsisten dengan dashboard -->
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
@@ -468,9 +419,15 @@
           <input type="date" id="printInputTanggal" onchange="handleInputPrintTanggalChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none">
         </div>
         <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Barang</label>
+          <select id="printInputKategori" onchange="handleInputPrintKategoriChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none disabled:opacity-50" disabled>
+            <option value="" disabled selected>Pilih tanggal dulu</option>
+          </select>
+        </div>
+        <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Nama Barang</label>
           <select id="printInputBarang" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none disabled:opacity-50">
-            <option value="" disabled selected>Pilih tanggal dulu</option>
+            <option value="" disabled selected>Pilih kategori dulu</option>
           </select>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
             <button type="button" id="btnTambahPrintBarang" onclick="addInputPrintBarang()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-lg transition-colors border border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed">+ Tambah Barang</button>
@@ -525,9 +482,6 @@
       document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
       buildKategoriOptions();
-      setTimeout(() => {
-        if (sessionStorage.getItem('APJ_INPUT_HELP_SEEN') !== 'true') openInputHelpModal(true);
-      }, 450);
     });
 
     
@@ -572,36 +526,7 @@ function buildKategoriOptions() {
       toast.className = type === 'success'
         ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md"
         : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
-      window.clearTimeout(window.__apjToastTimer);
-      window.__apjToastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
-    }
-
-    const inputHelpModal = () => document.getElementById('inputHelpModal');
-    function openInputHelpModal(autoOpen = false) {
-      const modal = inputHelpModal();
-      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
-      const content = modal ? modal.querySelector('.modal-content') : null;
-      if (!modal || !overlay || !content) return;
-      if (autoOpen) modal.dataset.autoOpen = 'true';
-      modal.classList.remove('hidden');
-      void modal.offsetWidth;
-      overlay.classList.add('opacity-100');
-      overlay.classList.remove('opacity-0');
-      content.classList.add('scale-100', 'opacity-100');
-      content.classList.remove('scale-95', 'opacity-0');
-    }
-
-    function closeInputHelpModal() {
-      const modal = inputHelpModal();
-      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
-      const content = modal ? modal.querySelector('.modal-content') : null;
-      if (!modal || !overlay || !content) return;
-      sessionStorage.setItem('APJ_INPUT_HELP_SEEN', 'true');
-      overlay.classList.remove('opacity-100');
-      overlay.classList.add('opacity-0');
-      content.classList.remove('scale-100', 'opacity-100');
-      content.classList.add('scale-95', 'opacity-0');
-      setTimeout(() => modal.classList.add('hidden'), 250);
+      setTimeout(() => toast.classList.remove('show'), 4000);
     }
 
     function escapeHtml(value) {
@@ -911,6 +836,7 @@ function buildKategoriOptions() {
     });
 
 
+    let inputPrintAllItems = [];
     let inputPrintAvailableItems = [];
     let inputPrintSelectedItems = [];
 
@@ -951,6 +877,12 @@ function buildKategoriOptions() {
       await loadInputPrintOptionsForDate();
     }
 
+    function handleInputPrintKategoriChange() {
+      inputPrintSelectedItems = [];
+      renderInputPrintSelectedList();
+      filterInputPrintItemsByKategori();
+    }
+
     function setInputPrintButtonsDisabled(disabled) {
       const btnAdd = document.getElementById('btnTambahPrintBarang');
       const btnAll = document.getElementById('btnTambahSemuaPrintBarang');
@@ -958,23 +890,108 @@ function buildKategoriOptions() {
       if (btnAll) btnAll.disabled = disabled;
     }
 
-    async function loadInputPrintOptionsForDate() {
-      const tanggal = document.getElementById('printInputTanggal')?.value || '';
+    function resetInputPrintCategory(message = 'Pilih tanggal dulu') {
+      const kategoriSelect = document.getElementById('printInputKategori');
+      if (!kategoriSelect) return;
+      kategoriSelect.disabled = true;
+      kategoriSelect.innerHTML = `<option value="" disabled selected>${escapeHtml(message)}</option>`;
+    }
+
+    function resetInputPrintBarang(message = 'Pilih kategori dulu') {
+      const select = document.getElementById('printInputBarang');
+      if (!select) return;
+      select.disabled = true;
+      select.innerHTML = `<option value="" disabled selected>${escapeHtml(message)}</option>`;
+    }
+
+    function getInputPrintKategori(item) {
+      const kategori = String(item?.kategori || '').trim();
+      return kategori || 'Tanpa Kategori';
+    }
+
+    function populateInputPrintKategoriOptions() {
+      const kategoriSelect = document.getElementById('printInputKategori');
+      const info = document.getElementById('printInputInfo');
+      if (!kategoriSelect) return;
+
+      const categories = Array.from(new Set(inputPrintAllItems.map(getInputPrintKategori)))
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, 'id'));
+
+      if (!categories.length) {
+        resetInputPrintCategory('Tidak ada kategori');
+        resetInputPrintBarang('Tidak ada barang');
+        if (info) info.textContent = 'Tanggal ini belum punya data stok masuk yang bisa dicetak.';
+        return;
+      }
+
+      kategoriSelect.disabled = false;
+      kategoriSelect.innerHTML = '<option value="" disabled selected>-- Pilih Kategori --</option>' + categories.map(kategori => {
+        const count = inputPrintAllItems.filter(item => getInputPrintKategori(item) === kategori).length;
+        return `<option value="${escapeHtml(kategori)}">${escapeHtml(kategori)} (${count})</option>`;
+      }).join('');
+
+      resetInputPrintBarang('Pilih kategori dulu');
+      setInputPrintButtonsDisabled(true);
+      if (info) info.textContent = `${categories.length} kategori ditemukan. Pilih kategori dulu agar barang tidak tercampur.`;
+
+      const currentKategoriLabel = document.getElementById('kategoriSelect')?.selectedOptions?.[0]?.textContent?.trim() || '';
+      if (currentKategoriLabel && categories.includes(currentKategoriLabel)) {
+        kategoriSelect.value = currentKategoriLabel;
+        filterInputPrintItemsByKategori();
+      }
+    }
+
+    function filterInputPrintItemsByKategori() {
+      const kategoriSelect = document.getElementById('printInputKategori');
       const select = document.getElementById('printInputBarang');
       const info = document.getElementById('printInputInfo');
-      if (!select) return;
+      if (!kategoriSelect || !select) return;
 
+      const kategori = kategoriSelect.value || '';
       inputPrintAvailableItems = [];
-      select.disabled = true;
+      setInputPrintButtonsDisabled(true);
+
+      if (!kategori) {
+        resetInputPrintBarang('Pilih kategori dulu');
+        if (info) info.textContent = 'Pilih kategori barang untuk menampilkan daftar nama barang.';
+        return;
+      }
+
+      inputPrintAvailableItems = inputPrintAllItems.filter(item => getInputPrintKategori(item) === kategori);
+
+      if (!inputPrintAvailableItems.length) {
+        resetInputPrintBarang('Tidak ada barang di kategori ini');
+        if (info) info.textContent = `Tidak ada barang kategori ${kategori} pada tanggal ini.`;
+        return;
+      }
+
+      select.disabled = false;
+      setInputPrintButtonsDisabled(false);
+      select.innerHTML = '<option value="" disabled selected>-- Pilih Barang --</option>' + inputPrintAvailableItems.map(item => {
+        const label = `${item.nama || '-'} • ${formatNumber(item.qtyMasuk || 0)} ${item.satuan || '-'}`;
+        return `<option value="${escapeHtml(item.key)}">${escapeHtml(label)}</option>`;
+      }).join('');
+      if (info) info.textContent = `${inputPrintAvailableItems.length} barang kategori ${kategori}. Bisa tambah satu-satu atau tambah semua kategori ini.`;
+    }
+
+    async function loadInputPrintOptionsForDate() {
+      const tanggal = document.getElementById('printInputTanggal')?.value || '';
+      const info = document.getElementById('printInputInfo');
+
+      inputPrintAllItems = [];
+      inputPrintAvailableItems = [];
+      resetInputPrintCategory('Pilih tanggal dulu');
+      resetInputPrintBarang('Pilih kategori dulu');
       setInputPrintButtonsDisabled(true);
 
       if (!tanggal) {
-        select.innerHTML = '<option value="" disabled selected>Pilih tanggal dulu</option>';
         if (info) info.textContent = 'Pilih tanggal masuk terlebih dahulu.';
         return;
       }
 
-      select.innerHTML = '<option value="" disabled selected>Memuat barang tanggal ini...</option>';
+      resetInputPrintCategory('Memuat kategori...');
+      resetInputPrintBarang('Pilih kategori dulu');
       if (info) info.textContent = 'Memuat barang dari transaksi input tersimpan...';
 
       try {
@@ -988,7 +1005,7 @@ function buildKategoriOptions() {
         if (!result.success) throw new Error(result.message || 'Gagal memuat daftar barang.');
 
         const rows = result.data || [];
-        inputPrintAvailableItems = rows.map(item => ({
+        inputPrintAllItems = rows.map(item => ({
           key: String(item.key || item.id || item.nama || '').trim(),
           id: item.id || '',
           nama: item.nama || '-',
@@ -997,24 +1014,17 @@ function buildKategoriOptions() {
           qtyMasuk: item.qtyMasuk || 0
         })).filter(item => item.key);
 
-        if (!inputPrintAvailableItems.length) {
-          select.innerHTML = '<option value="" disabled selected>Tidak ada barang pada tanggal ini</option>';
-          select.disabled = true;
-          setInputPrintButtonsDisabled(true);
+        if (!inputPrintAllItems.length) {
+          resetInputPrintCategory('Tidak ada kategori');
+          resetInputPrintBarang('Tidak ada barang pada tanggal ini');
           if (info) info.textContent = 'Tanggal ini belum punya data stok masuk yang bisa dicetak.';
           return;
         }
 
-        select.disabled = false;
-        setInputPrintButtonsDisabled(false);
-        select.innerHTML = '<option value="" disabled selected>-- Pilih Barang --</option>' + inputPrintAvailableItems.map(item => {
-          const label = `${item.nama || '-'} • ${formatNumber(item.qtyMasuk || 0)} ${item.satuan || '-'}${item.kategori ? ' • ' + item.kategori : ''}`;
-          return `<option value="${escapeHtml(item.key)}">${escapeHtml(label)}</option>`;
-        }).join('');
-        if (info) info.textContent = `${inputPrintAvailableItems.length} barang pada tanggal ini. Bisa tambah satu-satu atau tambah semua.`;
+        populateInputPrintKategoriOptions();
       } catch (error) {
-        select.innerHTML = '<option value="" disabled selected>Gagal memuat daftar barang</option>';
-        select.disabled = true;
+        resetInputPrintCategory('Gagal memuat kategori');
+        resetInputPrintBarang('Gagal memuat daftar barang');
         setInputPrintButtonsDisabled(true);
         if (info) info.textContent = 'Gagal mengambil daftar barang dari server.';
         showToast('Gagal memuat daftar barang print.', 'error');
@@ -1033,10 +1043,11 @@ function buildKategoriOptions() {
     }
 
     function addAllInputPrintBarang() {
-      if (!inputPrintAvailableItems.length) return showToast('Tidak ada barang pada tanggal ini.', 'error');
+      if (!inputPrintAvailableItems.length) return showToast('Pilih kategori dan pastikan ada barang pada kategori ini.', 'error');
       inputPrintSelectedItems = inputPrintAvailableItems.slice();
       renderInputPrintSelectedList();
-      showToast(`${inputPrintSelectedItems.length} barang masuk daftar print.`, 'success');
+      const kategori = document.getElementById('printInputKategori')?.value || 'kategori ini';
+      showToast(`${inputPrintSelectedItems.length} barang kategori ${kategori} masuk daftar print.`, 'success');
     }
 
     function removeInputPrintBarang(key) {
@@ -1060,7 +1071,7 @@ function buildKategoriOptions() {
         <div class="flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2">
           <div class="min-w-0">
             <p class="text-sm font-semibold text-white truncate">${idx + 1}. ${escapeHtml(item.nama)}</p>
-            <p class="text-xs text-slate-500">Qty: ${escapeHtml(formatNumber(item.qtyMasuk || 0))} ${escapeHtml(item.satuan || '-')}</p>
+            <p class="text-xs text-slate-500">Kategori: ${escapeHtml(getInputPrintKategori(item))} • Qty: ${escapeHtml(formatNumber(item.qtyMasuk || 0))} ${escapeHtml(item.satuan || '-')}</p>
           </div>
           <button type="button" onclick="removeInputPrintBarang('${escapeHtml(item.key)}')" class="text-xs font-semibold text-rose-400 hover:text-rose-300 shrink-0">Hapus</button>
         </div>
@@ -1215,10 +1226,7 @@ function buildKategoriOptions() {
     }
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeMobileSidebar();
-        closeInputHelpModal();
-      }
+      if (event.key === 'Escape') closeMobileSidebar();
     });
 
     window.addEventListener('resize', () => {
@@ -1244,12 +1252,10 @@ function buildKategoriOptions() {
       if (!sidebar) return;
       if (window.innerWidth < 1024) {
         sidebar.classList.remove('sidebar-collapsed');
-        document.body.classList.remove('sidebar-collapsed-active');
         return;
       }
       const collapsed = localStorage.getItem('APJ_SIDEBAR_COLLAPSED') === 'true';
       sidebar.classList.toggle('sidebar-collapsed', collapsed);
-      document.body.classList.toggle('sidebar-collapsed-active', collapsed);
     }
 
     function toggleSidebarCollapse() {
@@ -1257,7 +1263,6 @@ function buildKategoriOptions() {
       if (!sidebar || window.innerWidth < 1024) return;
       const willCollapse = !sidebar.classList.contains('sidebar-collapsed');
       sidebar.classList.toggle('sidebar-collapsed', willCollapse);
-      document.body.classList.toggle('sidebar-collapsed-active', willCollapse);
       localStorage.setItem('APJ_SIDEBAR_COLLAPSED', willCollapse ? 'true' : 'false');
     }
 
@@ -1266,7 +1271,6 @@ function buildKategoriOptions() {
       const backdrop = document.getElementById('sidebarBackdrop');
       if (!sidebar || !backdrop) return;
       sidebar.classList.remove('sidebar-collapsed');
-      document.body.classList.remove('sidebar-collapsed-active');
       sidebar.classList.remove('-translate-x-full');
       backdrop.classList.remove('hidden');
       document.body.classList.add('overflow-hidden');
