@@ -31,7 +31,7 @@
       .sj-page { page-break-after: always; break-after: page; }
       .sj-page:last-child { page-break-after: auto; break-after: auto; }
       body.print-transfer-a4 #printAreaTransfer { font-family: 'Times New Roman', serif; }
-      body.print-transfer-a4 .sj-page { width: 190mm; max-width: 190mm; min-height: 285mm; max-height: 285mm; margin: 0 auto; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden; }
+      body.print-transfer-a4 .sj-page { width: 190mm; max-width: 190mm; min-height: 278mm; max-height: 278mm; margin: 0 auto; display: flex; flex-direction: column; box-sizing: border-box; overflow: visible; padding-bottom: 4mm; }
       body.print-transfer-58 #printAreaTransfer { width: 54mm; max-width: 54mm; font-family: Arial, sans-serif; font-size: 8.2px; line-height: 1.16; }
       body.print-transfer-58 .sj-page { width: 54mm; max-width: 54mm; page-break-inside: avoid; break-inside: avoid; }
       .sj-kop { text-align: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
@@ -60,12 +60,12 @@
       body.print-transfer-a4 .sj-title { font-size: 13.8pt; }
       body.print-transfer-a4 .sj-subtitle { font-size: 8.4pt; }
       body.print-transfer-a4 .sj-meta { font-size: 7.4pt; margin: 3px 0 4px; gap: 0.5px 14px; flex: 0 0 auto; }
-      body.print-transfer-a4 .sj-note { font-size: 7.2pt; margin-top: 2.5mm; flex: 0 0 auto; }
-      body.print-transfer-a4 .sj-sign { margin-top: 4mm; gap: 12px; flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-note { font-size: 7.2pt; margin-top: 2.2mm; flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-sign { margin-top: 6mm; margin-bottom: 5mm; gap: 12px; flex: 0 0 auto; }
       body.print-transfer-a4 .sj-sign-box { font-size: 7.3pt; }
-      body.print-transfer-a4 .sj-sign-name { margin-top: 22mm; padding-top: 2px; }
+      body.print-transfer-a4 .sj-sign-name { margin-top: 16mm; padding-top: 2px; }
       body.print-transfer-a4 .sj-table-zone { flex: 0 0 auto; }
-      body.print-transfer-a4 .sj-a4-spacer { flex: 1 1 auto; min-height: 1mm; }
+      body.print-transfer-a4 .sj-a4-spacer { display: none !important; flex: 0 0 0; height: 0; min-height: 0; }
       body.print-transfer-a4 .sj-name-cell { font-size: var(--sj-a4-name-font, 7.5pt); }
       .sj-note { font-size: 9pt; margin-top: 10px; }
       .sj-sign { display: flex; justify-content: space-between; gap: 18px; margin-top: 28px; page-break-inside: avoid; }
@@ -769,8 +769,8 @@
     function buildA4SuratJalanVars(rowCount) {
       const count = Math.max(1, parseInt(rowCount || 0, 10));
       const totalTableRows = count + 1; // header + produk
-      const availableTableMm = 204;
-      const rowH = Math.max(3.25, Math.min(7.35, availableTableMm / totalTableRows));
+      const availableTableMm = 210;
+      const rowH = Math.max(3.15, Math.min(7.55, availableTableMm / totalTableRows));
       const headH = Math.max(4.1, Math.min(7.2, rowH + 0.45));
       let font = 7.45;
       if (count > 34) font = 7.0;
