@@ -91,17 +91,30 @@
       overflow: hidden;
     }
     .sidebar-head { padding: 18px 18px 12px; }
-    .sidebar-toggle {
-      width: 38px; height: 38px;
-      border-radius: 16px;
-      display:flex; align-items:center; justify-content:center;
-      background: rgba(255,255,255,.09);
-      border: 1px solid rgba(255,255,255,.10);
-      color: rgba(255,255,255,.84);
-      transition: all .18s ease;
-      flex: 0 0 auto;
+    .brand-toggle {
+      width: 100%;
+      display:flex; align-items:center; justify-content:space-between; gap: 12px;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      color: inherit;
+      text-align: left;
+      transition: transform .18s ease;
     }
-    .sidebar-toggle:hover { background: rgba(255,255,255,.14); color:#fff; transform: translateY(-1px); }
+    .brand-toggle:hover { transform: translateY(-1px); }
+    .logo-stack { display:flex; align-items:center; gap: 12px; min-width:0; }
+    .logo-mark-wrap { position: relative; flex: 0 0 auto; }
+    .logo-toggle-badge {
+      position:absolute; right:-8px; top:50%; transform:translateY(-50%);
+      width: 28px; height: 28px; border-radius: 999px;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, #a855f7, #7c3aed);
+      border: 2px solid #020204;
+      color:#ffffff;
+      box-shadow: 0 10px 22px rgba(124,58,237,.30);
+      transition: transform .18s ease;
+    }
+    .logo-toggle-badge svg { width:14px; height:14px; stroke-width:2.25; }
     .sidebar-nav {
       flex: 1 1 auto;
       overflow: hidden;
@@ -148,9 +161,10 @@
     #sidebar.sidebar-collapsed .logout-text { display:none; }
     #sidebar.sidebar-collapsed .sidebar-head { padding: 18px 14px 12px; }
     #sidebar.sidebar-collapsed .sidebar-head-inner { justify-content:center; }
+    #sidebar.sidebar-collapsed .brand-toggle { justify-content:center; }
     #sidebar.sidebar-collapsed .logo-mark { width:48px; height:48px; border-radius:20px; }
-    #sidebar.sidebar-collapsed .sidebar-toggle { position:absolute; left:62px; top:24px; width:28px; height:28px; border-radius:12px; background:rgba(124,58,237,.92); color:#fff; }
-    #sidebar.sidebar-collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    #sidebar.sidebar-collapsed .logo-toggle-badge { right:-10px; width:30px; height:30px; }
+    #sidebar.sidebar-collapsed .logo-toggle-badge svg { transform: rotate(180deg); }
     #sidebar.sidebar-collapsed .sidebar-nav { padding-left:14px; padding-right:14px; align-items:center; gap: 12px; }
     #sidebar.sidebar-collapsed .menu-section { align-items:center; gap:7px; }
     #sidebar.sidebar-collapsed .menu-label { width:34px; height:1px; padding:0; margin:2px 0; background:rgba(255,255,255,.18); border-radius:999px; }
@@ -210,23 +224,28 @@
       display:flex; align-items:center; justify-content:space-between; gap: 18px;
       padding: 18px 24px;
       border-bottom: 1px solid var(--border);
-      background: rgba(255,255,255,.38);
-      backdrop-filter: blur(22px);
+      background: color-mix(in srgb, var(--surface-solid) 82%, transparent);
+      backdrop-filter: blur(18px);
       position: sticky; top: 0; z-index: 20;
     }
-    [data-theme="dark"] .topbar { background: rgba(11,17,32,.58); }
+    [data-theme="dark"] .topbar { background: rgba(4, 10, 24, .88); }
     .search-pill {
       height: 48px;
       max-width: 520px;
       flex: 1;
       display:flex; align-items:center; gap: 12px;
       border: 1px solid var(--border);
-      background: var(--surface);
+      background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
       border-radius: 20px;
       padding: 0 16px;
       color: var(--muted);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(16px);
+      box-shadow: none;
+      backdrop-filter: blur(10px);
+    }
+    [data-theme="dark"] .search-pill {
+      background: rgba(15, 23, 42, .72);
+      border-color: rgba(148, 163, 184, .15);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
     }
     .icon-button {
       width: 48px; height: 48px;
@@ -438,16 +457,25 @@
   <aside id="sidebar" class="apj-sidebar fixed lg:static inset-y-0 left-0 z-40 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out">
     <div class="sidebar-head relative">
       <div class="sidebar-head-inner flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3 min-w-0">
+        <button id="sidebarToggle" type="button" onclick="toggleSidebarCollapse()" class="brand-toggle hidden lg:flex" title="Buka/tutup sidebar" aria-label="Buka/tutup sidebar">
+          <span class="logo-stack">
+            <span class="logo-mark-wrap">
+              <span class="logo-mark">APJ</span>
+              <span class="logo-toggle-badge"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg></span>
+            </span>
+            <span class="brand-text min-w-0">
+              <p class="text-[21px] leading-none font-black tracking-tight text-white">APJ</p>
+              <p class="text-xs font-extrabold tracking-[.18em] text-violet-300">INVENTORI</p>
+            </span>
+          </span>
+        </button>
+        <div class="lg:hidden flex items-center gap-3 min-w-0">
           <div class="logo-mark">APJ</div>
           <div class="brand-text min-w-0">
             <p class="text-[21px] leading-none font-black tracking-tight text-white">APJ</p>
             <p class="text-xs font-extrabold tracking-[.18em] text-violet-300">INVENTORI</p>
           </div>
         </div>
-        <button id="sidebarToggle" type="button" onclick="toggleSidebarCollapse()" class="sidebar-toggle hidden lg:flex" title="Buka/tutup sidebar" aria-label="Buka/tutup sidebar">
-          <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-        </button>
         <button type="button" onclick="closeMobileSidebar()" class="lg:hidden w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10 text-white">×</button>
       </div>
     </div>
@@ -504,7 +532,7 @@
         <button type="button" class="icon-button hide-xs" title="Notifikasi"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 0 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"></path></svg></button>
         <div class="flex items-center gap-3 pl-1">
           <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white" style="background:linear-gradient(135deg,#c084fc,#7c3aed); box-shadow:0 12px 28px rgba(124,58,237,.20)"><span id="displayInisial">U</span></div>
-          <div class="hidden sm:block text-right min-w-0">
+          <div class="hidden sm:block min-w-0">
             <p id="displayNama" class="text-sm font-extrabold clamp-1" style="color:var(--text)">Memuat...</p>
             <p id="displayLevel" class="text-xs font-bold uppercase tracking-wide" style="color:var(--muted)">--</p>
           </div>
