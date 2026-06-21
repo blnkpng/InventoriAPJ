@@ -5,24 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Produk Outlet | APJ Inventori</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-    .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all .35s ease; z-index: 9999; }
+    .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all 0.4s ease; z-index: 9999; }
     .toast.show { top: 24px; }
-    .modal-overlay { transition: opacity .25s ease-out; }
-    .modal-content { transition: transform .25s ease-out, opacity .25s ease-out; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Logout modal, disamakan dengan dashboard */
+    .modal-overlay { transition: opacity 0.3s ease-out; }
+    .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
+
+
+    /* Responsif mobile/tablet */
     .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
     .table-scroll::-webkit-scrollbar { height: 8px; }
     .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
-    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    input[type=number] { -moz-appearance: textfield; }
     @media (max-width: 1023px) {
       .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
-      input, select, textarea { font-size: 16px; }
+      input, select, textarea { font-size: 16px; } /* cegah auto-zoom iOS */
       main { width: 100%; }
     }
-    #printArea80 { display: none; }
+
+  
+
+
+    .btn-rose { border-radius:16px; background:linear-gradient(135deg,#e11d48,#f43f5e); color:#fff; font-weight:900; box-shadow:0 16px 32px rgba(244,63,94,.22); transition:all .16s ease; }
+    .btn-rose:hover { filter:brightness(1.05); transform:translateY(-1px); }
+    .btn-amber { border-radius:16px; background:linear-gradient(135deg,#d97706,#f59e0b); color:#fff; font-weight:900; box-shadow:0 16px 32px rgba(245,158,11,.20); transition:all .16s ease; }
+    .btn-amber:hover { filter:brightness(1.05); transform:translateY(-1px); }
+    .btn-slate { border-radius:16px; background:rgba(15,23,42,.84); border:1px solid var(--border); color:#e2e8f0; font-weight:900; transition:all .16s ease; }
+    .btn-slate:hover { background:rgba(30,41,59,.88); transform:translateY(-1px); }
+    .btn-sky { border-radius:16px; background:linear-gradient(135deg,#0284c7,#06b6d4); color:#fff; font-weight:900; box-shadow:0 16px 32px rgba(6,182,212,.20); transition:all .16s ease; }
+    .btn-sky:hover { filter:brightness(1.05); transform:translateY(-1px); }
+    .produk-modal-card { border-radius:28px; border:1px solid rgba(96,165,250,.24); background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.96)); box-shadow:0 28px 88px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter:blur(22px); }
+    .access-box { margin:18px 24px; border-radius:24px; }
+    @media (max-width:1023px) { .access-box { margin:16px; } }
+
+
+#printArea80 { display: none; }
     @media print {
       body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
       body > *:not(#printArea80) { display: none !important; }
@@ -65,136 +90,205 @@
       body.print-produk-58 .produk-print-table th:nth-child(4), body.print-produk-58 .produk-print-table td:nth-child(4) { width: 16%; text-align:center; }
       body.print-produk-a4 .produk-print-table th, body.print-produk-a4 .produk-print-table td { padding: 5px; }
     }
-  
-
-    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
-    @media screen and (max-width: 768px) {
-      .table-scroll { overflow-x: visible !important; }
-      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
-      .table-scroll thead { display: none !important; }
-      .table-scroll tbody { display: block !important; width: 100% !important; }
-      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
-      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
-      .table-scroll td:last-child { border-bottom: 0 !important; }
-      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
-      .table-scroll td > * { max-width: 58%; }
-      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
-      .table-scroll .text-center { text-align: right !important; }
-      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
-    }
-
   </style>
 </head>
-<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
-  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition no-print">
+<body class="flex h-[100dvh] lg:h-screen antialiased">
+  <div id="customToast" class="toast border backdrop-blur-xl p-4 no-print" role="alert"><div class="ml-3 text-sm font-medium" id="toastMessage"></div></div>
+
+  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden icon-button active:scale-95 transition no-print">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
   </button>
-  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/70 backdrop-blur-sm lg:hidden no-print"></div>
+  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/60 backdrop-blur-sm lg:hidden no-print"></div>
 
-  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md no-print" role="alert"><div class="ml-3 text-sm font-medium" id="toastMessage"></div></div>
+  <aside id="sidebar" class="apj-sidebar fixed lg:static inset-y-0 left-0 z-40 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out no-print">
+    <div class="sidebar-head relative">
+      <div class="sidebar-head-inner flex items-center justify-between gap-3">
+        <button id="sidebarToggle" type="button" onclick="toggleSidebarCollapse()" class="brand-toggle hidden lg:flex" title="Buka/tutup sidebar" aria-label="Buka/tutup sidebar">
+          <span class="logo-stack"><span class="logo-mark">APJ</span><span class="brand-text min-w-0"><p>APJ</p><p>INVENTORI</p></span></span>
+        </button>
+        <div class="lg:hidden flex items-center gap-3 min-w-0"><div class="logo-mark">APJ</div><div class="brand-text min-w-0"><p>APJ</p><p>INVENTORI</p></div></div>
+        <button type="button" onclick="closeMobileSidebar()" class="lg:hidden w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10 text-white">×</button>
+      </div>
+    </div>
 
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none no-print">
-    <div class="h-16 flex items-center px-6 border-b border-slate-800"><div class="flex items-center gap-3 text-sky-500"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span></div></div>
-    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
-      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
-      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 bg-sky-600/10 text-sky-400 rounded-lg font-semibold text-sm transition-colors border border-sky-500/20">Produk Outlet</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
-      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
-      <a id="adminMenuLink" href="admin.html" class="hidden flex items-center gap-3 px-3 py-2.5 text-violet-300 hover:text-white hover:bg-violet-950/40 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-violet-500/20">Admin Sistem</a>
+    <nav class="sidebar-nav">
+      <div class="menu-section">
+        <p class="menu-label"><span>Overview</span></p>
+        <a href="dashboard.html" class="nav-item" title="Dashboard"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"></path></svg></span><span class="nav-text">Dashboard</span></a>
+      </div>
+      <div class="menu-section">
+        <p class="menu-label"><span>Transaksi Stok</span></p>
+        <a href="input-stok.html" class="nav-item" title="Input Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg></span><span class="nav-text">Input Stok</span></a>
+        <a href="output-stok.html" class="nav-item" title="Output Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21V9m0 0 4 4m-4-4-4 4M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"></path></svg></span><span class="nav-text">Output Stok</span></a>
+      </div>
+      <div class="menu-section">
+        <p class="menu-label"><span>Outlet & Produksi</span></p>
+        <a href="transfer-produksi.html" class="nav-item" title="Transfer Produk Outlet"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"></path></svg></span><span class="nav-text">Transfer Produk Outlet</span></a>
+        <a href="produk-outlet.html" class="nav-item active" title="Produk Outlet"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16M6 10v10h12V10M8 10V6a4 4 0 0 1 8 0v4M9 15h2m2 0h2"></path></svg></span><span class="nav-text">Produk Outlet</span></a>
+      </div>
+      <div class="menu-section">
+        <p class="menu-label"><span>Kontrol Stok</span></p>
+        <a href="stok-opname.html" class="nav-item" title="Stok Opname"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l2 2 4-4M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path></svg></span><span class="nav-text">Stok Opname</span></a>
+        <a href="lihat-stok.html" class="nav-item" title="Lihat Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 0 0-1-1.73L13 2.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16ZM3.3 7.2 12 12l8.7-4.8M12 22V12"></path></svg></span><span class="nav-text">Lihat Stok</span></a>
+      </div>
+      <div class="menu-section">
+        <p class="menu-label"><span>Laporan & Sistem</span></p>
+        <a href="riwayat-transaksi.html" class="nav-item" title="Riwayat Transaksi"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v5l3 2M4 4v5h5M4.6 15A8 8 0 1 0 5.7 6.3L4 9"></path></svg></span><span class="nav-text">Riwayat Transaksi</span></a>
+        <a href="admin.html" data-admin-menu class="nav-item hidden" title="Admin Sistem"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM19.4 15a1.7 1.7 0 0 0 .34 1.88l.03.03a2 2 0 0 1-2.83 2.83l-.03-.03A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6l-.02.02a2 2 0 0 1-3.96 0L10 20a1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.03.03a2 2 0 0 1-2.83-2.83l.03-.03A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1l-.02-.02a2 2 0 0 1 0-3.96L4 10a1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.03-.03a2 2 0 0 1 2.83-2.83l.03.03A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6l.02-.02a2 2 0 0 1 3.96 0L14 4a1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.03-.03a2 2 0 0 1 2.83 2.83l-.03.03A1.7 1.7 0 0 0 19.4 9c.1.36.3.7.6 1l.02.02a2 2 0 0 1 0 3.96L20 14c-.3.3-.5.64-.6 1Z"></path></svg></span><span class="nav-text">Admin Sistem</span></a>
+      </div>
     </nav>
-    <div class="p-4 border-t border-slate-800">
-      <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">Logout Sistem</button>
+    <div class="sidebar-footer">
+      <button type="button" onclick="showLogoutModal()" class="logout-button" title="Logout Sistem"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l5-5-5-5M21 12H9M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8"></path></svg></span><span class="logout-text">Logout Sistem</span></button>
     </div>
   </aside>
 
-  <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
-    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/70 backdrop-blur-sm sticky top-0 z-10 no-print">
-      <div class="min-w-0">
-        <h2 class="text-base sm:text-lg font-semibold text-sky-400 truncate">Produk Outlet</h2>
-        <p class="hidden sm:block text-xs text-slate-500">Catat produk terjual dan opname stok outlet.</p>
+
+  <main class="apj-main flex-1 flex flex-col">
+    <header class="topbar no-print">
+      <div class="topbar-title">
+        <div class="topbar-title-mark"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16M6 10v10h12V10M8 10V6a4 4 0 0 1 8 0v4M9 15h2m2 0h2"></path></svg></div>
+        <div class="min-w-0">
+          <h2>Produk Outlet</h2>
+          <p>Monitoring stok outlet, produk terjual, opname, dan laporan harian.</p>
+        </div>
       </div>
-      <div class="hidden sm:block text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-sky-400">Memuat...</span></div>
+      <div class="user-chip">
+        <div class="user-avatar"><span id="displayInisial">U</span></div>
+        <div class="user-meta text-right hidden sm:block">
+          <p id="displayNama" class="text-sm font-extrabold text-white leading-tight truncate max-w-[180px]">Memuat...</p>
+          <p id="displayLevel" class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mt-1">--</p>
+        </div>
+      </div>
     </header>
 
-    <div id="accessDeniedBox" class="hidden m-4 sm:m-8 rounded-xl border border-rose-800 bg-rose-950/30 p-5 text-rose-300 no-print">
+    <div id="accessDeniedBox" class="access-box hidden border border-rose-800 bg-rose-950/30 p-5 text-rose-300 no-print">
       <h3 class="font-bold text-white mb-1">Akses Ditolak</h3>
       <p class="text-sm">Menu ini hanya tersedia untuk role dengan izin ProdukOutlet.</p>
     </div>
 
-    <section class="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4"><p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Outlet Aktif</p><h3 id="kpiOutlet" class="text-lg font-bold text-sky-300 mt-2">-</h3></div>
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4"><p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Total Produk</p><h3 id="kpiProduk" class="text-2xl font-bold text-white mt-1">0</h3></div>
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4"><p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Masuk Hari Ini</p><h3 id="kpiMasuk" class="text-2xl font-bold text-emerald-300 mt-1">0</h3></div>
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4"><p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Terjual Hari Ini</p><h3 id="kpiTerjual" class="text-2xl font-bold text-rose-300 mt-1">0</h3></div>
-      </div>
-
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
-        <div class="grid grid-cols-1 lg:grid-cols-8 gap-4 mb-6 no-print">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal</label>
-            <input type="date" id="tanggalInput" onchange="loadProdukOutlet()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-sky-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Outlet</label>
-            <select id="outletSelect" onchange="loadProdukOutlet()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-sky-500 focus:outline-none"></select>
-          </div>
-          <div class="lg:col-span-2">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cari Produk</label>
-            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari produk..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-sky-500 focus:outline-none">
-          </div>
-          <div class="flex items-end">
-            <button type="button" onclick="openTerjualModal()" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-rose-600/20">Input Terjual</button>
-          </div>
-          <div class="flex items-end">
-            <button type="button" onclick="openOpnameModal()" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-amber-600/20">Stok Opname</button>
-          </div>
-          <div class="flex items-end">
-            <button type="button" onclick="printProdukOutlet('58')" class="w-full bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-slate-700">Print 58mm</button>
-          </div>
-          <div class="flex items-end">
-            <button type="button" onclick="printProdukOutlet('a4')" class="w-full bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-sky-700/20">Print A4</button>
+    <section class="page-scroll">
+      <div class="page-wrap">
+        <div class="hero-card no-print">
+          <div class="relative z-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+            <div>
+              <div class="soft-badge mb-4"><span class="h-2 w-2 rounded-full bg-cyan-300"></span><span>Stok Outlet</span></div>
+              <h1 class="hero-title">Produk Outlet APJ</h1>
+              <p class="hero-desc">Pantau stok produk outlet, catat penjualan harian, lakukan koreksi fisik lewat opname, dan cetak laporan outlet dalam format 58mm atau A4.</p>
+            </div>
+            <div class="rounded-2xl border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm text-blue-100">
+              Petugas: <span id="namaPetugas" class="font-extrabold text-white">Memuat...</span>
+            </div>
           </div>
         </div>
 
-        <div class="mb-4 text-xs text-slate-400 bg-sky-950/20 border border-sky-900/50 rounded-lg p-3 no-print">
-          Produk masuk otomatis dari <b>Transfer Produk Outlet</b>. Kasir bisa input <b>Terjual</b> secara bulk, dan koreksi stok fisik lewat <b>Opname</b>. Baris kosong/0 tidak disimpan.
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="mini-stat"><p>Outlet Aktif</p><strong id="kpiOutlet" class="text-cyan-300">-</strong></div>
+          <div class="mini-stat"><p>Total Produk</p><strong id="kpiProduk">0</strong></div>
+          <div class="mini-stat"><p>Masuk Hari Ini</p><strong id="kpiMasuk" class="text-emerald-300">0</strong></div>
+          <div class="mini-stat"><p>Terjual Hari Ini</p><strong id="kpiTerjual" class="text-rose-300">0</strong></div>
         </div>
 
-        <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll">
-          <table class="w-full text-left border-collapse min-w-[1050px]">
-            <thead>
-              <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
-                <th class="p-4 min-w-[280px]">Nama Produk</th>
-                <th class="p-4 min-w-[120px] text-center">Stok Kemarin</th>
-                <th class="p-4 min-w-[120px] text-center">Stok Masuk</th>
-                <th class="p-4 min-w-[120px] text-center">Stok Terjual</th>
-                <th class="p-4 min-w-[120px] text-center">Opname +/-</th>
-                <th class="p-4 min-w-[120px] text-center">Stok Sisa</th>
-                <th class="p-4 min-w-[100px] text-center">Satuan</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyProduk">
-              <tr><td colspan="7" class="p-8 text-center text-slate-500">Memuat data produk outlet...</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <p id="tableHint" class="text-xs text-slate-500">Stok sisa = stok kemarin + masuk - terjual + koreksi opname.</p>
-          <p id="rowsInfo" class="text-xs text-slate-500">0 data tampil</p>
+        <div class="panel">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-4 mb-5 no-print">
+            <div>
+              <label class="form-label">Tanggal</label>
+              <input type="date" id="tanggalInput" onchange="loadProdukOutlet()" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Outlet</label>
+              <select id="outletSelect" onchange="loadProdukOutlet()" class="form-control"></select>
+            </div>
+            <div class="lg:col-span-2">
+              <label class="form-label">Cari Produk</label>
+              <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari produk..." class="form-control">
+            </div>
+            <div class="flex items-end"><button type="button" onclick="openTerjualModal()" class="w-full btn-rose px-4 py-3 text-sm">Input Terjual</button></div>
+            <div class="flex items-end"><button type="button" onclick="openOpnameModal()" class="w-full btn-amber px-4 py-3 text-sm">Stok Opname</button></div>
+            <div class="flex items-end"><button type="button" onclick="printProdukOutlet('58')" class="w-full btn-slate px-4 py-3 text-sm">Print 58mm</button></div>
+            <div class="flex items-end"><button type="button" onclick="printProdukOutlet('a4')" class="w-full btn-sky px-4 py-3 text-sm">Print A4</button></div>
+          </div>
+
+          <div class="info-card mb-5 no-print">
+            Produk masuk otomatis dari <b class="text-blue-200">Transfer Produk Outlet</b>. Kasir bisa input <b class="text-rose-200">Terjual</b> secara bulk, dan koreksi stok fisik lewat <b class="text-amber-200">Opname</b>. Baris kosong/0 tidak disimpan.
+          </div>
+
+          <div class="table-shell table-scroll overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[1050px]">
+              <thead>
+                <tr class="thead-row text-xs uppercase tracking-wider">
+                  <th class="p-4 min-w-[280px]">Nama Produk</th>
+                  <th class="p-4 min-w-[120px] text-center">Stok Kemarin</th>
+                  <th class="p-4 min-w-[120px] text-center">Stok Masuk</th>
+                  <th class="p-4 min-w-[120px] text-center">Stok Terjual</th>
+                  <th class="p-4 min-w-[120px] text-center">Opname +/-</th>
+                  <th class="p-4 min-w-[120px] text-center">Stok Sisa</th>
+                  <th class="p-4 min-w-[100px] text-center">Satuan</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyProduk"><tr><td colspan="7" class="p-8 text-center text-slate-500">Memuat data produk outlet...</td></tr></tbody>
+            </table>
+          </div>
+          <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <p id="tableHint" class="text-xs text-slate-500">Stok sisa = stok kemarin + masuk - terjual + koreksi opname.</p>
+            <p id="rowsInfo" class="text-xs text-slate-500">0 data tampil</p>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
+
+
+
+  <button id="produkHelpFab" type="button" onclick="openProdukHelpModal(false)" class="help-fab no-print" aria-label="Buka panduan produk outlet" title="Panduan Produk Outlet">
+    <span class="help-fab-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span>
+    <span>Panduan Produk</span>
+  </button>
+
+  <div id="produkHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4 no-print">
+    <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeProdukHelpModal()"></div>
+    <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
+      <div class="relative z-10">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <p class="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-blue-200">
+              <span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span> Panduan Modul
+            </p>
+            <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-tight text-white">Cara pakai Produk Outlet</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-400">Panduan ini membantu kasir/PIC outlet membaca stok produk, mencatat produk terjual, dan melakukan opname fisik harian.</p>
+          </div>
+          <button type="button" onclick="closeProdukHelpModal()" class="w-11 h-11 rounded-2xl border border-slate-700 bg-slate-950/70 text-slate-300 hover:text-white hover:bg-slate-800 transition" aria-label="Tutup panduan">×</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+          <div class="help-step flex gap-3"><div class="help-step-number">1</div><div><p class="text-sm font-black text-white">Pilih tanggal & outlet</p><p class="mt-1 text-xs leading-5 text-slate-400">Tanggal menentukan laporan produk outlet yang dilihat. Owner bisa memilih outlet, sedangkan role outlet mengikuti aksesnya.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">2</div><div><p class="text-sm font-black text-white">Baca stok harian</p><p class="mt-1 text-xs leading-5 text-slate-400">Stok sisa dihitung dari stok kemarin + masuk dari transfer - terjual + koreksi opname.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">3</div><div><p class="text-sm font-black text-white">Input produk terjual</p><p class="mt-1 text-xs leading-5 text-slate-400">Klik <b class="text-rose-200">Input Terjual</b>, isi hanya produk yang terjual. Baris kosong atau 0 otomatis dilewati.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">4</div><div><p class="text-sm font-black text-white">Stok opname outlet</p><p class="mt-1 text-xs leading-5 text-slate-400">Klik <b class="text-amber-200">Stok Opname</b> untuk menyamakan stok sistem dengan stok fisik. Jika ada selisih, alasan wajib diisi.</p></div></div>
+        </div>
+
+        <div class="rounded-2xl border border-cyan-500/22 bg-cyan-500/10 p-4 mb-5">
+          <p class="text-sm font-black text-cyan-100">Print laporan outlet</p>
+          <p class="mt-1 text-xs sm:text-sm leading-6 text-cyan-100/75">Gunakan <b>Print 58mm</b> untuk rekap kecil per outlet, atau <b>Print A4</b> untuk laporan yang lebih formal. Data print mengikuti tanggal dan outlet yang sedang dipilih.</p>
+        </div>
+
+        <div class="rounded-2xl border border-amber-500/22 bg-amber-500/10 p-4 mb-5">
+          <p class="text-sm font-black text-amber-100">Catatan penting</p>
+          <p class="mt-1 text-xs sm:text-sm leading-6 text-amber-100/75">Produk masuk otomatis berasal dari Transfer Produk Outlet. Jangan input terjual sebelum memastikan tanggal dan outlet sudah benar.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol mengambang di pojok kanan bawah.</p>
+          <button type="button" onclick="closeProdukHelpModal()" class="btn-primary px-5 py-3 text-sm">Mengerti, lanjut</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <div id="modalTerjual" class="fixed inset-0 z-50 hidden items-center justify-center p-4 no-print">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm modal-overlay opacity-0" onclick="closeModal('modalTerjual')"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-5xl max-h-[90dvh] overflow-hidden transform scale-95 opacity-0 modal-content">
+    <div class="produk-modal-card relative w-full max-w-5xl max-h-[90dvh] overflow-hidden transform scale-95 opacity-0 modal-content">
       <div class="p-5 border-b border-slate-800 flex items-start justify-between gap-3">
         <div><p class="text-xs font-bold uppercase tracking-wider text-rose-400">Bulk Input</p><h3 class="text-lg font-bold text-white">Input Produk Terjual</h3><p class="text-sm text-slate-400 mt-1">Isi hanya produk yang terjual. Kosong atau 0 otomatis dilewati.</p></div>
         <button onclick="closeModal('modalTerjual')" class="text-slate-500 hover:text-white">✕</button>
@@ -207,14 +301,14 @@
       </div>
       <div class="p-5 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <p id="terjualSummary" class="text-xs text-slate-500">Belum ada qty terjual.</p>
-        <div class="flex gap-3"><button onclick="closeModal('modalTerjual')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded-lg border border-slate-700">Batal</button><button id="btnSaveTerjual" onclick="saveTerjual()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-lg">Simpan Terjual</button></div>
+        <div class="flex gap-3"><button onclick="closeModal('modalTerjual')" class="px-4 py-2 btn-slate text-sm px-4 py-2">Batal</button><button id="btnSaveTerjual" onclick="saveTerjual()" class="btn-rose px-5 py-2 text-sm">Simpan Terjual</button></div>
       </div>
     </div>
   </div>
 
   <div id="modalOpname" class="fixed inset-0 z-50 hidden items-center justify-center p-4 no-print">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm modal-overlay opacity-0" onclick="closeModal('modalOpname')"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-6xl max-h-[90dvh] overflow-hidden transform scale-95 opacity-0 modal-content">
+    <div class="produk-modal-card relative w-full max-w-6xl max-h-[90dvh] overflow-hidden transform scale-95 opacity-0 modal-content">
       <div class="p-5 border-b border-slate-800 flex items-start justify-between gap-3">
         <div><p class="text-xs font-bold uppercase tracking-wider text-amber-400">Koreksi Fisik</p><h3 class="text-lg font-bold text-white">Stok Opname Produk Outlet</h3><p class="text-sm text-slate-400 mt-1">Isi stok fisik untuk produk yang dicek. Jika selisih tidak nol, alasan wajib diisi.</p></div>
         <button onclick="closeModal('modalOpname')" class="text-slate-500 hover:text-white">✕</button>
@@ -227,7 +321,7 @@
       </div>
       <div class="p-5 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <p id="opnameSummary" class="text-xs text-slate-500">Belum ada stok fisik yang diisi.</p>
-        <div class="flex gap-3"><button onclick="closeModal('modalOpname')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded-lg border border-slate-700">Batal</button><button id="btnSaveOpname" onclick="saveOpname()" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-lg">Simpan Opname</button></div>
+        <div class="flex gap-3"><button onclick="closeModal('modalOpname')" class="px-4 py-2 btn-slate text-sm px-4 py-2">Batal</button><button id="btnSaveOpname" onclick="saveOpname()" class="btn-amber px-5 py-2 text-sm">Simpan Opname</button></div>
       </div>
     </div>
   </div>
@@ -267,14 +361,14 @@
 
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none no-print">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
+    <div class="produk-modal-card relative p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
       <h3 class="text-lg font-bold text-white text-center mb-2">Konfirmasi Keluar</h3>
       <p class="text-sm text-slate-400 text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ?</p>
-      <div class="flex gap-3"><button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg border border-slate-600">Batal</button><button onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg">Ya, Keluar</button></div>
+      <div class="flex gap-3"><button onclick="closeLogoutModal()" class="flex-1 btn-slate px-4 py-2 text-sm">Batal</button><button onclick="executeLogout()" class="flex-1 btn-rose px-4 py-2 text-sm">Ya, Keluar</button></div>
     </div>
   </div>
 
-  <script>
+<script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
     let currentRows = [];
     let filteredRows = [];
@@ -624,17 +718,96 @@
 
 
   <script>
-    (function showAdminMenuForAuthorizedRoles() {
-      const adminMenuLink = document.getElementById('adminMenuLink');
-      if (!adminMenuLink) return;
-
-      const level = String(localStorage.getItem('APJ_USER_LEVEL') || '').trim().toLowerCase();
-      const allowedLevels = ['owner', 'superadmin', 'super admin', 'supervisor'];
-
-      if (allowedLevels.includes(level)) {
-        adminMenuLink.classList.remove('hidden');
+    // APJ Produk Outlet helpers: panduan + sidebar collapse + identitas user.
+    const produkHelpModal = () => document.getElementById('produkHelpModal');
+    function openProdukHelpModal(autoOpen = false) {
+      const modal = produkHelpModal();
+      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+      const content = modal ? modal.querySelector('.modal-content') : null;
+      if (!modal || !overlay || !content) return;
+      if (autoOpen) modal.dataset.autoOpen = 'true';
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      overlay.classList.add('opacity-100');
+      overlay.classList.remove('opacity-0');
+      content.classList.add('scale-100', 'opacity-100');
+      content.classList.remove('scale-95', 'opacity-0');
+    }
+    function closeProdukHelpModal() {
+      const modal = produkHelpModal();
+      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+      const content = modal ? modal.querySelector('.modal-content') : null;
+      if (!modal || !overlay || !content) return;
+      sessionStorage.setItem('APJ_PRODUK_HELP_SEEN', 'true');
+      overlay.classList.remove('opacity-100');
+      overlay.classList.add('opacity-0');
+      content.classList.remove('scale-100', 'opacity-100');
+      content.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 250);
+    }
+    function setupAdminMenu(levelValue) {
+      const level = String(levelValue || localStorage.getItem('APJ_USER_LEVEL') || '').trim().toLowerCase();
+      const show = level === 'owner' || level === 'superadmin' || level === 'super admin' || level === 'supervisor';
+      document.querySelectorAll('[data-admin-menu]').forEach(el => el.classList.toggle('hidden', !show));
+    }
+    function applySidebarState() {
+      const sidebar = document.getElementById('sidebar');
+      if (!sidebar) return;
+      if (window.innerWidth < 1024) {
+        sidebar.classList.remove('sidebar-collapsed');
+        document.body.classList.remove('sidebar-collapsed-active');
+        return;
       }
-    })();
+      const collapsed = localStorage.getItem('APJ_SIDEBAR_COLLAPSED') === 'true';
+      sidebar.classList.toggle('sidebar-collapsed', collapsed);
+      document.body.classList.toggle('sidebar-collapsed-active', collapsed);
+    }
+    function toggleSidebarCollapse() {
+      const sidebar = document.getElementById('sidebar');
+      if (!sidebar || window.innerWidth < 1024) return;
+      const willCollapse = !sidebar.classList.contains('sidebar-collapsed');
+      sidebar.classList.toggle('sidebar-collapsed', willCollapse);
+      document.body.classList.toggle('sidebar-collapsed-active', willCollapse);
+      localStorage.setItem('APJ_SIDEBAR_COLLAPSED', willCollapse ? 'true' : 'false');
+    }
+    function openMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (!sidebar || !backdrop) return;
+      sidebar.classList.remove('sidebar-collapsed');
+      sidebar.classList.remove('-translate-x-full');
+      backdrop.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+    function closeMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (!sidebar || !backdrop) return;
+      if (window.innerWidth < 1024) sidebar.classList.add('-translate-x-full');
+      backdrop.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+      if (window.innerWidth >= 1024) applySidebarState();
+    }
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeMobileSidebar(); closeProdukHelpModal(); } });
+    document.addEventListener('DOMContentLoaded', () => {
+      applySidebarState();
+      setupAdminMenu(localStorage.getItem('APJ_USER_LEVEL'));
+      const userName = localStorage.getItem('APJ_USER_NAME') || '-';
+      const userLevel = localStorage.getItem('APJ_USER_LEVEL') || '-';
+      const displayNama = document.getElementById('displayNama');
+      const displayLevel = document.getElementById('displayLevel');
+      const displayInisial = document.getElementById('displayInisial');
+      if (displayNama) displayNama.textContent = userName;
+      if (displayLevel) displayLevel.textContent = userLevel;
+      if (displayInisial) displayInisial.textContent = (userName || 'U').charAt(0).toUpperCase();
+      setTimeout(() => {
+        const denied = !document.getElementById('accessDeniedBox')?.classList.contains('hidden');
+        if (!denied && sessionStorage.getItem('APJ_PRODUK_HELP_SEEN') !== 'true') openProdukHelpModal(true);
+      }, 650);
+    });
+    window.addEventListener('resize', applySidebarState);
   </script>
+
+
 </body>
 </html>
