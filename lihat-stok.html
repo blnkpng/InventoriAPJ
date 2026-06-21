@@ -34,7 +34,7 @@
       #printTable th, #printTable td { border: 1px solid black !important; padding: 4px 5px !important; color: black !important; }
       #printTable th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       #printTable td { text-align: center !important; }
-      #printTable td:nth-child(4) { text-align: left !important; }
+      #printTable td:nth-child(3) { text-align: left !important; }
       #printFooter { page-break-inside: avoid; }
       .print-loc { text-align: center; margin-bottom: 15px; font-size: 10pt; color: black !important; }
       .ttd-container { display: flex; justify-content: space-around; width: 100%; gap: 12px; }
@@ -75,13 +75,14 @@
         </div>
       </div>
       <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-        <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
-        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
-        <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
-        <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
-        <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
-        <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-600/10 text-emerald-500 rounded-lg font-medium text-sm transition-colors border border-emerald-500/20">Lihat Stok</a>
-      </nav>
+      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
+      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
+      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
+      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
+      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produksi</a>
+      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
+      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-600/10 text-emerald-500 rounded-lg font-medium text-sm transition-colors border border-emerald-500/20">Lihat Stok</a>
+    </nav>
   
     <div class="p-4 border-t border-slate-800">
       <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
@@ -136,15 +137,14 @@
           </div>
 
           <div id="infoBox" class="mb-4 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg p-3">
-            Pilih kategori untuk memuat stok. Kategori <b>Produksi</b> akan tampil per lokasi: PUSAT dan outlet jika sudah ada transfer.
+            Pilih kategori untuk memuat stok. Kategori <b>Produksi</b> akan tampil unik per lauk/jadi, bukan duplikat per bahan baku.
           </div>
 
           <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll">
-            <table class="w-full text-left border-collapse min-w-[1040px]">
+            <table class="w-full text-left border-collapse min-w-[920px]">
               <thead>
                 <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
                   <th class="p-4 w-[70px] text-center">No</th>
-                  <th class="p-4 min-w-[110px] text-center">Lokasi</th>
                   <th class="p-4 min-w-[140px] text-center">ID Barang</th>
                   <th class="p-4 min-w-[300px]">Nama Barang</th>
                   <th class="p-4 min-w-[130px] text-center">Qty Stok</th>
@@ -154,7 +154,7 @@
                 </tr>
               </thead>
               <tbody id="tbodyStok">
-                <tr><td colspan="8" class="p-8 text-center text-slate-500">Pilih kategori di atas untuk memuat data stok.</td></tr>
+                <tr><td colspan="7" class="p-8 text-center text-slate-500">Pilih kategori di atas untuk memuat data stok.</td></tr>
               </tbody>
             </table>
           </div>
@@ -214,7 +214,7 @@
     <div id="printTableContainer">
       <table id="printTable">
         <thead>
-          <tr><th>No</th><th>Lokasi</th><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th><th>Status</th><th>Last Update</th></tr>
+          <tr><th>No</th><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th><th>Status</th><th>Last Update</th></tr>
         </thead>
         <tbody id="printTbody"></tbody>
       </table>
@@ -385,7 +385,7 @@ function buildKategoriOptions() {
       filteredRows = [];
       document.getElementById('searchInput').value = '';
       document.getElementById('cardKategori').textContent = currentKategoriLabel;
-      document.getElementById('tbodyStok').innerHTML = '<tr><td colspan="8" class="p-8 text-center text-slate-500 animate-pulse">Menarik data dari database...</td></tr>';
+      document.getElementById('tbodyStok').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500 animate-pulse">Menarik data dari database...</td></tr>';
       document.getElementById('btnRefresh').disabled = true;
 
       try {
@@ -411,7 +411,7 @@ function buildKategoriOptions() {
               showToast('Produksi tampil via fallback. Update Code.gs v3 agar stok produksi terbaca lebih akurat.', 'error');
             }
           }
-          document.getElementById('infoBox').innerHTML = 'Mode <b>Produksi</b>: stok dibaca dari <b>STOK_AKHIR</b> dan ditampilkan per lokasi. PUSAT berkurang saat transfer, outlet bertambah saat menerima transfer.';
+          document.getElementById('infoBox').innerHTML = 'Mode <b>Produksi</b>: laporan dibuat 1 baris per lauk/jadi. Jika sumber masih <b>TRANSAKSI_OUTPUT_PRODUKSI</b>, sebaiknya STOK_AKHIR produksi juga dibuat agar stok akhir benar-benar final.';
         } else {
           result = await fetchApi({ action: 'getBarang', sheetName: select.value, context: 'operasional' });
           document.getElementById('infoBox').innerHTML = 'Mode <b>General</b>: stok dibaca dari master kategori dan dicocokkan ke <b>STOK_AKHIR</b> berdasarkan ID/Nama barang.';
@@ -434,7 +434,6 @@ function buildKategoriOptions() {
 
     function normalizeRows(rows) {
       return rows.map(r => ({
-        lokasi: r.lokasi || 'PUSAT',
         id: r.id || r.idProduksi || '',
         nama: r.nama || r.produksi || '',
         stokTersedia: r.stokTersedia ?? 0,
@@ -449,14 +448,14 @@ function buildKategoriOptions() {
       const query = document.getElementById('searchInput').value.trim().toLowerCase();
       filteredRows = currentRows.filter(r => {
         if (!query) return true;
-        return String(r.lokasi).toLowerCase().includes(query) || String(r.id).toLowerCase().includes(query) || String(r.nama).toLowerCase().includes(query);
+        return String(r.id).toLowerCase().includes(query) || String(r.nama).toLowerCase().includes(query);
       });
 
       updateCards(filteredRows);
 
       const tbody = document.getElementById('tbodyStok');
       if (!filteredRows.length) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-slate-500">Tidak ada data yang cocok.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500">Tidak ada data yang cocok.</td></tr>';
         document.getElementById('rowsInfo').textContent = '0 data tampil';
         return;
       }
@@ -466,7 +465,6 @@ function buildKategoriOptions() {
         return `
           <tr class="border-b border-slate-800/60 bg-slate-950 hover:bg-slate-900 transition-colors">
             <td class="p-4 text-center text-sm text-slate-500">${idx + 1}</td>
-            <td class="p-4 text-center text-xs font-bold text-blue-300">${escapeHtml(r.lokasi || 'PUSAT')}</td>
             <td class="p-4 text-center text-sm font-medium text-slate-300">${escapeHtml(r.id || '-')}</td>
             <td class="p-4 text-sm font-semibold text-white">${escapeHtml(r.nama || '-')}</td>
             <td class="p-4 text-center text-sm font-bold ${parseNumber(r.stokTersedia) <= 0 ? 'text-rose-400' : 'text-emerald-400'}">${formatNumber(r.stokTersedia)}</td>
@@ -516,7 +514,7 @@ function buildKategoriOptions() {
     }
 
     function setEmpty(message, type = 'default') {
-      document.getElementById('tbodyStok').innerHTML = `<tr><td colspan="8" class="p-8 text-center ${type === 'error' ? 'text-rose-500' : 'text-slate-500'}">${escapeHtml(message)}</td></tr>`;
+      document.getElementById('tbodyStok').innerHTML = `<tr><td colspan="7" class="p-8 text-center ${type === 'error' ? 'text-rose-500' : 'text-slate-500'}">${escapeHtml(message)}</td></tr>`;
       currentRows = [];
       filteredRows = [];
       updateCards([]);
@@ -598,7 +596,6 @@ function buildKategoriOptions() {
         const status = buildStatus(r).label;
         return `<tr>
           <td>${idx + 1}</td>
-          <td>${escapeHtml(r.lokasi || 'PUSAT')}</td>
           <td>${escapeHtml(r.id || '-')}</td>
           <td>${escapeHtml(r.nama || '-')}</td>
           <td>${formatNumber(r.stokTersedia)}</td>
