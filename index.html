@@ -60,25 +60,289 @@
     }
   
 
-    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
-    @media screen and (max-width: 768px) {
-      .table-scroll { overflow-x: visible !important; }
-      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
-      .table-scroll thead { display: none !important; }
-      .table-scroll tbody { display: block !important; width: 100% !important; }
-      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
-      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
-      .table-scroll td:last-child { border-bottom: 0 !important; }
-      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
-      .table-scroll td > * { max-width: 58%; }
-      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
-      .table-scroll .text-center { text-align: right !important; }
-      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
+    /* ================= APJ INVENTORI v15 UI PRO ================= */
+    :root {
+      --apj-blue: #3b82f6;
+      --apj-sky: #38bdf8;
+      --apj-emerald: #34d399;
+      --apj-amber: #f59e0b;
+      --apj-rose: #fb7185;
+      --apj-violet: #a78bfa;
+      --apj-bg: #0f172a;
+      --apj-card: rgba(15, 23, 42, .86);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(59,130,246,.18), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(167,139,250,.14), transparent 24%),
+        radial-gradient(circle at 80% 100%, rgba(52,211,153,.10), transparent 30%),
+        #0f172a !important;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, rgba(0,0,0,.72), transparent 72%);
+    }
+    aside, main, #customToast, .apj-help-fab, .apj-mobile-menu, .apj-sidebar-backdrop, .apj-guide-modal { position: relative; z-index: 1; }
+    aside {
+      background: linear-gradient(180deg, rgba(2,6,23,.98), rgba(15,23,42,.96)) !important;
+      border-right-color: rgba(51,65,85,.85) !important;
+      box-shadow: 18px 0 50px rgba(0,0,0,.18);
+    }
+    aside nav a {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid transparent;
+    }
+    aside nav a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,.08), transparent 45%);
+      opacity: 0;
+      transform: translateX(-30%);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    aside nav a:hover::after { opacity: 1; transform: translateX(0); }
+    .apj-nav-ico {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      background: rgba(15,23,42,.85);
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .apj-active-link {
+      background: linear-gradient(135deg, rgba(59,130,246,.18), rgba(14,165,233,.08)) !important;
+      border-color: rgba(59,130,246,.35) !important;
+      color: #fff !important;
+      box-shadow: 0 14px 35px rgba(37,99,235,.12);
+    }
+    .apj-card-glow, .bg-slate-950, .bg-slate-900\/80 {
+      box-shadow: 0 22px 70px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .apj-lift, .bg-slate-950.border, .bg-slate-900.border {
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .apj-lift:hover, .bg-slate-950.border:hover {
+      transform: translateY(-2px);
+      border-color: rgba(96,165,250,.35) !important;
+      box-shadow: 0 24px 70px rgba(15,23,42,.38), 0 0 0 1px rgba(96,165,250,.06) inset;
+    }
+    .apj-soft-animate { animation: apjSoftEnter .45s ease-out both; }
+    @keyframes apjSoftEnter { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes apjPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.35); } 50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
+    .apj-help-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 60;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,.35);
+      background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(14,165,233,.9));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 22px 60px rgba(37,99,235,.32);
+      transition: transform .2s ease, filter .2s ease;
+      animation: apjPulse 2.2s ease-in-out infinite;
+    }
+    .apj-help-fab:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.08); }
+    .apj-guide-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .apj-guide-modal.show { display: flex; }
+    .apj-guide-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(2,6,23,.82);
+      backdrop-filter: blur(10px);
+    }
+    .apj-guide-card {
+      position: relative;
+      width: min(760px, 100%);
+      max-height: 90dvh;
+      overflow: auto;
+      border-radius: 24px;
+      border: 1px solid rgba(148,163,184,.22);
+      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
+      box-shadow: 0 30px 120px rgba(0,0,0,.55);
+      padding: 22px;
+      transform: translateY(10px) scale(.98);
+      opacity: 0;
+      transition: transform .24s ease, opacity .24s ease;
+    }
+    .apj-guide-modal.show .apj-guide-card { transform: translateY(0) scale(1); opacity: 1; }
+    .apj-guide-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .apj-guide-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      background: linear-gradient(135deg, rgba(59,130,246,.2), rgba(14,165,233,.10));
+      border: 1px solid rgba(96,165,250,.28);
+    }
+    .apj-guide-steps { display: grid; gap: 10px; margin: 16px 0; }
+    .apj-guide-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(15,23,42,.78);
+      border: 1px solid rgba(71,85,105,.55);
+    }
+    .apj-step-no {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+    }
+    .apj-guide-note {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(245,158,11,.28);
+      background: rgba(120,53,15,.20);
+      color: #fde68a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .apj-guide-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+    .apj-btn-soft {
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(15,23,42,.9);
+      color: #e2e8f0;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .apj-btn-primary {
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      color: white;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 14px 40px rgba(37,99,235,.22);
+    }
+    .apj-mobile-menu {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 70;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.28);
+      background: rgba(2,6,23,.88);
+      color: white;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 18px 45px rgba(0,0,0,.28);
+    }
+    .apj-sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 65;
+      display: none;
+      background: rgba(2,6,23,.68);
+      backdrop-filter: blur(7px);
+    }
+    .apj-sidebar-backdrop.show { display: block; }
+    @media (max-width: 1023px) {
+      body { min-height: 100dvh; }
+      .apj-mobile-menu { display: inline-flex; }
+      aside {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: min(290px, 86vw) !important;
+        z-index: 80 !important;
+        transform: translateX(-105%);
+        transition: transform .28s ease !important;
+      }
+      aside.apj-open { transform: translateX(0) !important; }
+      main header { padding-left: 68px !important; }
+      input, select, textarea { font-size: 16px !important; }
+      .apj-help-fab { right: 14px; bottom: 14px; padding: 11px 13px; }
+      .apj-help-fab span:last-child { display: none; }
+    }
+    @media print {
+      .apj-help-fab, .apj-guide-modal, .apj-mobile-menu, .apj-sidebar-backdrop { display: none !important; }
+      body::before { display: none !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    }
+    /* ================= /APJ INVENTORI v15 UI PRO ================= */
+
+
+    /* APJ Login v15 Pro polish */
+    body::after {
+      content: "";
+      position: fixed;
+      width: 460px;
+      height: 460px;
+      right: -140px;
+      bottom: -160px;
+      background: radial-gradient(circle, rgba(59,130,246,.28), transparent 64%);
+      pointer-events: none;
+      animation: apjFloat 8s ease-in-out infinite alternate;
+    }
+    @keyframes apjFloat { from { transform: translate(0, 0) scale(1); } to { transform: translate(-18px, -26px) scale(1.08); } }
+    .apj-login-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(59,130,246,.25);
+      background: rgba(37,99,235,.10);
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 800;
     }
 
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 antialiased">
+<body data-apj-page="index.html" class="min-h-screen flex items-center justify-center p-4 antialiased">
 
   <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert">
     <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg" id="toastIconContainer">
@@ -97,7 +361,8 @@
         </svg>
       </div>
       <h1 class="text-xl font-bold tracking-tight text-white uppercase">Sistem Inventori APJ</h1>
-      <p class="text-xs text-slate-400 mt-1">Standardisasi & Manajemen Stok Terintegrasi • <span class="text-blue-400 font-semibold">Versi 1.0</span></p>
+      <p class="text-xs text-slate-400 mt-1">Standardisasi & Manajemen Stok Terintegrasi • <span class="text-blue-400 font-semibold">v15 UI Pro</span></p>
+      <div class="apj-login-mark">✨ Tampilan baru • Data lama tetap aman</div>
     </div>
 
     <form id="loginForm" class="space-y-5" onsubmit="handleLogin(event)">
@@ -206,7 +471,6 @@
           localStorage.setItem('APJ_SESSION_ACTIVE', 'true');
           localStorage.setItem('APJ_USER_NAME', result.user.nama);
           localStorage.setItem('APJ_USER_LEVEL', result.user.level);
-          localStorage.setItem('APJ_USER_OUTLET', result.user.outlet || '');
           
           // BARU: Simpan data permission sebagai string JSON
           localStorage.setItem('APJ_USER_PERMISSIONS', JSON.stringify(result.user.permissions));
@@ -234,36 +498,5 @@
       }
     }
   </script>
-
-
-  <script>
-    // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
-    (function(){
-      function headersFor(table){
-        return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
-      }
-      function labelTable(table){
-        var headers = headersFor(table);
-        if (!headers.length) return;
-        Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
-          Array.from(row.children).forEach(function(cell, idx){
-            if (!cell || cell.tagName !== 'TD') return;
-            if (!cell.getAttribute('data-label')) cell.setAttribute('data-label', headers[idx] || 'Data');
-          });
-        });
-      }
-      function applyResponsiveTableLabels(root){
-        root = root || document;
-        root.querySelectorAll('.table-scroll table').forEach(labelTable);
-      }
-      window.applyResponsiveTableLabels = applyResponsiveTableLabels;
-      document.addEventListener('DOMContentLoaded', function(){
-        applyResponsiveTableLabels(document);
-        var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
-        obs.observe(document.body, { childList:true, subtree:true });
-      });
-    })();
-  </script>
-
 </body>
 </html>
