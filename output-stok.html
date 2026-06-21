@@ -1,132 +1,375 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Output Stok | APJ Inventori</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-    .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all 0.4s ease; z-index: 9999; }
-    .toast.show { top: 24px; }
-    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-    .hidden-soft { display: none !important; }
 
-    /* Logout modal, disamakan dengan dashboard */
-    .modal-overlay { transition: opacity 0.3s ease-out; }
-    .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
+    :root {
+      color-scheme: dark;
+      --apj-bg: #0f172a;
+      --apj-card: rgba(15, 23, 42, .84);
+      --apj-border: rgba(51, 65, 85, .78);
+      --apj-blue: #2563eb;
+      --apj-cyan: #06b6d4;
+      --apj-emerald: #10b981;
+      --apj-rose: #f43f5e;
+      --apj-amber: #f59e0b;
+      --bg: #0f172a;
+      --surface: rgba(15, 23, 42, .84);
+      --surface-solid: #0f172a;
+      --surface-soft: rgba(2, 6, 23, .46);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --muted-2: #64748b;
+      --border: rgba(51, 65, 85, .78);
+      --border-strong: rgba(96, 165, 250, .34);
+      --shadow: 0 26px 90px rgba(0,0,0,.50), inset 0 1px 0 rgba(255,255,255,.04);
+      --shadow-soft: 0 18px 46px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.035);
+      --primary: #2563eb;
+      --primary-2: #0ea5e9;
+      --accent: #06b6d4;
+      --blue: #2563eb;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --amber: #f59e0b;
+      --violet: #8b5cf6;
+      --sky: #06b6d4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 20%, rgba(37, 99, 235, .20), transparent 32%),
+        radial-gradient(circle at 82% 15%, rgba(6, 182, 212, .16), transparent 28%),
+        radial-gradient(circle at 70% 86%, rgba(16, 185, 129, .12), transparent 24%),
+        linear-gradient(135deg, #020617 0%, #0f172a 52%, #111827 100%);
+    }
+    body::before {
+      content:"";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, .05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 78%);
+      z-index: 0;
+    }
+    body > * { position: relative; z-index: 1; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+    input[type=number] { -moz-appearance:textfield; }
 
+    .apj-sidebar {
+      width: 286px;
+      height: 100dvh;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.97));
+      border-right: 1px solid rgba(51,65,85,.70);
+      box-shadow: 18px 0 50px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04);
+      backdrop-filter: blur(18px);
+      color: #f8fafc;
+    }
+    .sidebar-head { padding:18px 18px 10px; }
+    .brand-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; background:transparent; border:0; color:inherit; text-align:left; transition:transform .18s ease; }
+    .brand-toggle:hover { transform: translateY(-1px); }
+    .logo-stack { display:flex; align-items:center; gap:12px; min-width:0; }
+    .logo-mark { width:54px; height:54px; border-radius:22px; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#ffffff,#dff6ff 48%,#2563eb); color:#0a0a0b; font-weight:950; letter-spacing:-.05em; box-shadow:0 16px 34px rgba(37,99,235,.26); }
+    .brand-text p:first-child { font-size:22px; line-height:1; font-weight:950; letter-spacing:-.04em; color:#fff; }
+    .brand-text p:last-child { margin-top:3px; font-size:11px; font-weight:900; letter-spacing:.18em; color:#7dd3fc; }
+    .sidebar-nav { flex:1 1 auto; overflow:hidden; padding:8px 15px 12px; display:flex; flex-direction:column; gap:9px; }
+    .menu-section { display:flex; flex-direction:column; gap:4px; min-width:0; }
+    .menu-label { padding:0 12px 2px; color:rgba(203,213,225,.62); font-size:9px; font-weight:950; text-transform:uppercase; letter-spacing:.17em; line-height:1; white-space:nowrap; }
+    .nav-item { display:flex; align-items:center; gap:11px; min-height:39px; padding:8px 12px; border-radius:16px; color:rgba(203,213,225,.62); font-size:13px; font-weight:780; border:1px solid transparent; transition:all .16s ease; min-width:0; }
+    .nav-item:hover { color:#fff; background:rgba(255,255,255,.065); transform:translateX(2px); }
+    .nav-item.active { color:#fff; background:linear-gradient(135deg, rgba(37,99,235,.38), rgba(6,182,212,.15)); border-color:rgba(125,211,252,.20); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 12px 28px rgba(37,99,235,.18); }
+    .nav-icon { width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; opacity:.94; }
+    .nav-icon svg { width:19px; height:19px; stroke-width:1.9; }
+    .nav-text { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sidebar-footer { padding:12px 15px 16px; border-top:1px solid rgba(255,255,255,.08); }
+    .logout-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:rgba(244,63,94,.12); border:1px solid rgba(244,63,94,.25); color:#fb7185; font-size:13.5px; font-weight:880; transition:all .16s ease; }
+    .logout-button:hover { background:rgba(244,63,94,.20); color:#fecdd3; transform:translateY(-1px); }
+    #sidebar.sidebar-collapsed { width:88px; }
+    #sidebar.sidebar-collapsed .brand-text, #sidebar.sidebar-collapsed .nav-text, #sidebar.sidebar-collapsed .menu-label span, #sidebar.sidebar-collapsed .logout-text { display:none; }
+    #sidebar.sidebar-collapsed .sidebar-head { padding:18px 14px 12px; }
+    #sidebar.sidebar-collapsed .brand-toggle { justify-content:center; }
+    #sidebar.sidebar-collapsed .logo-mark { width:52px; height:52px; border-radius:20px; }
+    #sidebar.sidebar-collapsed .sidebar-nav { padding-left:14px; padding-right:14px; align-items:center; gap:11px; }
+    #sidebar.sidebar-collapsed .menu-section { align-items:center; gap:7px; }
+    #sidebar.sidebar-collapsed .menu-label { width:34px; height:1px; padding:0; margin:2px 0; background:rgba(255,255,255,.18); border-radius:999px; }
+    #sidebar.sidebar-collapsed .nav-item { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
+    #sidebar.sidebar-collapsed .sidebar-footer { padding:12px 14px 16px; }
+    #sidebar.sidebar-collapsed .logout-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
 
-    /* Responsif mobile/tablet */
-    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-    .table-scroll::-webkit-scrollbar { height: 8px; }
-    .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
-    @media (max-width: 1023px) {
-      .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
-      input, select, textarea { font-size: 16px; } /* cegah auto-zoom iOS */
-      main { width: 100%; }
+    .apj-main { min-width:0; background:transparent; }
+    .topbar { height:84px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:16px 24px; border-bottom:1px solid var(--border); background:rgba(2,6,23,.72); backdrop-filter:blur(18px); position:sticky; top:0; z-index:20; }
+    .topbar-title { min-width:0; display:flex; align-items:center; gap:14px; }
+    .topbar-title-mark { width:42px; height:42px; border-radius:16px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, rgba(37,99,235,.18), rgba(6,182,212,.10)); border:1px solid rgba(96,165,250,.24); color:#7dd3fc; }
+    .topbar-title h2 { color:var(--text); font-size:18px; font-weight:900; letter-spacing:-.02em; line-height:1.1; }
+    .topbar-title p { color:var(--muted); font-size:12px; font-weight:700; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .user-chip { display:flex; align-items:center; gap:12px; min-width:0; }
+    .user-avatar { width:52px; height:52px; border-radius:19px; display:flex; align-items:center; justify-content:center; font-weight:950; color:#fff; background:linear-gradient(135deg,#2563eb,#06b6d4); box-shadow:0 14px 32px rgba(37,99,235,.28); flex:0 0 auto; }
+    .user-meta { min-width:0; line-height:1.12; }
+    .icon-button { width:48px; height:48px; border-radius:18px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); background:rgba(255,255,255,.035); color:var(--text); transition:transform .15s ease, border-color .15s ease, background .15s ease; backdrop-filter:blur(14px); }
+    .icon-button:hover { transform:translateY(-1px); border-color:var(--border-strong); background:rgba(255,255,255,.06); }
+    .page-scroll { overflow:auto; height:calc(100dvh - 84px); padding:22px 24px 30px; scroll-behavior:smooth; }
+    .page-wrap { max-width:1500px; margin:0 auto; display:flex; flex-direction:column; gap:18px; }
+    .hero-card { position:relative; overflow:hidden; border-radius:26px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(15,23,42,.88), rgba(2,6,23,.90)); padding:22px; box-shadow:var(--shadow); backdrop-filter:blur(20px); }
+    .hero-card::before { content:""; position:absolute; inset:-80px -40px auto auto; width:270px; height:270px; border-radius:999px; background:rgba(37,99,235,.20); filter:blur(32px); pointer-events:none; }
+    .hero-card::after { content:""; position:absolute; inset:auto auto -120px -80px; width:260px; height:260px; border-radius:999px; background:rgba(6,182,212,.16); filter:blur(34px); pointer-events:none; }
+    .hero-title { color:var(--text); font-size:clamp(26px,2.6vw,36px); font-weight:950; line-height:1.06; letter-spacing:-.045em; }
+    .hero-desc { color:var(--muted); max-width:760px; font-size:14px; line-height:1.58; margin-top:10px; }
+    .soft-badge { display:inline-flex; align-items:center; gap:8px; padding:7px 11px; border-radius:999px; background:rgba(37,99,235,.13); color:#7dd3fc; border:1px solid rgba(96,165,250,.24); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.065em; }
+    .panel, .mini-stat { border:1px solid var(--apj-border); background:linear-gradient(180deg, rgba(15,23,42,.84), rgba(2,6,23,.78)); box-shadow:var(--shadow-soft); backdrop-filter:blur(18px); }
+    .panel { border-radius:24px; padding:18px; overflow:hidden; }
+    .mini-stat { border-radius:20px; padding:14px 15px; }
+    .mini-stat p { color:var(--muted); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.06em; }
+    .mini-stat strong { display:block; color:var(--text); font-size:14px; font-weight:900; margin-top:4px; }
+    .info-card { border-radius:18px; border:1px solid rgba(96,165,250,.18); background:rgba(37,99,235,.09); padding:13px 14px; color:var(--muted); font-size:12px; line-height:1.55; }
+    .form-label { display:block; color:var(--muted); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+    .form-control { width:100%; border-radius:16px; border:1px solid var(--border); background:rgba(2,6,23,.62); color:#fff; padding:11px 13px; font-size:14px; outline:none; transition:all .16s ease; }
+    .form-control:focus { border-color:rgba(59,130,246,.95); box-shadow:0 0 0 4px rgba(37,99,235,.12); }
+    .table-shell { border:1px solid var(--border); border-radius:20px; overflow:hidden; background:rgba(2,6,23,.42); }
+    .table-scroll { -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+    .table-scroll::-webkit-scrollbar { height:8px; }
+    .table-scroll::-webkit-scrollbar-thumb { background:rgba(100,116,139,.45); border-radius:999px; }
+    .thead-row { background:rgba(15,23,42,.72); border-bottom:1px solid var(--border); color:var(--muted); }
+    .btn-primary { border-radius:16px; background:linear-gradient(135deg,#2563eb,#0ea5e9); color:#fff; font-weight:900; box-shadow:0 16px 32px rgba(37,99,235,.24); transition:all .16s ease; }
+    .btn-primary:hover { filter:brightness(1.05); transform:translateY(-1px); }
+    .btn-emerald { border-radius:16px; background:rgba(16,185,129,.14); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; font-weight:900; transition:all .16s ease; }
+    .btn-emerald:hover { background:rgba(16,185,129,.20); transform:translateY(-1px); }
+    .toast {
+      position:fixed;
+      top:18px;
+      left:calc(50% + 143px);
+      transform:translate(-50%,-14px) scale(.98);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .24s ease, transform .24s cubic-bezier(.16,1,.3,1), left .28s ease;
+      z-index:9999;
+      min-width:280px;
+      max-width:min(460px,calc(100vw - 32px));
+      border-radius:22px;
+    }
+    .toast.show { opacity:1; transform:translate(-50%,0) scale(1); pointer-events:auto; }
+    body.sidebar-collapsed-active .toast { left:calc(50% + 44px); }
+    .help-fab {
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      z-index:35;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      min-height:52px;
+      padding:12px 16px 12px 13px;
+      border-radius:999px;
+      border:1px solid rgba(96,165,250,.26);
+      background:linear-gradient(135deg, rgba(37,99,235,.94), rgba(6,182,212,.88));
+      color:#fff;
+      font-size:13px;
+      font-weight:950;
+      box-shadow:0 18px 38px rgba(37,99,235,.30), inset 0 1px 0 rgba(255,255,255,.18);
+      backdrop-filter:blur(16px);
+      transition:transform .16s ease, filter .16s ease, box-shadow .16s ease;
+    }
+    .help-fab:hover { transform:translateY(-2px); filter:brightness(1.05); box-shadow:0 22px 44px rgba(37,99,235,.36), inset 0 1px 0 rgba(255,255,255,.18); }
+    .help-fab:active { transform:translateY(0) scale(.98); }
+    .help-fab-icon { width:30px; height:30px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.18); }
+    .help-modal-card {
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      border:1px solid rgba(96,165,250,.28);
+      background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.96));
+      box-shadow:0 28px 88px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+      backdrop-filter:blur(22px);
+    }
+    .help-modal-card::before { content:""; position:absolute; width:220px; height:220px; right:-90px; top:-110px; border-radius:999px; background:rgba(37,99,235,.24); filter:blur(34px); pointer-events:none; }
+    .help-step { border:1px solid rgba(51,65,85,.70); background:rgba(15,23,42,.58); border-radius:18px; padding:13px; }
+    .help-step-number { width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(37,99,235,.16); border:1px solid rgba(96,165,250,.24); color:#7dd3fc; font-weight:950; font-size:12px; flex:0 0 auto; }
+    .modal-overlay { transition:opacity .25s ease-out; }
+    .modal-content { transition:transform .25s ease-out, opacity .25s ease-out; }
+    @media (max-width:1023px) {
+      body { overflow:hidden; }
+      .apj-sidebar { width:288px; height:100dvh; margin:0; border-radius:0; }
+      .topbar { height:78px; padding-left:68px; }
+      .topbar-title p { display:none; }
+      .page-scroll { height:calc(100dvh - 78px); padding:16px; }
+      input,select,textarea{font-size:16px;}
+      main { width:100%; }
+      .toast { top:14px; left:50%; max-width:calc(100vw - 24px); }
+      .help-fab { right:16px; bottom:16px; min-height:50px; padding:11px 13px; }
+    }
+    @media (max-width:640px) {
+      .topbar-title-mark { display:none; }
+      .hero-card { padding:18px; border-radius:24px; }
+      .user-meta { display:none; }
+      .panel { padding:15px; }
+      .help-fab span:last-child { display:none; }
+      .help-fab { width:54px; height:54px; justify-content:center; padding:0; }
     }
 
+    @media screen and (max-width:768px) {
+      .table-scroll { overflow-x:visible!important; }
+      .table-scroll table { min-width:0!important; width:100%!important; display:block!important; }
+      .table-scroll thead { display:none!important; }
+      .table-scroll tbody { display:block!important; width:100%!important; }
+      .table-scroll tr { display:block!important; width:100%!important; margin-bottom:12px!important; padding:10px!important; border:1px solid #334155!important; border-radius:16px!important; background:rgba(15,23,42,.88)!important; }
+      .table-scroll td { display:flex!important; align-items:flex-start!important; justify-content:space-between!important; gap:12px!important; width:100%!important; min-width:0!important; padding:8px 4px!important; border:0!important; border-bottom:1px dashed rgba(100,116,139,.35)!important; text-align:right!important; white-space:normal!important; word-break:break-word!important; }
+      .table-scroll td:last-child { border-bottom:0!important; }
+      .table-scroll td::before { content:attr(data-label); flex:0 0 42%; max-width:42%; text-align:left!important; color:#94a3b8; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.035em; }
+      .table-scroll td > * { max-width:58%; }
+    }
   
-
-    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
-    @media screen and (max-width: 768px) {
-      .table-scroll { overflow-x: visible !important; }
-      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
-      .table-scroll thead { display: none !important; }
-      .table-scroll tbody { display: block !important; width: 100% !important; }
-      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
-      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
-      .table-scroll td:last-child { border-bottom: 0 !important; }
-      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
-      .table-scroll td > * { max-width: 58%; }
-      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
-      .table-scroll .text-center { text-align: right !important; }
-      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
-    }
+    .hidden-soft { display: none !important; }
+    .btn-rose { border-radius:16px; background:linear-gradient(135deg,#e11d48,#f43f5e); color:#fff; font-weight:900; box-shadow:0 16px 32px rgba(244,63,94,.22); transition:all .16s ease; }
+    .btn-rose:hover { filter:brightness(1.05); transform:translateY(-1px); }
+    .output-mode-note b { color:#fecdd3; }
 
   </style>
 </head>
-<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
-  <!-- Tombol menu mobile: tampil di layar kecil untuk membuka sidebar -->
-  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-  </button>
-  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/70 backdrop-blur-sm lg:hidden"></div>
+<body class="flex h-[100dvh] lg:h-screen antialiased">
+  <div id="customToast" class="toast border backdrop-blur-xl p-4" role="alert">
+    <div class="flex items-start gap-3"><div class="w-9 h-9 rounded-xl bg-rose-500/15 border border-rose-500/20 flex items-center justify-center text-rose-300">i</div><div class="min-w-0"><p class="text-sm font-extrabold text-white">Notifikasi</p><p class="mt-1 text-sm leading-relaxed" id="toastMessage"></p></div></div>
+  </div>
 
+  <button aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden icon-button active:scale-95 transition" id="mobileMenuBtn" onclick="openMobileSidebar()" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+  <div class="fixed inset-0 z-30 hidden bg-slate-950/60 backdrop-blur-sm lg:hidden" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
 
-  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert"><div class="ml-3 text-sm font-medium" id="toastMessage"></div>
+  <aside class="apj-sidebar fixed lg:static inset-y-0 left-0 z-40 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out" id="sidebar">
+<div class="sidebar-head relative">
+<div class="sidebar-head-inner flex items-center justify-between gap-3">
+<button aria-label="Buka/tutup sidebar" class="brand-toggle hidden lg:flex" id="sidebarToggle" onclick="toggleSidebarCollapse()" title="Buka/tutup sidebar" type="button">
+<span class="logo-stack"><span class="logo-mark">APJ</span><span class="brand-text min-w-0"><p>APJ</p><p>INVENTORI</p></span></span>
+</button>
+<div class="lg:hidden flex items-center gap-3 min-w-0"><div class="logo-mark">APJ</div><div class="brand-text min-w-0"><p>APJ</p><p>INVENTORI</p></div></div>
+<button class="lg:hidden w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10 text-white" onclick="closeMobileSidebar()" type="button">×</button>
 </div>
+</div>
+<nav class="sidebar-nav">
+<div class="menu-section">
+<p class="menu-label"><span>Overview</span></p>
+<a class="nav-item" href="dashboard.html" title="Dashboard"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Dashboard</span></a>
+</div>
+<div class="menu-section">
+<p class="menu-label"><span>Transaksi Stok</span></p>
+<a class="nav-item" href="input-stok.html" title="Input Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Input Stok</span></a>
+<a class="nav-item active" href="output-stok.html" title="Output Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 21V9m0 0 4 4m-4-4-4 4M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Output Stok</span></a>
+</div>
+<div class="menu-section">
+<p class="menu-label"><span>Outlet &amp; Produksi</span></p>
+<a class="nav-item" href="transfer-produksi.html" title="Transfer Produk Outlet"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Transfer Produk Outlet</span></a>
+<a class="nav-item" href="produk-outlet.html" title="Produk Outlet"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 10h16M6 10v10h12V10M8 10V6a4 4 0 0 1 8 0v4M9 15h2m2 0h2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Produk Outlet</span></a>
+</div>
+<div class="menu-section">
+<p class="menu-label"><span>Kontrol Stok</span></p>
+<a class="nav-item" href="stok-opname.html" title="Stok Opname"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 11l2 2 4-4M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Stok Opname</span></a>
+<a class="nav-item" href="lihat-stok.html" title="Lihat Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73L13 2.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16ZM3.3 7.2 12 12l8.7-4.8M12 22V12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Lihat Stok</span></a>
+</div>
+<div class="menu-section">
+<p class="menu-label"><span>Laporan &amp; Sistem</span></p>
+<a class="nav-item" href="riwayat-transaksi.html" title="Riwayat Transaksi"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 8v5l3 2M4 4v5h5M4.6 15A8 8 0 1 0 5.7 6.3L4 9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Riwayat Transaksi</span></a>
+<a class="nav-item hidden" data-admin-menu="" href="admin.html" title="Admin Sistem"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM19.4 15a1.7 1.7 0 0 0 .34 1.88l.03.03a2 2 0 0 1-2.83 2.83l-.03-.03A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6l-.02.02a2 2 0 0 1-3.96 0L10 20a1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.03.03a2 2 0 0 1-2.83-2.83l.03-.03A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1l-.02-.02a2 2 0 0 1 0-3.96L4 10a1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.03-.03a2 2 0 0 1 2.83-2.83l.03.03A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6l.02-.02a2 2 0 0 1 3.96 0L14 4a1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.03-.03a2 2 0 0 1 2.83 2.83l-.03.03A1.7 1.7 0 0 0 19.4 9c.1.36.3.7.6 1l.02.02a2 2 0 0 1 0 3.96L20 14c-.3.3-.5.64-.6 1Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="nav-text">Admin Sistem</span></a>
+</div>
+</nav>
+<div class="sidebar-footer">
+<button class="logout-button" onclick="showLogoutModal()" title="Logout Sistem" type="button"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M16 17l5-5-5-5M21 12H9M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="logout-text">Logout Sistem</span></button>
+</div>
+</aside>
 
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
-    <div class="h-16 flex items-center px-6 border-b border-slate-800"><div class="flex items-center gap-3 text-blue-500"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span></div></div>
-    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-rose-600/10 text-rose-500 rounded-lg font-medium text-sm transition-colors border border-rose-500/20">Output Stok</a>
-      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
-      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
-      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
-      <a id="adminMenuLink" href="admin.html" class="hidden flex items-center gap-3 px-3 py-2.5 text-violet-300 hover:text-white hover:bg-violet-950/40 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-violet-500/20">Admin Sistem</a>
-    </nav>
-
-    <div class="p-4 border-t border-slate-800">
-      <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-        Logout Sistem
-      </button>
-    </div>
-  </aside>
-
-  <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
-    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
-      <h2 class="text-base sm:text-lg font-semibold text-rose-400">Form Output Stok</h2>
-      <div class="hidden sm:block text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-rose-400">Memuat...</span></div>
-    </header>
-
-    <div class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto w-full">
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Keluar</label>
-            <input type="date" id="tanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-rose-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Transaksi</label>
-            <select id="kategoriSelect" onchange="handleKategoriChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-rose-500 focus:outline-none">
-              <option value="" disabled selected>-- Pilih Kategori --</option>
-            </select>
-          </div>
-        </div>
-
-        <div id="modeInfo" class="mb-4 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg p-3">
-          Pilih kategori terlebih dahulu. Mode <b>Produksi</b> akan mencatat lauk jadi dan otomatis mengurangi bahan mentah yang dipakai.
-        </div>
-
-        <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll mb-6">
-          <table class="w-full text-left border-collapse min-w-[980px]">
-            <thead id="tableHead"></thead>
-            <tbody id="itemTableBody">
-              <tr><td class="p-8 text-center text-slate-500" colspan="9">Pilih kategori untuk mulai input output stok.</td></tr>
-            </tbody>
-          </table>
-          <div class="bg-slate-900 p-3 text-center border-t border-slate-800">
-            <button type="button" id="btnTambahBaris" onclick="handleTambahBaris()" class="text-rose-500 hover:text-rose-400 text-sm font-medium flex items-center justify-center gap-2 w-full" disabled>+ Tambah Baris</button>
-          </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row sm:justify-end gap-3">
-          <button type="button" id="btnSimpan" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-rose-600/20 w-full sm:w-auto">Simpan Output Stok</button>
+  <main class="apj-main flex-1 flex flex-col">
+    <header class="topbar">
+      <div class="topbar-title">
+        <div class="topbar-title-mark"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21V9m0 0 4 4m-4-4-4 4M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"></path></svg></div>
+        <div class="min-w-0">
+          <h2>Output Stok</h2>
+          <p>Catat barang keluar, pemakaian produksi, dan transfer kebutuhan operasional.</p>
         </div>
       </div>
-    </div>
+      <div class="user-chip">
+        <div class="user-avatar"><span id="displayInisial">U</span></div>
+        <div class="user-meta text-right hidden sm:block">
+          <p id="displayNama" class="text-sm font-extrabold text-white leading-tight truncate max-w-[180px]">Memuat...</p>
+          <p id="displayLevel" class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mt-1">--</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="page-scroll">
+      <div class="page-wrap">
+        <div class="hero-card">
+          <div class="relative z-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+            <div>
+              <div class="soft-badge mb-4"><span class="h-2 w-2 rounded-full bg-rose-400"></span><span>Barang Keluar</span></div>
+              <h1 class="hero-title">Form Output Stok APJ</h1>
+              <p class="hero-desc">Gunakan halaman ini untuk mencatat barang keluar dari stok, baik untuk kebutuhan pusat, transfer, maupun proses produksi. Pastikan qty dan tujuan sudah sesuai sebelum disimpan.</p>
+            </div>
+            <div class="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+              Petugas: <span id="namaPetugas" class="font-extrabold text-white">Memuat...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            <div>
+              <label class="form-label">Tanggal Keluar</label>
+              <input type="date" id="tanggalInput" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Kategori Transaksi</label>
+              <select id="kategoriSelect" onchange="handleKategoriChange()" class="form-control">
+                <option value="" disabled selected>-- Pilih Kategori --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+            <div class="mini-stat"><p>Mode</p><strong id="modeLabel" class="text-rose-300">Output / Produksi</strong></div>
+            <div class="mini-stat"><p>Logika</p><strong id="logicLabel">Stok keluar → Sistem</strong></div>
+            <div class="mini-stat"><p>Status</p><strong id="statusInfo" class="text-slate-300">Pilih kategori untuk mulai output.</strong></div>
+          </div>
+
+          <div id="modeInfo" class="info-card output-mode-note mb-5">
+            Pilih kategori terlebih dahulu. Mode <b>Produksi</b> akan mencatat lauk jadi dan otomatis mengurangi bahan mentah yang dipakai.
+          </div>
+
+          <div class="table-shell table-scroll mb-5">
+            <table class="w-full text-left border-collapse min-w-[980px]">
+              <thead id="tableHead"></thead>
+              <tbody id="itemTableBody">
+                <tr><td class="p-8 text-center text-slate-500" colspan="9">Pilih kategori untuk mulai input output stok.</td></tr>
+              </tbody>
+            </table>
+            <div class="bg-slate-950/60 p-3 text-center border-t border-slate-800">
+              <button type="button" id="btnTambahBaris" onclick="handleTambahBaris()" class="text-rose-300 hover:text-rose-200 text-sm font-extrabold flex items-center justify-center gap-2 w-full disabled:opacity-40 disabled:cursor-not-allowed" disabled>+ Tambah Baris</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <p id="saveHint" class="text-xs text-slate-500">Pastikan qty keluar, tujuan, outlet, dan PIC sudah sesuai sebelum disimpan.</p>
+            <button type="button" id="btnSimpan" class="btn-rose px-8 py-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto">Simpan Output Stok</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
-
-  <!-- Modal konfirmasi logout, dibuat konsisten dengan dashboard -->
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
     <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
@@ -143,6 +386,7 @@
   </div>
 
   <script>
+
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
 
     // CATATAN: Pastikan URL di atas sama dengan Web App aktif. Jika gagal, pakai URL lama Anda:
@@ -168,6 +412,16 @@
 
       document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
+      const displayNama = document.getElementById('displayNama');
+      const displayLevel = document.getElementById('displayLevel');
+      const displayInisial = document.getElementById('displayInisial');
+      const userName = localStorage.getItem('APJ_USER_NAME') || '-';
+      const userLevel = localStorage.getItem('APJ_USER_LEVEL') || '-';
+      if (displayNama) displayNama.textContent = userName;
+      if (displayLevel) displayLevel.textContent = userLevel;
+      if (displayInisial) displayInisial.textContent = (userName || 'U').charAt(0).toUpperCase();
+      setupAdminMenu(userLevel);
+      applySidebarState();
 
       buildKategoriOptions();
       await loadOutputInit();
@@ -263,7 +517,10 @@ function buildKategoriOptions() {
     }
 
     async function loadGeneralMode(sheetName) {
-      document.getElementById('modeInfo').innerHTML = 'Mode <b>General</b>: Tujuan <b>Transfer</b> wajib memilih Outlet dan PIC. Tujuan <b>Pusat</b> otomatis menyembunyikan Outlet/PIC.';
+      document.getElementById('modeInfo').innerHTML = 'Mode <b>General</b>: catat pengeluaran stok biasa. Tujuan <b>Transfer</b> wajib memilih Outlet dan PIC, sedangkan tujuan <b>Pusat</b> tidak perlu Outlet/PIC.';
+      const status = document.getElementById('statusInfo'); if (status) status.textContent = 'Mode general siap diisi.';
+      const mode = document.getElementById('modeLabel'); if (mode) mode.textContent = 'Output General';
+      const logic = document.getElementById('logicLabel'); if (logic) logic.textContent = 'Stok berkurang';
       renderGeneralHeader();
       setLoadingRow(9, 'Memuat data barang general...');
 
@@ -288,7 +545,10 @@ function buildKategoriOptions() {
     }
 
     async function loadProduksiMode() {
-      document.getElementById('modeInfo').innerHTML = 'Mode <b>Produksi</b>: pilih satu Produksi/lauk, sistem menampilkan bahan baku otomatis. Saat disimpan, lauk jadi masuk ke <b>TRANSAKSI_OUTPUT_PRODUKSI</b>, bahan yang dipakai masuk sebagai pengeluaran ke <b>TRANSAKSI_OUTPUT_STOK</b>.';
+      document.getElementById('modeInfo').innerHTML = 'Mode <b>Produksi</b>: pilih lauk/produk, lalu isi pemakaian bahan. Lauk jadi masuk ke transaksi produksi, bahan otomatis tercatat sebagai output stok.';
+      const status = document.getElementById('statusInfo'); if (status) status.textContent = 'Mode produksi siap diisi.';
+      const mode = document.getElementById('modeLabel'); if (mode) mode.textContent = 'Output Produksi';
+      const logic = document.getElementById('logicLabel'); if (logic) logic.textContent = 'Bahan keluar → Produk jadi';
       renderProduksiHeader();
       setLoadingRow(8, 'Memuat master produksi...');
 
@@ -313,7 +573,7 @@ function buildKategoriOptions() {
 
     function renderGeneralHeader() {
       document.getElementById('tableHead').innerHTML = `
-        <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
+        <tr class="thead-row text-xs uppercase tracking-wider">
           <th class="p-4 min-w-[240px]">Nama Barang</th>
           <th class="p-4 min-w-[120px] text-center">Stok Tersedia</th>
           <th class="p-4 min-w-[90px] text-center">Satuan</th>
@@ -328,7 +588,7 @@ function buildKategoriOptions() {
 
     function renderProduksiHeader() {
       document.getElementById('tableHead').innerHTML = `
-        <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
+        <tr class="thead-row text-xs uppercase tracking-wider">
           <th class="p-4 min-w-[230px]">Produksi</th>
           <th class="p-4 min-w-[220px]">Bahan Baku</th>
           <th class="p-4 min-w-[120px] text-center">Stok Tersedia</th>
@@ -734,10 +994,71 @@ function buildKategoriOptions() {
       });
     });
 
-</script>
+    // APJ Sidebar Helpers - selaras dengan dashboard/input terbaru.
+    function setupAdminMenu(levelValue) {
+      const level = String(levelValue || localStorage.getItem('APJ_USER_LEVEL') || '').trim().toLowerCase();
+      const show = level === 'owner' || level === 'superadmin' || level === 'super admin' || level === 'supervisor';
+      document.querySelectorAll('[data-admin-menu]').forEach(el => el.classList.toggle('hidden', !show));
+    }
 
+    function applySidebarState() {
+      const sidebar = document.getElementById('sidebar');
+      if (!sidebar) return;
+      if (window.innerWidth < 1024) {
+        sidebar.classList.remove('sidebar-collapsed');
+        document.body.classList.remove('sidebar-collapsed-active');
+        return;
+      }
+      const collapsed = localStorage.getItem('APJ_SIDEBAR_COLLAPSED') === 'true';
+      sidebar.classList.toggle('sidebar-collapsed', collapsed);
+      document.body.classList.toggle('sidebar-collapsed-active', collapsed);
+    }
+
+    function toggleSidebarCollapse() {
+      const sidebar = document.getElementById('sidebar');
+      if (!sidebar || window.innerWidth < 1024) return;
+      const willCollapse = !sidebar.classList.contains('sidebar-collapsed');
+      sidebar.classList.toggle('sidebar-collapsed', willCollapse);
+      document.body.classList.toggle('sidebar-collapsed-active', willCollapse);
+      localStorage.setItem('APJ_SIDEBAR_COLLAPSED', willCollapse ? 'true' : 'false');
+    }
+
+    function openMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (!sidebar || !backdrop) return;
+      sidebar.classList.remove('sidebar-collapsed');
+      sidebar.classList.remove('-translate-x-full');
+      backdrop.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (!sidebar || !backdrop) return;
+      if (window.innerWidth < 1024) sidebar.classList.add('-translate-x-full');
+      backdrop.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+      if (window.innerWidth >= 1024) applySidebarState();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMobileSidebar();
+    });
+
+    window.addEventListener('resize', applySidebarState);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMobileSidebar));
+      applySidebarState();
+      setupAdminMenu(localStorage.getItem('APJ_USER_LEVEL'));
+    });
+
+  </script>
 
   <script>
+
     // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
     (function(){
       function headersFor(table){
@@ -764,22 +1085,8 @@ function buildKategoriOptions() {
         obs.observe(document.body, { childList:true, subtree:true });
       });
     })();
+  
   </script>
 
-
-
-  <script>
-    (function showAdminMenuForAuthorizedRoles() {
-      const adminMenuLink = document.getElementById('adminMenuLink');
-      if (!adminMenuLink) return;
-
-      const level = String(localStorage.getItem('APJ_USER_LEVEL') || '').trim().toLowerCase();
-      const allowedLevels = ['owner', 'superadmin', 'super admin', 'supervisor'];
-
-      if (allowedLevels.includes(level)) {
-        adminMenuLink.classList.remove('hidden');
-      }
-    })();
-  </script>
 </body>
 </html>
