@@ -101,8 +101,10 @@
     .sidebar-footer { padding:12px 15px 16px; border-top:1px solid rgba(255,255,255,.08); }
     .logout-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:rgba(244,63,94,.12); border:1px solid rgba(244,63,94,.25); color:#fb7185; font-size:13.5px; font-weight:880; transition:all .16s ease; }
     .logout-button:hover { background:rgba(244,63,94,.20); color:#fecdd3; transform:translateY(-1px); }
+    .sidebar-guide-button { width:100%; min-height:44px; margin-bottom:10px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:linear-gradient(135deg, rgba(37,99,235,.22), rgba(6,182,212,.14)); border:1px solid rgba(96,165,250,.28); color:#bfdbfe; font-size:13.5px; font-weight:880; transition:all .16s ease; }
+    .sidebar-guide-button:hover { background:linear-gradient(135deg, rgba(37,99,235,.32), rgba(6,182,212,.20)); color:#fff; transform:translateY(-1px); border-color:rgba(125,211,252,.38); }
     #sidebar.sidebar-collapsed { width:88px; }
-    #sidebar.sidebar-collapsed .brand-text, #sidebar.sidebar-collapsed .nav-text, #sidebar.sidebar-collapsed .menu-label span, #sidebar.sidebar-collapsed .logout-text { display:none; }
+    #sidebar.sidebar-collapsed .brand-text, #sidebar.sidebar-collapsed .nav-text, #sidebar.sidebar-collapsed .menu-label span, #sidebar.sidebar-collapsed .logout-text, #sidebar.sidebar-collapsed .guide-text { display:none; }
     #sidebar.sidebar-collapsed .sidebar-head { padding:18px 14px 12px; }
     #sidebar.sidebar-collapsed .brand-toggle { justify-content:center; }
     #sidebar.sidebar-collapsed .logo-mark { width:52px; height:52px; border-radius:20px; }
@@ -112,6 +114,7 @@
     #sidebar.sidebar-collapsed .nav-item { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
     #sidebar.sidebar-collapsed .sidebar-footer { padding:12px 14px 16px; }
     #sidebar.sidebar-collapsed .logout-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
+    #sidebar.sidebar-collapsed .sidebar-guide-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; margin-bottom:10px; }
 
     .apj-main { min-width:0; background:transparent; }
     .topbar { height:84px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:16px 24px; border-bottom:1px solid var(--border); background:rgba(2,6,23,.72); backdrop-filter:blur(18px); position:sticky; top:0; z-index:20; }
@@ -330,6 +333,7 @@
       </div>
     </nav>
     <div class="sidebar-footer">
+      <button id="opnameHelpFab" type="button" onclick="openOpnameHelpModal(false); closeMobileSidebar();" class="sidebar-guide-button no-print" aria-label="Buka panduan stok opname" title="Panduan Stok Opname"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span><span class="guide-text">Panduan Opname</span></button>
       <button type="button" onclick="showLogoutModal()" class="logout-button" title="Logout Sistem"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l5-5-5-5M21 12H9M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8"></path></svg></span><span class="logout-text">Logout Sistem</span></button>
     </div>
   </aside>
@@ -426,11 +430,6 @@
 
 
 
-  <button id="opnameHelpFab" type="button" onclick="openOpnameHelpModal(false)" class="help-fab no-print" aria-label="Buka panduan stok opname" title="Panduan Stok Opname">
-    <span class="help-fab-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span>
-    <span>Panduan Opname</span>
-  </button>
-
   <div id="opnameHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4 no-print">
     <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeOpnameHelpModal()"></div>
     <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
@@ -464,7 +463,7 @@
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol mengambang kanan bawah.</p>
+          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol Panduan Opname di sidebar kiri, tepat di atas Logout.</p>
           <button type="button" onclick="closeOpnameHelpModal()" class="btn-opname px-5 py-3 text-sm">Mengerti, lanjut opname</button>
         </div>
       </div>
