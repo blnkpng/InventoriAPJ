@@ -1094,6 +1094,7 @@ function buildKategoriOptions() {
       const labelsHtml = items.map((item, idx) => {
         const nama = escapeHtml(item.namaBarang || '-');
         const tanggal = escapeHtml(formatDateID(item.tanggal || data.tanggal));
+        const petugas = escapeHtml(item.petugas || data.petugas || '-');
         const qty = escapeHtml(formatNumber(item.qtyMasuk || 0));
         const satuan = escapeHtml(item.satuan || '-');
         return `
@@ -1102,6 +1103,7 @@ function buildKategoriOptions() {
             <div class="line"></div>
             <div class="nama">${nama}</div>
             <div class="row"><div class="label">Tanggal Masuk</div><div class="value">${tanggal}</div></div>
+            <div class="row"><div class="label">Petugas</div><div class="value">${petugas}</div></div>
             <div class="row"><div class="label">Qty Masuk</div><div class="value">${qty}</div></div>
             <div class="row"><div class="label">Satuan</div><div class="value">${satuan}</div></div>
             <div class="cut">${idx < items.length - 1 ? 'potong di sini' : ''}</div>
