@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transfer Produk Outlet | APJ Inventori v14.9.4</title>
+  <title>Transfer Produk Outlet | APJ Inventori v14.9.5</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -31,7 +31,7 @@
       .sj-page { page-break-after: always; break-after: page; }
       .sj-page:last-child { page-break-after: auto; break-after: auto; }
       body.print-transfer-a4 #printAreaTransfer { font-family: 'Times New Roman', serif; }
-      body.print-transfer-a4 .sj-page { width: 186mm; max-width: 186mm; margin: 0 auto; }
+      body.print-transfer-a4 .sj-page { width: 190mm; max-width: 190mm; min-height: 285mm; max-height: 285mm; margin: 0 auto; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden; }
       body.print-transfer-58 #printAreaTransfer { width: 54mm; max-width: 54mm; font-family: Arial, sans-serif; font-size: 8.2px; line-height: 1.16; }
       body.print-transfer-58 .sj-page { width: 54mm; max-width: 54mm; page-break-inside: avoid; break-inside: avoid; }
       .sj-kop { text-align: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
@@ -45,9 +45,9 @@
       .sj-table th { background: #f2f2f2 !important; text-align: center; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .sj-table td { text-align: center; vertical-align: top; }
       .sj-table .sj-name-cell { text-align: left; font-weight: 600; }
-      body.print-transfer-a4 .sj-table { table-layout: fixed; font-size: 7.7pt; width: 100%; }
-      body.print-transfer-a4 .sj-table th, body.print-transfer-a4 .sj-table td { padding: 2.6px 2px; line-height: 1.12; }
-      body.print-transfer-a4 .sj-table th { font-size: 7.2pt; }
+      body.print-transfer-a4 .sj-table { table-layout: fixed; font-size: var(--sj-a4-font, 7.4pt); width: 100%; }
+      body.print-transfer-a4 .sj-table th, body.print-transfer-a4 .sj-table td { padding: 0.55mm 0.6mm; line-height: 1.05; height: var(--sj-row-h, 6.6mm); vertical-align: middle; }
+      body.print-transfer-a4 .sj-table th { font-size: var(--sj-a4-head-font, 6.8pt); height: var(--sj-head-h, 7mm); }
       body.print-transfer-a4 .sj-table .sj-name-cell { padding-left: 5px; }
       body.print-transfer-a4 .sj-table th:nth-child(1), body.print-transfer-a4 .sj-table td:nth-child(1) { width: 7mm; }
       body.print-transfer-a4 .sj-table th:nth-child(2), body.print-transfer-a4 .sj-table td:nth-child(2) { width: 82mm; }
@@ -56,14 +56,17 @@
       body.print-transfer-a4 .sj-table th:nth-child(5), body.print-transfer-a4 .sj-table td:nth-child(5) { width: 20mm; }
       body.print-transfer-a4 .sj-table th:nth-child(6), body.print-transfer-a4 .sj-table td:nth-child(6) { width: 20mm; }
       body.print-transfer-a4 .sj-table th:nth-child(7), body.print-transfer-a4 .sj-table td:nth-child(7) { width: 20mm; }
-      body.print-transfer-a4 .sj-kop { padding-bottom: 4px; margin-bottom: 6px; }
-      body.print-transfer-a4 .sj-title { font-size: 14.5pt; }
-      body.print-transfer-a4 .sj-subtitle { font-size: 9pt; }
-      body.print-transfer-a4 .sj-meta { font-size: 7.8pt; margin: 5px 0 6px; gap: 1px 16px; }
-      body.print-transfer-a4 .sj-note { font-size: 7.5pt; margin-top: 3px; }
-      body.print-transfer-a4 .sj-sign { margin-top: 18px; gap: 14px; }
-      body.print-transfer-a4 .sj-sign-box { font-size: 7.8pt; }
-      body.print-transfer-a4 .sj-sign-name { margin-top: 60px; padding-top: 3px; }
+      body.print-transfer-a4 .sj-kop { padding-bottom: 3px; margin-bottom: 4px; flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-title { font-size: 13.8pt; }
+      body.print-transfer-a4 .sj-subtitle { font-size: 8.4pt; }
+      body.print-transfer-a4 .sj-meta { font-size: 7.4pt; margin: 3px 0 4px; gap: 0.5px 14px; flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-note { font-size: 7.2pt; margin-top: 2.5mm; flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-sign { margin-top: 4mm; gap: 12px; flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-sign-box { font-size: 7.3pt; }
+      body.print-transfer-a4 .sj-sign-name { margin-top: 22mm; padding-top: 2px; }
+      body.print-transfer-a4 .sj-table-zone { flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-a4-spacer { flex: 1 1 auto; min-height: 1mm; }
+      body.print-transfer-a4 .sj-name-cell { font-size: var(--sj-a4-name-font, 7.5pt); }
       .sj-note { font-size: 9pt; margin-top: 10px; }
       .sj-sign { display: flex; justify-content: space-between; gap: 18px; margin-top: 28px; page-break-inside: avoid; }
       .sj-sign-box { width: 33.333%; text-align: center; font-size: 10pt; }
@@ -760,7 +763,23 @@
       const isThermal = mode === '58' || mode === '80';
       style.textContent = isThermal
         ? '@media print { @page { size: 58mm auto; margin: 2mm; } }'
-        : '@media print { @page { size: A4 portrait; margin: 7mm; } }';
+        : '@media print { @page { size: A4 portrait; margin: 6mm; } }';
+    }
+
+    function buildA4SuratJalanVars(rowCount) {
+      const count = Math.max(1, parseInt(rowCount || 0, 10));
+      const totalTableRows = count + 1; // header + produk
+      const availableTableMm = 204;
+      const rowH = Math.max(3.25, Math.min(7.35, availableTableMm / totalTableRows));
+      const headH = Math.max(4.1, Math.min(7.2, rowH + 0.45));
+      let font = 7.45;
+      if (count > 34) font = 7.0;
+      if (count > 42) font = 6.5;
+      if (count > 52) font = 6.0;
+      if (count > 64) font = 5.55;
+      const headFont = Math.max(5.5, font - 0.45);
+      const nameFont = Math.min(7.6, font + 0.1);
+      return `--sj-row-h:${rowH.toFixed(2)}mm;--sj-head-h:${headH.toFixed(2)}mm;--sj-a4-font:${font.toFixed(2)}pt;--sj-a4-head-font:${headFont.toFixed(2)}pt;--sj-a4-name-font:${nameFont.toFixed(2)}pt;`;
     }
 
     function buildSuratJalanPage(group, mode) {
@@ -802,8 +821,9 @@
         </tr>
       `).join('');
 
+      const a4Vars = is58 ? '' : buildA4SuratJalanVars(a4Rows.length);
       return `
-        <section class="sj-page">
+        <section class="sj-page" style="${a4Vars}">
           <div class="sj-kop">
             <div class="sj-title">AMPERA PAK JENGGOT</div>
             <div class="sj-subtitle">SURAT JALAN TRANSFER PRODUK OUTLET</div>
@@ -816,11 +836,14 @@
             <div>Petugas Kirim <b>${escapeHtml(group.petugas || '-')}</b></div>
             <div>Dicetak <b>${escapeHtml(now.toLocaleString('id-ID'))}</b></div>
           </div>
-          <table class="sj-table">
-            <thead><tr>${head}</tr></thead>
-            <tbody>${body}</tbody>
-          </table>
+          <div class="sj-table-zone">
+            <table class="sj-table">
+              <thead><tr>${head}</tr></thead>
+              <tbody>${body}</tbody>
+            </table>
+          </div>
           <div class="sj-note">Catatan: ${escapeHtml(group.catatan || '-')}</div>
+          <div class="sj-a4-spacer"></div>
           <div class="sj-sign">
             <div class="sj-sign-box"><div>Mengetahui</div><div class="sj-sign-name">Supervisor</div></div>
             <div class="sj-sign-box"><div>Pengirim</div><div class="sj-sign-name">${escapeHtml(group.petugas || 'Petugas')}</div></div>
