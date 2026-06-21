@@ -329,10 +329,11 @@
           showPopup((result.message || 'Login berhasil.') + " Selamat datang, " + result.user.nama, "success");
 
           localStorage.setItem('APJ_SESSION_ACTIVE', 'true');
+          localStorage.setItem('APJ_SESSION_TOKEN', result.sessionToken || result.token || result.authToken || '');
           localStorage.setItem('APJ_USER_NAME', result.user.nama);
           localStorage.setItem('APJ_USER_LEVEL', result.user.level);
           localStorage.setItem('APJ_USER_OUTLET', result.user.outlet || '');
-          localStorage.setItem('APJ_USER_PERMISSIONS', JSON.stringify(result.user.permissions || {}));
+          localStorage.setItem('APJ_USER_PERMISSIONS', JSON.stringify((result.user && result.user.permissions) || {}));
 
           setTimeout(() => {
             window.location.href = "dashboard.html";
