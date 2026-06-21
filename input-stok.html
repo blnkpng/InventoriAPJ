@@ -219,6 +219,66 @@
       .table-scroll td::before { content:attr(data-label); flex:0 0 42%; max-width:42%; text-align:left!important; color:#94a3b8; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.035em; }
       .table-scroll td > * { max-width:58%; }
     }
+
+
+    /* APJ cleanup: print action dibuat compact agar sejajar dengan tanggal & kategori */
+    .print-compact-button {
+      width: 100%;
+      min-height: 58px;
+      border-radius: 16px;
+      border: 1px solid rgba(16,185,129,.28);
+      background: rgba(16,185,129,.12);
+      color: #6ee7b7;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 11px 13px;
+      font-size: 14px;
+      font-weight: 950;
+      transition: all .16s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .print-compact-button:hover { background:rgba(16,185,129,.20); transform:translateY(-1px); color:#a7f3d0; }
+    .print-compact-button:active { transform:translateY(0); }
+
+    .help-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 35;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 12px 16px 12px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,.26);
+      background: linear-gradient(135deg, rgba(37,99,235,.94), rgba(6,182,212,.88));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 950;
+      box-shadow: 0 18px 38px rgba(37,99,235,.30), inset 0 1px 0 rgba(255,255,255,.18);
+      backdrop-filter: blur(16px);
+      transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+    }
+    .help-fab:hover { transform:translateY(-2px); filter:brightness(1.05); box-shadow:0 22px 44px rgba(37,99,235,.36), inset 0 1px 0 rgba(255,255,255,.18); }
+    .help-fab:active { transform:translateY(0) scale(.98); }
+    .help-fab-icon { width:30px; height:30px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.18); }
+    .help-modal-card {
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      border:1px solid rgba(96,165,250,.28);
+      background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.96));
+      box-shadow:0 28px 88px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+      backdrop-filter:blur(22px);
+    }
+    .help-modal-card::before { content:""; position:absolute; width:220px; height:220px; right:-90px; top:-110px; border-radius:999px; background:rgba(37,99,235,.24); filter:blur(34px); pointer-events:none; }
+    .help-step { border:1px solid rgba(51,65,85,.70); background:rgba(15,23,42,.58); border-radius:18px; padding:13px; }
+    .help-step-number { width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(37,99,235,.16); border:1px solid rgba(96,165,250,.24); color:#7dd3fc; font-weight:950; font-size:12px; flex:0 0 auto; }
+    @media (max-width:1023px) { .help-fab { right:16px; bottom:16px; min-height:50px; padding:11px 13px; } }
+    @media (max-width:640px) { .help-fab span:last-child { display:none; } .help-fab { width:54px; height:54px; justify-content:center; padding:0; } }
   </style>
 </head>
 <body class="flex h-[100dvh] lg:h-screen antialiased">
@@ -318,26 +378,14 @@
                 <option value="" disabled selected>-- Pilih Kategori --</option>
               </select>
             </div>
-            <div class="print-action-card">
-              <div class="print-action-inner">
-                <div class="print-action-head">
-                  <div class="print-action-icon">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V4h12v5M6 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1M7 14h10v7H7v-7Z"></path>
-                    </svg>
-                  </div>
-                  <div class="min-w-0">
-                    <p class="print-action-title">Print Data Stok Masuk</p>
-                    <p class="print-action-desc">Cetak label 58mm dari transaksi input yang sudah tersimpan.</p>
-                  </div>
-                </div>
-                <button type="button" onclick="openInputPrintModal()" class="btn-emerald mt-3 px-5 py-3 text-sm w-full inline-flex items-center justify-center gap-2">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V4h12v5M6 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1M7 14h10v7H7v-7Z"></path>
-                  </svg>
-                  Print 58mm
-                </button>
-              </div>
+            <div>
+              <label class="form-label">Print Data Stok Masuk</label>
+              <button type="button" onclick="openInputPrintModal()" class="print-compact-button">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V4h12v5M6 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1M7 14h10v7H7v-7Z"></path>
+                </svg>
+                <span>Print 58mm</span>
+              </button>
             </div>
           </div>
 
@@ -385,6 +433,46 @@
   </main>
 
 
+  <button id="inputHelpFab" type="button" onclick="openInputHelpModal(false)" class="help-fab" aria-label="Buka panduan input stok" title="Panduan Input Stok">
+    <span class="help-fab-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span>
+    <span>Panduan Input</span>
+  </button>
+
+  <div id="inputHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
+    <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeInputHelpModal()"></div>
+    <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
+      <div class="relative z-10">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <p class="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-blue-200"><span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span> Panduan Modul</p>
+            <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-tight text-white">Cara pakai Input Stok</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-400">Popup ini membantu petugas memahami alur input barang masuk dan print label stok APJ.</p>
+          </div>
+          <button type="button" onclick="closeInputHelpModal()" class="w-11 h-11 rounded-2xl border border-slate-700 bg-slate-950/70 text-slate-300 hover:text-white hover:bg-slate-800 transition" aria-label="Tutup panduan">×</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+          <div class="help-step flex gap-3"><div class="help-step-number">1</div><div><p class="text-sm font-black text-white">Pilih tanggal & kategori</p><p class="mt-1 text-xs leading-5 text-slate-400">Tanggal adalah tanggal barang masuk. Kategori menentukan master barang yang akan muncul.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">2</div><div><p class="text-sm font-black text-white">Tambah baris barang</p><p class="mt-1 text-xs leading-5 text-slate-400">Klik <b class="text-blue-200">+ Tambah Baris Barang</b>, lalu pilih nama barang yang dibeli/ditambahkan.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">3</div><div><p class="text-sm font-black text-white">Isi qty dengan benar</p><p class="mt-1 text-xs leading-5 text-slate-400"><b class="text-blue-200">Qty Masuk</b> = jumlah beli. <b class="text-cyan-200">Qty Stok/Riil</b> = jumlah yang masuk ke stok sistem.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">4</div><div><p class="text-sm font-black text-white">Cek item preparasi</p><p class="mt-1 text-xs leading-5 text-slate-400">Untuk item parent seperti ayam potong, sistem bisa membuka baris hasil preparasi otomatis.</p></div></div>
+          <div class="help-step flex gap-3 md:col-span-2"><div class="help-step-number">5</div><div><p class="text-sm font-black text-white">Print label 58mm</p><p class="mt-1 text-xs leading-5 text-slate-400">Tombol <b class="text-emerald-200">Print 58mm</b> dipakai untuk mencetak transaksi input yang sudah tersimpan. Di popup print, pilih tanggal, pilih kategori barang, lalu pilih barang agar data tidak tercampur. Label print menampilkan tanggal masuk, petugas, qty, dan satuan.</p></div></div>
+        </div>
+
+        <div class="rounded-2xl border border-amber-500/22 bg-amber-500/10 p-4 mb-5">
+          <p class="text-sm font-black text-amber-100">Catatan penting</p>
+          <p class="mt-1 text-xs sm:text-sm leading-6 text-amber-100/75">Pastikan satuan beli dan satuan stok sudah sesuai sebelum menekan <b>Simpan Transaksi Input</b>. Print label hanya bisa mengambil data yang sudah pernah disimpan ke database.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol mengambang di pojok kanan bawah.</p>
+          <button type="button" onclick="closeInputHelpModal()" class="btn-primary px-5 py-3 text-sm">Mengerti, lanjut input</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Modal konfirmasi logout, dibuat konsisten dengan dashboard -->
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
@@ -410,7 +498,7 @@
       <div class="mb-5">
         <p class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Print Data Input 58mm</p>
         <h3 class="text-xl font-bold text-white">Cetak label stok masuk</h3>
-        <p class="text-sm text-slate-400 mt-1">Pilih tanggal, lalu tambahkan satu atau banyak barang. Sekali print bisa langsung keluar berurutan ke bawah dan tinggal dipotong manual.</p>
+        <p class="text-sm text-slate-400 mt-1">Pilih tanggal dan kategori, lalu tambahkan satu atau banyak barang. Sekali print bisa langsung keluar berurutan ke bawah dan tinggal dipotong manual.</p>
       </div>
 
       <div class="space-y-4">
@@ -482,6 +570,9 @@
       document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
       buildKategoriOptions();
+      setTimeout(() => {
+        if (sessionStorage.getItem('APJ_INPUT_HELP_SEEN') !== 'true') openInputHelpModal(true);
+      }, 450);
     });
 
     
@@ -527,6 +618,35 @@ function buildKategoriOptions() {
         ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md"
         : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
       setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+
+    const inputHelpModal = () => document.getElementById('inputHelpModal');
+    function openInputHelpModal(autoOpen = false) {
+      const modal = inputHelpModal();
+      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+      const content = modal ? modal.querySelector('.modal-content') : null;
+      if (!modal || !overlay || !content) return;
+      if (autoOpen) modal.dataset.autoOpen = 'true';
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      overlay.classList.add('opacity-100');
+      overlay.classList.remove('opacity-0');
+      content.classList.add('scale-100', 'opacity-100');
+      content.classList.remove('scale-95', 'opacity-0');
+    }
+
+    function closeInputHelpModal() {
+      const modal = inputHelpModal();
+      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+      const content = modal ? modal.querySelector('.modal-content') : null;
+      if (!modal || !overlay || !content) return;
+      sessionStorage.setItem('APJ_INPUT_HELP_SEEN', 'true');
+      overlay.classList.remove('opacity-100');
+      overlay.classList.add('opacity-0');
+      content.classList.remove('scale-100', 'opacity-100');
+      content.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 250);
     }
 
     function escapeHtml(value) {
@@ -1228,7 +1348,7 @@ function buildKategoriOptions() {
     }
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeMobileSidebar();
+      if (event.key === 'Escape') { closeMobileSidebar(); closeInputHelpModal(); }
     });
 
     window.addEventListener('resize', () => {
