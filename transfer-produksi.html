@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transfer Produk Outlet | APJ Inventori v14.9.3</title>
+  <title>Transfer Produk Outlet | APJ Inventori v14.9.4</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -28,8 +28,12 @@
       body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
       body > *:not(#printAreaTransfer) { display: none !important; }
       #printAreaTransfer { display: block !important; color: black !important; }
+      .sj-page { page-break-after: always; break-after: page; }
+      .sj-page:last-child { page-break-after: auto; break-after: auto; }
       body.print-transfer-a4 #printAreaTransfer { font-family: 'Times New Roman', serif; }
-      body.print-transfer-58 #printAreaTransfer { width: 54mm; max-width: 54mm; font-family: Arial, sans-serif; font-size: 8.2px; line-height: 1.16; page-break-inside: avoid; break-inside: avoid; }
+      body.print-transfer-a4 .sj-page { width: 186mm; max-width: 186mm; margin: 0 auto; }
+      body.print-transfer-58 #printAreaTransfer { width: 54mm; max-width: 54mm; font-family: Arial, sans-serif; font-size: 8.2px; line-height: 1.16; }
+      body.print-transfer-58 .sj-page { width: 54mm; max-width: 54mm; page-break-inside: avoid; break-inside: avoid; }
       .sj-kop { text-align: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
       .sj-title { font-size: 20pt; font-weight: bold; letter-spacing: .5px; }
       .sj-subtitle { font-size: 12pt; font-weight: bold; margin-top: 2px; }
@@ -41,9 +45,6 @@
       .sj-table th { background: #f2f2f2 !important; text-align: center; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .sj-table td { text-align: center; vertical-align: top; }
       .sj-table .sj-name-cell { text-align: left; font-weight: 600; }
-      body.print-transfer-a4 #printAreaTransfer { width: 186mm; max-width: 186mm; margin: 0 auto; }
-      body.print-transfer-a4 .sj-page { min-height: 276mm; display: block; page-break-after: always; break-after: page; }
-      body.print-transfer-a4 .sj-page:last-child { page-break-after: auto; break-after: auto; }
       body.print-transfer-a4 .sj-table { table-layout: fixed; font-size: 7.7pt; width: 100%; }
       body.print-transfer-a4 .sj-table th, body.print-transfer-a4 .sj-table td { padding: 2.6px 2px; line-height: 1.12; }
       body.print-transfer-a4 .sj-table th { font-size: 7.2pt; }
@@ -60,13 +61,9 @@
       body.print-transfer-a4 .sj-subtitle { font-size: 9pt; }
       body.print-transfer-a4 .sj-meta { font-size: 7.8pt; margin: 5px 0 6px; gap: 1px 16px; }
       body.print-transfer-a4 .sj-note { font-size: 7.5pt; margin-top: 3px; }
-      body.print-transfer-a4 .sj-sign { margin-top: 5mm; gap: 12px; }
+      body.print-transfer-a4 .sj-sign { margin-top: 18px; gap: 14px; }
       body.print-transfer-a4 .sj-sign-box { font-size: 7.8pt; }
-      body.print-transfer-a4 .sj-sign-name { margin-top: 16mm; padding-top: 3px; }
-      body.print-transfer-a4 .sj-page.sj-rows-small .sj-table tbody tr { height: 8.2mm; }
-      body.print-transfer-a4 .sj-page.sj-rows-normal .sj-table tbody tr { height: 6.8mm; }
-      body.print-transfer-a4 .sj-page.sj-rows-many .sj-table tbody tr { height: 5.4mm; }
-      body.print-transfer-a4 .sj-page.sj-rows-extra .sj-table tbody tr { height: 4.4mm; }
+      body.print-transfer-a4 .sj-sign-name { margin-top: 60px; padding-top: 3px; }
       .sj-note { font-size: 9pt; margin-top: 10px; }
       .sj-sign { display: flex; justify-content: space-between; gap: 18px; margin-top: 28px; page-break-inside: avoid; }
       .sj-sign-box { width: 33.333%; text-align: center; font-size: 10pt; }
@@ -315,6 +312,8 @@
     let globalPics = [];
     let printTransferGroups = [];
     let printTransferAllGroup = null;
+    let printQueueGroups = [];
+    let printFilterTimer = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
@@ -577,12 +576,14 @@
       modal.classList.remove('hidden');
       modal.classList.add('flex');
 
-      const tglMain = document.getElementById('tanggalInput')?.value || '';
-      const outletMain = document.getElementById('outletSelect')?.value || '';
-      const printTanggal = document.getElementById('printTanggalInput');
-      const printOutlet = document.getElementById('printOutletSelect');
-      if (tglMain && printTanggal) printTanggal.value = tglMain;
-      if (outletMain && printOutlet) printOutlet.value = outletMain;
+      const tanggalPrint = document.getElementById('printTanggalInput');
+      const tanggalTransfer = document.getElementById('tanggalInput');
+      if (tanggalPrint && tanggalTransfer && tanggalTransfer.value) tanggalPrint.value = tanggalTransfer.value;
+
+      const outletPrint = document.getElementById('printOutletSelect');
+      const outletUtama = document.getElementById('outletSelect');
+      if (outletPrint && outletUtama && outletUtama.value) outletPrint.value = outletUtama.value;
+
       handlePrintFilterChange(true);
     }
 
@@ -593,50 +594,85 @@
       modal.classList.remove('flex');
     }
 
-    function handlePrintFilterChange(immediate = false) {
+    function setPrintLoadStatus(message, type = 'info') {
+      const box = document.getElementById('printLoadStatus');
+      if (!box) return;
+      const color = type === 'success'
+        ? 'border-emerald-900/70 bg-emerald-950/30 text-emerald-300'
+        : type === 'error'
+          ? 'border-rose-900/70 bg-rose-950/30 text-rose-300'
+          : 'border-slate-800 bg-slate-950 text-slate-400';
+      box.className = `rounded-lg border px-4 py-3 text-xs ${color}`;
+      box.textContent = message;
+    }
+
+    function setPrintTxSelectLoading(message = 'Memuat dokumen transfer...') {
+      const sel = document.getElementById('printTxSelect');
+      if (!sel) return;
+      sel.disabled = true;
+      sel.innerHTML = `<option value="">${escapeHtml(message)}</option>`;
+    }
+
+    function handlePrintFilterChange(force = false) {
+      const tanggal = document.getElementById('printTanggalInput')?.value || '';
+      const outlet = document.getElementById('printOutletSelect')?.value || '';
       clearTimeout(printFilterTimer);
-      const run = () => loadTransferPrintDocs();
-      if (immediate) run();
-      else printFilterTimer = setTimeout(run, 250);
+
+      if (!tanggal || !outlet) {
+        printTransferGroups = [];
+        printTransferAllGroup = null;
+        const sel = document.getElementById('printTxSelect');
+        if (sel) {
+          sel.disabled = false;
+          sel.innerHTML = `<option value="">${!tanggal ? 'Pilih tanggal dulu...' : 'Pilih outlet dulu...'}</option>`;
+        }
+        setPrintLoadStatus('Pilih tanggal dan outlet untuk memuat dokumen.', 'info');
+        return;
+      }
+
+      setPrintTxSelectLoading();
+      setPrintLoadStatus(`Memuat dokumen transfer ${outlet} tanggal ${dateToDisplay(tanggal)}...`, 'info');
+      printFilterTimer = setTimeout(() => loadTransferPrintDocs(), force ? 0 : 250);
     }
 
     async function loadTransferPrintDocs() {
-      const status = document.getElementById('printLoadStatus');
-      const tanggal = document.getElementById('printTanggalInput')?.value || '';
-      const outlet = document.getElementById('printOutletSelect')?.value || '';
+      const sel = document.getElementById('printTxSelect');
       try {
-        printTransferGroups = [];
-        printTransferAllGroup = null;
-        renderPrintTxOptions();
-        if (!tanggal || !outlet) {
-          if (status) status.textContent = 'Pilih tanggal dan outlet untuk memuat dokumen.';
-          return;
-        }
-        if (status) status.textContent = 'Memuat dokumen transfer tersimpan...';
+        const tanggal = document.getElementById('printTanggalInput').value;
+        const outlet = document.getElementById('printOutletSelect').value;
+        if (!tanggal) throw new Error('Tanggal print wajib diisi.');
+        if (!outlet) throw new Error('Outlet print wajib dipilih.');
+
+        setPrintTxSelectLoading();
+        setPrintLoadStatus(`Memuat dokumen transfer ${outlet}...`, 'info');
+
         const result = await fetchApi({ action: 'getTransferPrintData', tanggal, outlet });
         if (!result.success) throw new Error(result.message || 'Gagal memuat data print.');
         printTransferGroups = result.groups || [];
         printTransferAllGroup = result.allGroup || null;
         renderPrintTxOptions();
-        if (status) {
-          status.textContent = printTransferGroups.length
-            ? `Ditemukan ${printTransferGroups.length} dokumen transfer untuk ${outlet} pada ${dateToDisplay(tanggal)}.`
-            : `Tidak ada transfer tersimpan untuk ${outlet} pada ${dateToDisplay(tanggal)}.`;
-        }
+        setPrintLoadStatus(
+          printTransferGroups.length
+            ? `Ditemukan ${printTransferGroups.length} dokumen transfer untuk ${outlet}. Pilih dokumen, lalu Print atau + Tambah Outlet.`
+            : `Tidak ada dokumen transfer tersimpan untuk ${outlet} pada tanggal ${dateToDisplay(tanggal)}.`,
+          printTransferGroups.length ? 'success' : 'error'
+        );
       } catch (error) {
         printTransferGroups = [];
         printTransferAllGroup = null;
-        renderPrintTxOptions();
-        if (status) status.textContent = error.message || 'Data print gagal dimuat.';
-        showToast(error.message || 'Data print gagal dimuat.', 'error');
+        renderPrintTxOptions('Tidak ada data transfer tersimpan');
+        setPrintLoadStatus(error.message || 'Data print gagal dimuat.', 'error');
+      } finally {
+        if (sel) sel.disabled = false;
       }
     }
 
-    function renderPrintTxOptions() {
+    function renderPrintTxOptions(emptyText = 'Tidak ada data transfer tersimpan') {
       const sel = document.getElementById('printTxSelect');
       if (!sel) return;
+      sel.disabled = false;
       if (!printTransferGroups.length) {
-        sel.innerHTML = '<option value="">Tidak ada data transfer tersimpan</option>';
+        sel.innerHTML = `<option value="">${escapeHtml(emptyText)}</option>`;
         return;
       }
       const allOption = (printTransferGroups.length > 1 && printTransferAllGroup)
@@ -649,8 +685,8 @@
     }
 
     function getSelectedPrintGroup() {
-      const selected = document.getElementById('printTxSelect')?.value || '';
-      if (!printTransferGroups.length) throw new Error('Belum ada dokumen transfer pada tanggal/outlet ini.');
+      const selected = document.getElementById('printTxSelect').value;
+      if (!printTransferGroups.length) throw new Error('Belum ada dokumen transfer. Pilih tanggal dan outlet sampai dokumen muncul.');
       if (!selected) throw new Error('Pilih dokumen transfer yang mau dicetak.');
       if (selected === 'ALL') {
         if (printTransferAllGroup) return printTransferAllGroup;
@@ -661,53 +697,57 @@
       return found;
     }
 
-    function printGroupKey(group) {
-      return `${group.tanggal || ''}::${group.outlet || ''}::${group.txId || 'ALL'}`;
+    function makeQueueKey(group) {
+      return `${group.tanggal || ''}__${group.outlet || ''}__${group.txId || 'ALL'}`;
+    }
+
+    function cloneGroup(group) {
+      return JSON.parse(JSON.stringify(group || {}));
     }
 
     function addSelectedPrintGroupToQueue() {
       try {
         const group = getSelectedPrintGroup();
-        const key = printGroupKey(group);
-        if (printQueue.some(g => printGroupKey(g) === key)) {
-          showToast('Surat jalan ini sudah ada di daftar cetak.', 'error');
-          return;
+        const key = makeQueueKey(group);
+        if (printQueueGroups.some(g => makeQueueKey(g) === key)) {
+          throw new Error('Dokumen/outlet ini sudah ada di daftar cetak.');
         }
-        printQueue.push(group);
+        printQueueGroups.push(cloneGroup(group));
         renderPrintQueue();
-        showToast(`Ditambahkan: ${group.outlet || '-'} / ${buildSuratJalanNumber(group)}`, 'success');
+        setPrintLoadStatus(`${group.outlet || '-'} ditambahkan ke daftar cetak.`, 'success');
       } catch (error) {
-        showToast(error.message || 'Tidak bisa menambah surat jalan.', 'error');
+        setPrintLoadStatus(error.message || 'Gagal menambah outlet.', 'error');
+        showToast(error.message || 'Gagal menambah outlet.', 'error');
       }
     }
 
-    function clearPrintQueue() {
-      printQueue = [];
+    function removePrintQueue(index) {
+      printQueueGroups.splice(index, 1);
       renderPrintQueue();
     }
 
-    function removePrintQueueItem(key) {
-      printQueue = printQueue.filter(g => printGroupKey(g) !== key);
+    function clearPrintQueue() {
+      printQueueGroups = [];
       renderPrintQueue();
+      setPrintLoadStatus('Daftar cetak dikosongkan.', 'info');
     }
 
     function renderPrintQueue() {
       const box = document.getElementById('printQueueList');
       if (!box) return;
-      if (!printQueue.length) {
+      if (!printQueueGroups.length) {
         box.innerHTML = 'Belum ada outlet ditambahkan. Kalau langsung Print tanpa tambah outlet, sistem mencetak dokumen yang sedang dipilih.';
         return;
       }
-      box.innerHTML = printQueue.map(g => {
-        const key = printGroupKey(g);
-        return `<div class="flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2">
+      box.innerHTML = printQueueGroups.map((g, i) => `
+        <div class="flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2">
           <div class="min-w-0">
-            <div class="truncate font-bold text-white">${escapeHtml(g.outlet || '-')} • ${escapeHtml(buildSuratJalanNumber(g))}</div>
-            <div class="text-xs text-slate-500">${escapeHtml(dateToDisplay(g.tanggal))} • ${escapeHtml(formatNumber(g.totalQty || 0))} qty • PIC ${escapeHtml(g.pic || '-')}</div>
+            <div class="font-bold text-white truncate">${escapeHtml(g.outlet || '-')} • ${escapeHtml(g.txId || 'Gabungan')}</div>
+            <div class="text-xs text-slate-400">${escapeHtml(dateToDisplay(g.tanggal))} • ${escapeHtml(formatNumber(g.totalQty || 0))} qty • PIC ${escapeHtml(g.pic || '-')}</div>
           </div>
-          <button type="button" onclick="removePrintQueueItem('${escapeHtml(key)}')" class="shrink-0 rounded-md border border-rose-900/60 bg-rose-950/30 px-2 py-1 text-xs font-bold text-rose-300 hover:bg-rose-900/40">Hapus</button>
-        </div>`;
-      }).join('');
+          <button type="button" onclick="removePrintQueue(${i})" class="shrink-0 rounded-md border border-rose-900/60 bg-rose-950/30 px-2 py-1 text-xs font-bold text-rose-300 hover:bg-rose-900/40">Hapus</button>
+        </div>
+      `).join('');
     }
 
     function setDynamicPrintPage(mode) {
@@ -723,9 +763,12 @@
         : '@media print { @page { size: A4 portrait; margin: 7mm; } }';
     }
 
-    function getA4Rows(group) {
+    function buildSuratJalanPage(group, mode) {
       const rows = group.rows || [];
-      return (group.a4Rows && group.a4Rows.length) ? group.a4Rows : rows.map(r => ({
+      if (!rows.length) throw new Error(`Dokumen ${group.txId || group.outlet || ''} tidak memiliki baris produk.`);
+      const is58 = mode === '58' || mode === '80';
+      const now = new Date();
+      const a4Rows = (group.a4Rows && group.a4Rows.length) ? group.a4Rows : rows.map(r => ({
         namaProduk: r.namaProduk,
         satuan: r.satuan,
         stokAkhir: 0,
@@ -734,25 +777,12 @@
         produkTerjual: '',
         produkAkhir: ''
       }));
-    }
 
-    function getRowsClass(count) {
-      if (count <= 20) return 'sj-rows-small';
-      if (count <= 30) return 'sj-rows-normal';
-      if (count <= 38) return 'sj-rows-many';
-      return 'sj-rows-extra';
-    }
-
-    function buildSuratJalanPage(group, mode, printedAt) {
-      const is58 = mode === '58' || mode === '80';
-      const rows = group.rows || [];
-      const a4Rows = getA4Rows(group);
-      const dataRows = is58 ? rows : a4Rows;
-      const rowsClass = getRowsClass(dataRows.length);
       const head = is58
         ? '<th style="width:18px;">No</th><th>Detail Produk</th>'
         : '<th>No</th><th>Nama Produk</th><th>Stok<br>Akhir</th><th>Tambah<br>Produk</th><th>Total<br>Produk</th><th>Produk<br>Terjual</th><th>Produk<br>Akhir</th>';
-      const body = dataRows.map((r, i) => is58 ? `
+
+      const body = (is58 ? rows : a4Rows).map((r, i) => is58 ? `
         <tr>
           <td>${i + 1}</td>
           <td style="text-align:left;">
@@ -773,7 +803,7 @@
       `).join('');
 
       return `
-        <div class="sj-page ${rowsClass}">
+        <section class="sj-page">
           <div class="sj-kop">
             <div class="sj-title">AMPERA PAK JENGGOT</div>
             <div class="sj-subtitle">SURAT JALAN TRANSFER PRODUK OUTLET</div>
@@ -784,7 +814,7 @@
             <div>Outlet Tujuan <b>${escapeHtml(group.outlet || '-')}</b></div>
             <div>PIC Penerima <b>${escapeHtml(group.pic || '-')}</b></div>
             <div>Petugas Kirim <b>${escapeHtml(group.petugas || '-')}</b></div>
-            <div>Dicetak <b>${escapeHtml(printedAt)}</b></div>
+            <div>Dicetak <b>${escapeHtml(now.toLocaleString('id-ID'))}</b></div>
           </div>
           <table class="sj-table">
             <thead><tr>${head}</tr></thead>
@@ -796,27 +826,22 @@
             <div class="sj-sign-box"><div>Pengirim</div><div class="sj-sign-name">${escapeHtml(group.petugas || 'Petugas')}</div></div>
             <div class="sj-sign-box"><div>Penerima</div><div class="sj-sign-name">${escapeHtml(group.pic || 'PIC')}</div></div>
           </div>
-        </div>
+        </section>
       `;
     }
 
     function printSavedSuratJalan(mode) {
       try {
-        const groups = printQueue.length ? printQueue.slice() : [getSelectedPrintGroup()];
-        const now = new Date();
-        const printedAt = now.toLocaleString('id-ID');
+        const groups = printQueueGroups.length ? printQueueGroups : [getSelectedPrintGroup()];
         const is58 = mode === '58' || mode === '80';
-        groups.forEach(g => {
-          const rows = is58 ? (g.rows || []) : getA4Rows(g);
-          if (!rows.length) throw new Error(`Dokumen ${buildSuratJalanNumber(g)} tidak memiliki baris produk.`);
-        });
         setDynamicPrintPage(is58 ? '58' : 'a4');
         document.body.classList.remove('print-transfer-a4', 'print-transfer-58');
         document.body.classList.add(is58 ? 'print-transfer-58' : 'print-transfer-a4');
-        document.getElementById('printAreaTransfer').innerHTML = groups.map(g => buildSuratJalanPage(g, is58 ? '58' : 'a4', printedAt)).join('');
+        document.getElementById('printAreaTransfer').innerHTML = groups.map(g => buildSuratJalanPage(g, mode)).join('');
         window.print();
         setTimeout(() => document.body.classList.remove('print-transfer-a4', 'print-transfer-58'), 500);
       } catch (error) {
+        setPrintLoadStatus(error.message || 'Data surat jalan belum valid.', 'error');
         showToast(error.message || 'Data surat jalan belum valid.', 'error');
       }
     }
