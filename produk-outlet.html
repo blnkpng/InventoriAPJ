@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produk Outlet | APJ Inventori</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+    .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all .35s ease; z-index: 9999; }
+    .toast.show { top: 24px; }
+    .modal-overlay { transition: opacity .25s ease-out; }
+    .modal-content { transition: transform .25s ease-out, opacity .25s ease-out; }
+    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .table-scroll::-webkit-scrollbar { height: 8px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+    @media (max-width: 1023px) {
+      .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
+      input, select, textarea { font-size: 16px; }
+      main { width: 100%; }
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+    }
+  </style>
+</head>
+<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
+  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition no-print">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+  </button>
+  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/70 backdrop-blur-sm lg:hidden no-print"></div>
+
+  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md no-print" role="alert"><div class="ml-3 text-sm font-medium" id="toastMessage"></div></div>
+
+  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none no-print">
+    <div class="h-16 flex items-center px-6 border-b border-slate-800"><div class="flex items-center gap-3 text-sky-500"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span></div></div>
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
+      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
+      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
+      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
+      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produksi</a>
+      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 bg-sky-600/10 text-sky-400 rounded-lg font-semibold text-sm transition-colors border border-sky-500/20">Produk Outlet</a>
+      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
+      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
+      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
+    </nav>
+    <div class="p-4 border-t border-slate-800">
+      <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">Logout Sistem</button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
+    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/70 backdrop-blur-sm sticky top-0 z-10 no-print">
+      <div class="min-w-0">
+        <h2 class="text-base sm:text-lg font-semibold text-sky-400 truncate">Produk Outlet</h2>
+        <p class="hidden sm:block text-xs text-slate-500">Catat produk terjual dan opname stok outlet.</p>
+      </div>
+      <div class="hidden sm:block text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-sky-400">Memuat...</span></div>
+    </header>
+
+    <div id="accessDeniedBox" class="hidden m-4 sm:m-8 rounded-xl border border-rose-800 bg-rose-950/30 p-5 text-rose-300 no-print">
+      <h3 class="font-bold text-white mb-1">Akses Ditolak</h3>
+      <p class="text-sm">Menu ini hanya tersedia untuk role dengan izin ProdukOutlet.</p>
+    </div>
+
+    <section class="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4"><p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Outlet Aktif</p><h3 id="kpiOutlet" class="text-lg font-bold text-sky-300 mt-2">-</h3></div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4"><p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Total Produk</p><h3 id="kpiProduk" class="text-2xl font-bold text-white mt-1">0</h3></div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4"><p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Masuk Hari Ini</p><h3 id="kpiMasuk" class="text-2xl font-bold text-emerald-300 mt-1">0</h3></div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4"><p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Terjual Hari Ini</p><h3 id="kpiTerjual" class="text-2xl font-bold text-rose-300 mt-1">0</h3></div>
+      </div>
+
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-6 gap-4 mb-6 no-print">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal</label>
+            <input type="date" id="tanggalInput" onchange="loadProdukOutlet()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-sky-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Outlet</label>
+            <select id="outletSelect" onchange="loadProdukOutlet()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-sky-500 focus:outline-none"></select>
+          </div>
+          <div class="lg:col-span-2">
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cari Produk</label>
+            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari produk..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-sky-500 focus:outline-none">
+          </div>
+          <div class="flex items-end">
+            <button type="button" onclick="openTerjualModal()" class="w-full bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-rose-600/20">Input Terjual</button>
+          </div>
+          <div class="flex items-end">
+            <button type="button" onclick="openOpnameModal()" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-amber-600/20">Stok Opname</button>
+          </div>
+        </div>
+
+        <div class="mb-4 text-xs text-slate-400 bg-sky-950/20 border border-sky-900/50 rounded-lg p-3 no-print">
+          Produk masuk otomatis dari <b>Transfer Produksi</b>. Kasir bisa input <b>Terjual</b> secara bulk, dan koreksi stok fisik lewat <b>Opname</b>. Baris kosong/0 tidak disimpan.
+        </div>
+
+        <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll">
+          <table class="w-full text-left border-collapse min-w-[1050px]">
+            <thead>
+              <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
+                <th class="p-4 min-w-[280px]">Nama Produk</th>
+                <th class="p-4 min-w-[120px] text-center">Stok Kemarin</th>
+                <th class="p-4 min-w-[120px] text-center">Stok Masuk</th>
+                <th class="p-4 min-w-[120px] text-center">Stok Terjual</th>
+                <th class="p-4 min-w-[120px] text-center">Opname +/-</th>
+                <th class="p-4 min-w-[120px] text-center">Stok Sisa</th>
+                <th class="p-4 min-w-[100px] text-center">Satuan</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyProduk">
+              <tr><td colspan="7" class="p-8 text-center text-slate-500">Memuat data produk outlet...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <p id="tableHint" class="text-xs text-slate-500">Stok sisa = stok kemarin + masuk - terjual + koreksi opname.</p>
+          <p id="rowsInfo" class="text-xs text-slate-500">0 data tampil</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="modalTerjual" class="fixed inset-0 z-50 hidden items-center justify-center p-4 no-print">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm modal-overlay opacity-0" onclick="closeModal('modalTerjual')"></div>
+    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-5xl max-h-[90dvh] overflow-hidden transform scale-95 opacity-0 modal-content">
+      <div class="p-5 border-b border-slate-800 flex items-start justify-between gap-3">
+        <div><p class="text-xs font-bold uppercase tracking-wider text-rose-400">Bulk Input</p><h3 class="text-lg font-bold text-white">Input Produk Terjual</h3><p class="text-sm text-slate-400 mt-1">Isi hanya produk yang terjual. Kosong atau 0 otomatis dilewati.</p></div>
+        <button onclick="closeModal('modalTerjual')" class="text-slate-500 hover:text-white">✕</button>
+      </div>
+      <div class="p-5 overflow-auto max-h-[62dvh] table-scroll">
+        <table class="w-full min-w-[820px] text-left border-collapse">
+          <thead class="text-xs uppercase text-slate-400 border-b border-slate-800"><tr><th class="py-3 pr-3">Produk</th><th class="py-3 px-3 text-center">Stok Sisa</th><th class="py-3 px-3 text-center">Qty Terjual</th><th class="py-3 px-3 text-center">Satuan</th><th class="py-3 pl-3">Catatan</th></tr></thead>
+          <tbody id="tbodyTerjual" class="divide-y divide-slate-800/70"></tbody>
+        </table>
+      </div>
+      <div class="p-5 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p id="terjualSummary" class="text-xs text-slate-500">Belum ada qty terjual.</p>
+        <div class="flex gap-3"><button onclick="closeModal('modalTerjual')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded-lg border border-slate-700">Batal</button><button id="btnSaveTerjual" onclick="saveTerjual()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-lg">Simpan Terjual</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalOpname" class="fixed inset-0 z-50 hidden items-center justify-center p-4 no-print">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm modal-overlay opacity-0" onclick="closeModal('modalOpname')"></div>
+    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-6xl max-h-[90dvh] overflow-hidden transform scale-95 opacity-0 modal-content">
+      <div class="p-5 border-b border-slate-800 flex items-start justify-between gap-3">
+        <div><p class="text-xs font-bold uppercase tracking-wider text-amber-400">Koreksi Fisik</p><h3 class="text-lg font-bold text-white">Stok Opname Produk Outlet</h3><p class="text-sm text-slate-400 mt-1">Isi stok fisik untuk produk yang dicek. Jika selisih tidak nol, alasan wajib diisi.</p></div>
+        <button onclick="closeModal('modalOpname')" class="text-slate-500 hover:text-white">✕</button>
+      </div>
+      <div class="p-5 overflow-auto max-h-[62dvh] table-scroll">
+        <table class="w-full min-w-[980px] text-left border-collapse">
+          <thead class="text-xs uppercase text-slate-400 border-b border-slate-800"><tr><th class="py-3 pr-3">Produk</th><th class="py-3 px-3 text-center">Stok Sistem</th><th class="py-3 px-3 text-center">Stok Fisik</th><th class="py-3 px-3 text-center">Selisih</th><th class="py-3 px-3 text-center">Satuan</th><th class="py-3 pl-3">Alasan</th></tr></thead>
+          <tbody id="tbodyOpname" class="divide-y divide-slate-800/70"></tbody>
+        </table>
+      </div>
+      <div class="p-5 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p id="opnameSummary" class="text-xs text-slate-500">Belum ada stok fisik yang diisi.</p>
+        <div class="flex gap-3"><button onclick="closeModal('modalOpname')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded-lg border border-slate-700">Batal</button><button id="btnSaveOpname" onclick="saveOpname()" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-lg">Simpan Opname</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none no-print">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
+    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
+      <h3 class="text-lg font-bold text-white text-center mb-2">Konfirmasi Keluar</h3>
+      <p class="text-sm text-slate-400 text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ?</p>
+      <div class="flex gap-3"><button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg border border-slate-600">Batal</button><button onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg">Ya, Keluar</button></div>
+    </div>
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
+    let currentRows = [];
+    let filteredRows = [];
+    let allowedOutlets = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
+      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
+      document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
+      document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMobileSidebar));
+
+      const perms = safeParse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
+      const level = localStorage.getItem('APJ_USER_LEVEL') || '';
+      const canAccess = isOwnerLevel(level) || String(perms.produkOutlet || '').toUpperCase() === 'Y';
+      if (!canAccess) {
+        document.getElementById('accessDeniedBox').classList.remove('hidden');
+        document.querySelector('section').classList.add('hidden');
+        return;
+      }
+      initProdukOutlet();
+    });
+
+    async function initProdukOutlet() { await loadProdukOutlet(); }
+
+    async function fetchApi(payload) {
+      const res = await fetch(APPS_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, redirect:'follow', body: JSON.stringify(payload) });
+      return res.json();
+    }
+
+    async function loadProdukOutlet() {
+      const tbody = document.getElementById('tbodyProduk');
+      tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500 animate-pulse">Memuat data produk outlet...</td></tr>';
+      try {
+        const payload = { action:'getProdukOutletData', tanggal: document.getElementById('tanggalInput').value, outlet: document.getElementById('outletSelect').value, petugas: localStorage.getItem('APJ_USER_NAME') || '', level: localStorage.getItem('APJ_USER_LEVEL') || '' };
+        const result = await fetchApi(payload);
+        if (!result.success) throw new Error(result.message || 'Gagal memuat produk outlet.');
+        currentRows = result.data || [];
+        allowedOutlets = result.allowedOutlets || [];
+        renderOutletSelect(result.outlet, result.canSelectOutlet);
+        document.getElementById('kpiOutlet').textContent = result.outlet || '-';
+        renderTable();
+        showToast('Data produk outlet berhasil dimuat.', 'success');
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-rose-400">${escapeHtml(e.message || 'Koneksi gagal.')}</td></tr>`;
+        showToast(e.message || 'Koneksi gagal.', 'error');
+      }
+    }
+
+    function renderOutletSelect(selected, canSelect) {
+      const sel = document.getElementById('outletSelect');
+      const before = sel.value;
+      sel.innerHTML = (allowedOutlets || []).map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
+      sel.value = selected || before || (allowedOutlets[0] || '');
+      sel.disabled = !canSelect;
+    }
+
+    function renderTable() {
+      const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      filteredRows = currentRows.filter(r => !query || `${r.id || ''} ${r.nama || ''}`.toLowerCase().includes(query));
+      updateKpis(filteredRows);
+      const tbody = document.getElementById('tbodyProduk');
+      if (!filteredRows.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500">Tidak ada produk yang cocok.</td></tr>';
+        document.getElementById('rowsInfo').textContent = '0 data tampil';
+        return;
+      }
+      tbody.innerHTML = filteredRows.map(r => `
+        <tr class="border-b border-slate-800/60 bg-slate-950 hover:bg-slate-900 transition-colors">
+          <td class="p-4"><div class="text-sm font-bold text-white">${escapeHtml(r.nama || '-')}</div><div class="text-[11px] text-slate-500">${escapeHtml(r.id || '-')}</div>${r.keterangan ? `<div class="text-[11px] text-sky-300/80 mt-1">${escapeHtml(r.keterangan)}</div>` : ''}</td>
+          <td class="p-4 text-center text-sm font-bold text-slate-300">${formatNumber(r.stokKemarin)}</td>
+          <td class="p-4 text-center text-sm font-bold text-emerald-400">${formatNumber(r.stokMasuk)}</td>
+          <td class="p-4 text-center text-sm font-bold text-rose-400">${formatNumber(r.stokTerjual)}</td>
+          <td class="p-4 text-center text-sm font-bold ${parseNumber(r.selisihOpname) < 0 ? 'text-rose-300' : (parseNumber(r.selisihOpname) > 0 ? 'text-emerald-300' : 'text-slate-500')}">${formatNumber(r.selisihOpname)}</td>
+          <td class="p-4 text-center text-sm font-extrabold ${parseNumber(r.stokSisa) <= 0 ? 'text-rose-400' : 'text-sky-300'}">${formatNumber(r.stokSisa)}</td>
+          <td class="p-4 text-center text-sm text-slate-400">${escapeHtml(r.satuan || '-')}</td>
+        </tr>`).join('');
+      document.getElementById('rowsInfo').textContent = `${filteredRows.length} data tampil dari ${currentRows.length} produk`;
+    }
+
+    function updateKpis(rows) {
+      document.getElementById('kpiProduk').textContent = rows.length;
+      document.getElementById('kpiMasuk').textContent = formatNumber(rows.reduce((s,r)=>s+parseNumber(r.stokMasuk),0));
+      document.getElementById('kpiTerjual').textContent = formatNumber(rows.reduce((s,r)=>s+parseNumber(r.stokTerjual),0));
+    }
+
+    function openTerjualModal() {
+      if (!currentRows.length) return showToast('Data produk belum dimuat.', 'error');
+      document.getElementById('tbodyTerjual').innerHTML = currentRows.map((r, idx) => `
+        <tr data-index="${idx}">
+          <td class="py-3 pr-3"><div class="text-sm font-bold text-white">${escapeHtml(r.nama)}</div><div class="text-[11px] text-slate-500">${escapeHtml(r.id)}</div></td>
+          <td class="py-3 px-3 text-center text-sm font-bold text-sky-300 stok-sisa">${formatNumber(r.stokSisa)}</td>
+          <td class="py-3 px-3"><input type="number" min="0" step="any" oninput="updateTerjualSummary()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-terjual" placeholder="0"></td>
+          <td class="py-3 px-3 text-center text-sm text-slate-400">${escapeHtml(r.satuan)}</td>
+          <td class="py-3 pl-3"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-catatan" placeholder="Opsional..."></td>
+        </tr>`).join('');
+      updateTerjualSummary();
+      openModal('modalTerjual');
+    }
+
+    function updateTerjualSummary() {
+      const rows = collectTerjualRows(false);
+      const total = rows.reduce((s,r)=>s+parseNumber(r.qtyKeluar),0);
+      document.getElementById('terjualSummary').textContent = rows.length ? `${rows.length} produk diisi, total ${formatNumber(total)}.` : 'Belum ada qty terjual.';
+    }
+
+    function collectTerjualRows(strict) {
+      const rows = [];
+      document.querySelectorAll('#tbodyTerjual tr').forEach(tr => {
+        const item = currentRows[Number(tr.dataset.index)];
+        const qty = parseNumber(tr.querySelector('.input-terjual').value);
+        if (qty < 0 && strict) throw new Error('Qty tidak boleh minus.');
+        if (qty > 0) {
+          if (strict && qty > parseNumber(item.stokSisa)) throw new Error(`Qty terjual ${item.nama} melebihi stok sisa.`);
+          rows.push({ id:item.id, nama:item.nama, satuan:item.satuan, qtyKeluar:qty, keterangan:tr.querySelector('.input-catatan').value || 'Terjual' });
+        }
+      });
+      return rows;
+    }
+
+    async function saveTerjual() {
+      const btn = document.getElementById('btnSaveTerjual');
+      try {
+        const rows = collectTerjualRows(true);
+        if (!rows.length) throw new Error('Isi minimal 1 qty terjual.');
+        btn.disabled = true; btn.textContent = 'Menyimpan...';
+        const result = await fetchApi({ action:'simpanProdukOutletKeluar', tanggal:document.getElementById('tanggalInput').value, outlet:document.getElementById('outletSelect').value, petugas:localStorage.getItem('APJ_USER_NAME') || '', rows });
+        if (!result.success) throw new Error(result.message || 'Gagal menyimpan.');
+        showToast(result.message || 'Produk terjual berhasil disimpan.', 'success');
+        closeModal('modalTerjual');
+        await loadProdukOutlet();
+      } catch (e) { showToast(e.message || 'Data belum valid.', 'error'); }
+      finally { btn.disabled = false; btn.textContent = 'Simpan Terjual'; }
+    }
+
+    function openOpnameModal() {
+      if (!currentRows.length) return showToast('Data produk belum dimuat.', 'error');
+      document.getElementById('tbodyOpname').innerHTML = currentRows.map((r, idx) => `
+        <tr data-index="${idx}">
+          <td class="py-3 pr-3"><div class="text-sm font-bold text-white">${escapeHtml(r.nama)}</div><div class="text-[11px] text-slate-500">${escapeHtml(r.id)}</div></td>
+          <td class="py-3 px-3 text-center text-sm font-bold text-sky-300 stok-sistem">${formatNumber(r.stokSisa)}</td>
+          <td class="py-3 px-3"><input type="number" min="0" step="any" oninput="updateOpnameRow(this); updateOpnameSummary();" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-fisik" placeholder="Kosongkan jika tidak dicek"></td>
+          <td class="py-3 px-3 text-center text-sm font-bold label-selisih text-slate-500">-</td>
+          <td class="py-3 px-3 text-center text-sm text-slate-400">${escapeHtml(r.satuan)}</td>
+          <td class="py-3 pl-3"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-alasan" placeholder="Wajib jika selisih..."></td>
+        </tr>`).join('');
+      updateOpnameSummary();
+      openModal('modalOpname');
+    }
+
+    function updateOpnameRow(input) {
+      const tr = input.closest('tr');
+      const item = currentRows[Number(tr.dataset.index)];
+      const lbl = tr.querySelector('.label-selisih');
+      if (input.value === '') { lbl.textContent = '-'; lbl.className = 'py-3 px-3 text-center text-sm font-bold label-selisih text-slate-500'; return; }
+      const diff = parseNumber(input.value) - parseNumber(item.stokSisa);
+      lbl.textContent = formatNumber(diff);
+      lbl.className = `py-3 px-3 text-center text-sm font-bold label-selisih ${diff < 0 ? 'text-rose-400' : (diff > 0 ? 'text-emerald-400' : 'text-slate-400')}`;
+    }
+
+    function updateOpnameSummary() {
+      const rows = collectOpnameRows(false);
+      document.getElementById('opnameSummary').textContent = rows.length ? `${rows.length} produk akan dicatat opname.` : 'Belum ada stok fisik yang diisi.';
+    }
+
+    function collectOpnameRows(strict) {
+      const rows = [];
+      document.querySelectorAll('#tbodyOpname tr').forEach(tr => {
+        const item = currentRows[Number(tr.dataset.index)];
+        const fisikVal = tr.querySelector('.input-fisik').value;
+        if (fisikVal === '') return;
+        const fisik = parseNumber(fisikVal);
+        if (strict && fisik < 0) throw new Error(`Stok fisik ${item.nama} tidak boleh minus.`);
+        const diff = fisik - parseNumber(item.stokSisa);
+        const alasan = tr.querySelector('.input-alasan').value.trim();
+        if (strict && Math.abs(diff) > 0.0001 && !alasan) throw new Error(`Alasan wajib diisi untuk opname ${item.nama}.`);
+        rows.push({ id:item.id, nama:item.nama, satuan:item.satuan, stokSistem:item.stokSisa, stokFisik:fisikVal, alasan });
+      });
+      return rows;
+    }
+
+    async function saveOpname() {
+      const btn = document.getElementById('btnSaveOpname');
+      try {
+        const rows = collectOpnameRows(true);
+        if (!rows.length) throw new Error('Isi minimal 1 stok fisik.');
+        btn.disabled = true; btn.textContent = 'Menyimpan...';
+        const result = await fetchApi({ action:'simpanProdukOutletOpname', tanggal:document.getElementById('tanggalInput').value, outlet:document.getElementById('outletSelect').value, petugas:localStorage.getItem('APJ_USER_NAME') || '', rows });
+        if (!result.success) throw new Error(result.message || 'Gagal menyimpan opname.');
+        showToast(result.message || 'Opname berhasil disimpan.', 'success');
+        closeModal('modalOpname');
+        await loadProdukOutlet();
+      } catch (e) { showToast(e.message || 'Data belum valid.', 'error'); }
+      finally { btn.disabled = false; btn.textContent = 'Simpan Opname'; }
+    }
+
+    function openModal(id) {
+      const modal = document.getElementById(id); const overlay = modal.querySelector('.modal-overlay'); const content = modal.querySelector('.modal-content');
+      modal.classList.remove('hidden'); modal.classList.add('flex'); void modal.offsetWidth;
+      overlay.classList.remove('opacity-0'); overlay.classList.add('opacity-100'); content.classList.remove('scale-95','opacity-0'); content.classList.add('scale-100','opacity-100');
+    }
+    function closeModal(id) {
+      const modal = document.getElementById(id); const overlay = modal.querySelector('.modal-overlay'); const content = modal.querySelector('.modal-content');
+      overlay.classList.add('opacity-0'); overlay.classList.remove('opacity-100'); content.classList.add('scale-95','opacity-0'); content.classList.remove('scale-100','opacity-100');
+      setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 250);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('customToast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.className = type === 'success'
+        ? 'toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md no-print'
+        : 'toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md no-print';
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+    function parseNumber(v) { const n = parseFloat(String(v ?? '').replace(/\./g, '').replace(',', '.')); return Number.isFinite(n) ? n : 0; }
+    function formatNumber(v) { return parseNumber(v).toLocaleString('id-ID', { maximumFractionDigits: 2 }); }
+    function escapeHtml(v) { return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function safeParse(text) { try { return JSON.parse(text); } catch(e) { return {}; } }
+    function isOwnerLevel(level) { return /owner|super/i.test(String(level || '')); }
+    function openMobileSidebar() { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebarBackdrop').classList.remove('hidden'); }
+    function closeMobileSidebar() { document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebarBackdrop').classList.add('hidden'); }
+    function showLogoutModal() { const m=document.getElementById('logoutModal'), o=m.querySelector('.modal-overlay'), c=m.querySelector('.modal-content'); m.classList.remove('hidden'); void m.offsetWidth; o.classList.add('opacity-100'); o.classList.remove('opacity-0'); c.classList.add('scale-100','opacity-100'); c.classList.remove('scale-95','opacity-0'); }
+    function closeLogoutModal() { const m=document.getElementById('logoutModal'), o=m.querySelector('.modal-overlay'), c=m.querySelector('.modal-content'); o.classList.remove('opacity-100'); o.classList.add('opacity-0'); c.classList.remove('scale-100','opacity-100'); c.classList.add('scale-95','opacity-0'); setTimeout(()=>m.classList.add('hidden'),250); }
+    function executeLogout() { localStorage.removeItem('APJ_SESSION_ACTIVE'); localStorage.removeItem('APJ_USER_NAME'); localStorage.removeItem('APJ_USER_LEVEL'); localStorage.removeItem('APJ_USER_OUTLET'); localStorage.removeItem('APJ_USER_PERMISSIONS'); window.location.href = 'index.html'; }
+  </script>
+</body>
+</html>
