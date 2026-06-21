@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transfer Produk Outlet | APJ Inventori v14.5</title>
+  <title>Transfer Produk Outlet | APJ Inventori v14.6</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -29,7 +29,7 @@
       body > *:not(#printAreaTransfer) { display: none !important; }
       #printAreaTransfer { display: block !important; color: black !important; }
       body.print-transfer-a4 #printAreaTransfer { font-family: 'Times New Roman', serif; }
-      body.print-transfer-58 #printAreaTransfer { width: 54mm; max-width: 54mm; font-family: Arial, sans-serif; font-size: 8.2px; line-height: 1.16; page-break-inside: avoid; break-inside: avoid; }
+      body.print-transfer-58 #printAreaTransfer { width: 54mm; max-width: 54mm; font-family: Arial, sans-serif; font-size: 7.2px; line-height: 1.12; page-break-inside: avoid; break-inside: avoid; }
       .sj-kop { text-align: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
       .sj-title { font-size: 20pt; font-weight: bold; letter-spacing: .5px; }
       .sj-subtitle { font-size: 12pt; font-weight: bold; margin-top: 2px; }
@@ -46,23 +46,41 @@
       .sj-sign-box { width: 33.333%; text-align: center; font-size: 10pt; }
       .sj-sign-name { margin-top: 58px; border-top: 1px solid #000; padding-top: 4px; font-weight: bold; }
       body.print-transfer-58 .sj-kop { border-bottom: 1px dashed #000; padding-bottom: 3px; margin-bottom: 4px; }
-      body.print-transfer-58 .sj-title { font-size: 11px; letter-spacing: .1px; }
-      body.print-transfer-58 .sj-subtitle { font-size: 8px; }
-      body.print-transfer-58 .sj-meta { display: block; font-size: 7.2px; margin: 4px 0; }
+      body.print-transfer-58 .sj-title { font-size: 9.5px; letter-spacing: 0; }
+      body.print-transfer-58 .sj-subtitle { font-size: 7px; }
+      body.print-transfer-58 .sj-meta { display: block; font-size: 6.7px; margin: 3px 0; }
       body.print-transfer-58 .sj-meta div { border-bottom: none; padding: .5px 0; gap: 4px; }
       body.print-transfer-58 .sj-meta b { margin-left: 4px; }
-      body.print-transfer-58 .sj-table { font-size: 7.4px; border-collapse: collapse; }
+      body.print-transfer-58 .sj-table { font-size: 6.8px; border-collapse: collapse; table-layout: fixed; }
       body.print-transfer-58 .sj-table th, body.print-transfer-58 .sj-table td { padding: 1.5px 1px; page-break-inside: avoid; break-inside: avoid; }
       body.print-transfer-58 .sj-table th { background: transparent !important; }
-      body.print-transfer-58 .sj-item-name { font-weight: 800; font-size: 7.6px; }
-      body.print-transfer-58 .sj-item-detail { margin-top: 1px; font-size: 7.2px; }
-      body.print-transfer-58 .sj-note { font-size: 7.2px; border-top: 1px dashed #000; margin-top: 4px; padding-top: 3px; }
-      body.print-transfer-58 .sj-sign { display: block; margin-top: 6px; font-size: 7.2px; page-break-inside: avoid; }
-      body.print-transfer-58 .sj-sign-box { width: 100%; margin-top: 4px; text-align: left; }
+      body.print-transfer-58 .sj-item-name { font-weight: 700; font-size: 6.8px; line-height: 1.12; }
+      body.print-transfer-58 .sj-item-detail { margin-top: 1px; font-size: 6.6px; }
+      body.print-transfer-58 .sj-note { font-size: 6.6px; border-top: 1px dashed #000; margin-top: 3px; padding-top: 2px; }
+      body.print-transfer-58 .sj-sign { display: block; margin-top: 4px; font-size: 6.4px !important; line-height: 1.1; page-break-inside: avoid; }
+      body.print-transfer-58 .sj-sign-box { width: 100%; margin-top: 2px; text-align: left; display:flex; align-items:center; gap:3px; }
       body.print-transfer-58 .sj-sign-box:first-child { display:none; }
-      body.print-transfer-58 .sj-sign-box > div:first-child { display:inline-block; min-width: 38px; }
-      body.print-transfer-58 .sj-sign-name { display:inline-block; margin-top: 0; border-top: 1px dotted #000; padding-top: 1px; min-width: 34mm; text-align:center; font-weight: 700; }
+      body.print-transfer-58 .sj-sign-box > div:first-child { display:inline-block; min-width: 13mm; font-weight:600; }
+      body.print-transfer-58 .sj-sign-name { display:block; margin-top: 0; border-top: 0; padding-top: 0; min-width: 0; flex:1; text-align:left; font-size:6.4px !important; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     }
+  
+
+    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
+    @media screen and (max-width: 768px) {
+      .table-scroll { overflow-x: visible !important; }
+      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
+      .table-scroll thead { display: none !important; }
+      .table-scroll tbody { display: block !important; width: 100% !important; }
+      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
+      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
+      .table-scroll td:last-child { border-bottom: 0 !important; }
+      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
+      .table-scroll td > * { max-width: 58%; }
+      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
+      .table-scroll .text-center { text-align: right !important; }
+      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
+    }
+
   </style>
 </head>
 <body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
@@ -126,31 +144,29 @@
       </div>
 
       <div class="bg-slate-950 border border-violet-900/40 rounded-xl p-4 sm:p-6 shadow-xl mb-6">
-        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-4">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-violet-300 mb-1">Cetak Surat Jalan Tersimpan</p>
-            <h3 class="text-lg font-bold text-white">Print berdasarkan tanggal & outlet</h3>
-            <p class="text-xs text-slate-500 mt-1">Simpan transfer dulu, lalu cetak surat jalan dari data yang sudah masuk database. Kalau ada transfer pagi dan siang, pilih ID transfer yang mau dicetak.</p>
-          </div>
-          <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <button type="button" onclick="loadTransferPrintDocs()" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-700">Muat Data Print</button>
-            <button type="button" onclick="printSavedSuratJalan('a4')" class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-violet-600/20">Print A4</button>
-            <button type="button" onclick="printSavedSuratJalan('58')" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-700">Print 58mm</button>
-          </div>
+        <div class="mb-4">
+          <p class="text-xs font-bold uppercase tracking-wider text-violet-300 mb-1">Cetak Surat Jalan Tersimpan</p>
+          <h3 class="text-lg font-bold text-white">Print berdasarkan tanggal & outlet</h3>
+          <p class="text-xs text-slate-500 mt-1">Simpan transfer dulu, lalu pilih tanggal, outlet, dan dokumen transfer. Transfer pagi dan siang bisa dicetak terpisah sesuai ID transfer.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+          <div class="md:col-span-3">
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal SJ</label>
             <input type="date" id="printTanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
           </div>
-          <div>
+          <div class="md:col-span-3">
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Outlet</label>
             <select id="printOutletSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Memuat outlet...</option></select>
           </div>
-          <div class="md:col-span-2">
+          <div class="md:col-span-6">
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Dokumen Transfer</label>
-            <select id="printTxSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Klik Muat Data Print dulu...</option></select>
+            <select id="printTxSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Klik Muat Data dulu...</option></select>
           </div>
+        </div>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button type="button" onclick="loadTransferPrintDocs()" class="w-full bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wide border border-slate-700">Muat Data</button>
+          <button type="button" onclick="printSavedSuratJalan('a4')" class="w-full bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg shadow-violet-600/20">Print A4</button>
+          <button type="button" onclick="printSavedSuratJalan('58')" class="w-full bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wide border border-slate-700">Print 58mm</button>
         </div>
       </div>
 
@@ -742,5 +758,36 @@
     document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeMobileSidebar(); });
     window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeMobileSidebar(); });
   </script>
+
+
+  <script>
+    // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
+    (function(){
+      function headersFor(table){
+        return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
+      }
+      function labelTable(table){
+        var headers = headersFor(table);
+        if (!headers.length) return;
+        Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
+          Array.from(row.children).forEach(function(cell, idx){
+            if (!cell || cell.tagName !== 'TD') return;
+            if (!cell.getAttribute('data-label')) cell.setAttribute('data-label', headers[idx] || 'Data');
+          });
+        });
+      }
+      function applyResponsiveTableLabels(root){
+        root = root || document;
+        root.querySelectorAll('.table-scroll table').forEach(labelTable);
+      }
+      window.applyResponsiveTableLabels = applyResponsiveTableLabels;
+      document.addEventListener('DOMContentLoaded', function(){
+        applyResponsiveTableLabels(document);
+        var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
+        obs.observe(document.body, { childList:true, subtree:true });
+      });
+    })();
+  </script>
+
 </body>
 </html>
