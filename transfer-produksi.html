@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transfer Produk Outlet | APJ Inventori v14.9.6</title>
+  <title>Transfer Produk Outlet | APJ Inventori v14.9.7</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -56,15 +56,15 @@
       body.print-transfer-a4 .sj-table th:nth-child(5), body.print-transfer-a4 .sj-table td:nth-child(5) { width: 17mm; }
       body.print-transfer-a4 .sj-table th:nth-child(6), body.print-transfer-a4 .sj-table td:nth-child(6) { width: 18mm; }
       body.print-transfer-a4 .sj-table th:nth-child(7), body.print-transfer-a4 .sj-table td:nth-child(7) { width: 18mm; }
-      body.print-transfer-a4 .sj-kop { padding-bottom: 3px; margin-bottom: 4px; flex: 0 0 auto; }
-      body.print-transfer-a4 .sj-title { font-size: 15.2pt; }
-      body.print-transfer-a4 .sj-subtitle { font-size: 9.1pt; }
-      body.print-transfer-a4 .sj-meta { font-size: 7.4pt; margin: 2.8px 0 4px; gap: 0.5px 12px; flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-kop { padding-bottom: 3.5px; margin-bottom: 6px; flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-title { font-size: 18.2pt; letter-spacing: .65px; }
+      body.print-transfer-a4 .sj-subtitle { font-size: 10.4pt; margin-top: 1px; }
+      body.print-transfer-a4 .sj-meta { font-size: 8.45pt; margin: 5px 0 7px; gap: 1.2px 13px; flex: 0 0 auto; }
       body.print-transfer-a4 .sj-note { font-size: 7.2pt; margin-top: 2.2mm; flex: 0 0 auto; }
       body.print-transfer-a4 .sj-sign { margin-top: 5mm; margin-bottom: 0; gap: 10px; flex: 0 0 auto; }
       body.print-transfer-a4 .sj-sign-box { font-size: 7.3pt; }
       body.print-transfer-a4 .sj-sign-name { margin-top: 14mm; padding-top: 2px; }
-      body.print-transfer-a4 .sj-table-zone { flex: 0 0 auto; }
+      body.print-transfer-a4 .sj-table-zone { flex: 0 0 auto; margin-top: 1.8mm; }
       body.print-transfer-a4 .sj-a4-spacer { display: none !important; flex: 0 0 0; height: 0; min-height: 0; }
       body.print-transfer-a4 .sj-name-cell { font-size: var(--sj-a4-name-font, 7.4pt); }
       .sj-note { font-size: 9pt; margin-top: 10px; }
@@ -769,7 +769,7 @@
     function buildA4SuratJalanVars(rowCount) {
       const count = Math.max(1, parseInt(rowCount || 0, 10));
       const totalTableRows = count + 1; // header + produk
-      const availableTableMm = 170;
+      const availableTableMm = 162;
       const rowH = Math.max(3.0, Math.min(6.15, availableTableMm / totalTableRows));
       const headH = Math.max(4.0, Math.min(6.3, rowH + 0.35));
       let font = 7.25;
