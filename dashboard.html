@@ -87,8 +87,80 @@
       border-right: 1px solid var(--sidebar-border);
       box-shadow: 18px 0 55px rgba(2, 6, 23, .22);
     }
+    .apj-sidebar {
+      width: 292px;
+      overflow: hidden;
+    }
+    .sidebar-head { padding: 18px 18px 12px; }
+    .sidebar-toggle {
+      width: 38px; height: 38px;
+      border-radius: 16px;
+      display:none; align-items:center; justify-content:center;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.84);
+      transition: all .18s ease;
+      flex: 0 0 auto;
+    }
+    .sidebar-toggle:hover { background: rgba(255,255,255,.14); color:#fff; transform: translateY(-1px); }
+    .sidebar-nav {
+      flex: 1 1 auto;
+      overflow: hidden;
+      padding: 6px 16px 12px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .menu-section { display:flex; flex-direction:column; gap: 5px; min-width:0; }
+    .menu-label {
+      padding: 0 12px 2px;
+      color: var(--sidebar-muted);
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .17em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .sidebar-footer { padding: 12px 16px 16px; border-top: 1px solid rgba(255,255,255,.08); }
+    .logout-button {
+      width:100%;
+      min-height:44px;
+      border-radius:20px;
+      padding: 10px 14px;
+      display:flex; align-items:center; gap:12px;
+      background: rgba(244, 63, 94, .12);
+      border:1px solid rgba(244, 63, 94, .20);
+      color:#fb7185;
+      font-size:14px;
+      font-weight:850;
+      transition: all .18s ease;
+    }
+    .logout-button:hover { background: rgba(244, 63, 94, .18); color:#fecdd3; transform: translateY(-1px); }
+    .logout-button .nav-icon { color:#fb7185; }
+
+    #sidebar.sidebar-collapsed {
+      width: 88px;
+    }
+    #sidebar.sidebar-collapsed .brand-text,
+    #sidebar.sidebar-collapsed .nav-text,
+    #sidebar.sidebar-collapsed .menu-label span,
+    #sidebar.sidebar-collapsed .logout-text { display:none; }
+    #sidebar.sidebar-collapsed .sidebar-head { padding: 18px 14px 12px; }
+    #sidebar.sidebar-collapsed .sidebar-head-inner { justify-content:center; }
+    #sidebar.sidebar-collapsed .logo-mark { width:48px; height:48px; border-radius:20px; }
+    #sidebar.sidebar-collapsed .sidebar-toggle { position:absolute; left:62px; top:24px; width:28px; height:28px; border-radius:12px; background:rgba(124,58,237,.92); color:#fff; }
+    #sidebar.sidebar-collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    #sidebar.sidebar-collapsed .sidebar-nav { padding-left:14px; padding-right:14px; align-items:center; gap: 12px; }
+    #sidebar.sidebar-collapsed .menu-section { align-items:center; gap:7px; }
+    #sidebar.sidebar-collapsed .menu-label { width:34px; height:1px; padding:0; margin:2px 0; background:rgba(255,255,255,.18); border-radius:999px; }
+    #sidebar.sidebar-collapsed .nav-item { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
+    #sidebar.sidebar-collapsed .nav-icon { width:24px; height:24px; }
+    #sidebar.sidebar-collapsed .sidebar-footer { padding: 12px 14px 16px; }
+    #sidebar.sidebar-collapsed .logout-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
+
     .logo-mark {
-      width: 46px; height: 46px;
+      width: 44px; height: 44px;
       border-radius: 18px;
       display:flex; align-items:center; justify-content:center;
       background: linear-gradient(135deg, #ffffff, #e9d5ff 46%, #a78bfa);
@@ -99,15 +171,17 @@
     }
     .nav-item {
       display:flex; align-items:center; gap:12px;
-      min-height: 46px;
-      padding: 10px 14px;
-      border-radius: 18px;
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: 16px;
       color: var(--sidebar-muted);
-      font-size: 14px;
-      font-weight: 650;
+      font-size: 13.5px;
+      font-weight: 700;
       transition: all .18s ease;
       border: 1px solid transparent;
+      min-width: 0;
     }
+    .nav-text { white-space: nowrap; overflow:hidden; text-overflow:ellipsis; }
     .nav-item:hover { color: var(--sidebar-text); background: rgba(255,255,255,.065); transform: translateX(2px); }
     .nav-item.active {
       color: #ffffff;
@@ -167,22 +241,22 @@
     }
     .icon-button:hover { transform: translateY(-1px); border-color: var(--border-strong); }
 
-    .dashboard-scroll { overflow: auto; height: calc(100dvh - 88px); padding: 22px 24px 30px; }
-    .dashboard-wrap { max-width: 1500px; margin: 0 auto; }
-    .dashboard-layout { display:grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items:start; }
+    .dashboard-scroll { overflow: auto; height: calc(100dvh - 88px); padding: 22px 24px 30px; scroll-behavior:smooth; }
+    .dashboard-wrap { max-width: 1480px; margin: 0 auto; }
+    .dashboard-layout { display:grid; grid-template-columns: minmax(0, 1fr) 332px; gap: 24px; align-items:start; }
     .left-layout { min-width: 0; display:flex; flex-direction:column; gap: 18px; }
     .right-layout { min-width:0; display:flex; flex-direction:column; gap:18px; }
 
     .hero-card {
       position:relative;
       overflow:hidden;
-      border-radius: 32px;
+      border-radius: 30px;
       border: 1px solid var(--border);
       background:
         radial-gradient(circle at 80% 12%, rgba(236,72,153,.20), transparent 26%),
         radial-gradient(circle at 18% 95%, rgba(14,165,233,.18), transparent 30%),
         var(--surface);
-      padding: 24px;
+      padding: 24px 24px 22px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(22px);
     }
@@ -214,7 +288,7 @@
 
     .kpi-grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
     .kpi-card {
-      min-height: 154px;
+      min-height: 148px;
       border-radius: 28px;
       padding: 18px;
       position: relative;
@@ -273,11 +347,6 @@
     .tone-violet { --tone: var(--violet); }
     .tone-sky { --tone: var(--sky); }
     .tone-slate { --tone: #64748b; }
-    .pill.tone-blue, .pill.tone-emerald, .pill.tone-rose, .pill.tone-amber, .pill.tone-violet, .pill.tone-sky, .pill.tone-slate {
-      color: var(--tone);
-      background: color-mix(in srgb, var(--tone) 10%, transparent);
-      border-color: color-mix(in srgb, var(--tone) 22%, transparent);
-    }
 
     .category-row { display:grid; grid-template-columns: minmax(0,1fr) auto; gap:12px; align-items:center; }
     .bar-line { height: 8px; border-radius:999px; background: rgba(148,163,184,.18); overflow:hidden; margin-top:9px; display:flex; }
@@ -316,6 +385,9 @@
     .table-scroll::-webkit-scrollbar { height: 8px; }
     .table-scroll::-webkit-scrollbar-thumb { background: rgba(100,116,139,.45); border-radius:999px; }
 
+    @media (min-width: 1024px) {
+      .sidebar-toggle { display:flex; }
+    }
     @media (max-width: 1279px) {
       .dashboard-layout { grid-template-columns: 1fr; }
       .right-layout { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -361,42 +433,59 @@
   </button>
   <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/60 backdrop-blur-sm lg:hidden"></div>
 
-  <aside id="sidebar" class="apj-sidebar fixed lg:static inset-y-0 left-0 z-40 w-72 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none">
-    <div class="px-5 py-5">
-      <div class="flex items-center justify-between gap-4">
+  <aside id="sidebar" class="apj-sidebar fixed lg:static inset-y-0 left-0 z-40 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out">
+    <div class="sidebar-head relative">
+      <div class="sidebar-head-inner flex items-center justify-between gap-3">
         <div class="flex items-center gap-3 min-w-0">
           <div class="logo-mark">APJ</div>
-          <div class="min-w-0">
-            <p class="text-[22px] leading-none font-black tracking-tight text-white">APJ</p>
+          <div class="brand-text min-w-0">
+            <p class="text-[21px] leading-none font-black tracking-tight text-white">APJ</p>
             <p class="text-xs font-extrabold tracking-[.18em] text-violet-300">INVENTORI</p>
           </div>
         </div>
+        <button id="sidebarToggle" type="button" onclick="toggleSidebarCollapse()" class="sidebar-toggle hidden lg:flex" title="Buka/tutup sidebar" aria-label="Buka/tutup sidebar">
+          <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
         <button type="button" onclick="closeMobileSidebar()" class="lg:hidden w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10 text-white">×</button>
       </div>
     </div>
 
-    <nav class="flex-1 overflow-y-auto px-4 pb-4 space-y-1.5">
-      <p class="px-3 pt-5 pb-2 text-[10px] font-black uppercase tracking-[.18em]" style="color:var(--sidebar-muted)">Menu Utama</p>
-      <a href="dashboard.html" class="nav-item active"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 11.5 12 4l9 7.5M5 10.5V20h5v-5h4v5h5v-9.5"/></svg></span><span>Dashboard</span></a>
-      <a href="input-stok.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-7-7h14M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/></svg></span><span>Input Stok</span></a>
-      <a href="output-stok.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10M7 12h6m-6 5h10M4 5a2 2 0 0 1 2-2h8l6 6v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/></svg></span><span>Output Stok</span></a>
-      <a href="transfer-produksi.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/></svg></span><span>Transfer Produk Outlet</span></a>
-      <a href="produk-outlet.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16l-1-5H5l-1 5Zm1 0v10h14V10M9 20v-6h6v6"/></svg></span><span>Produk Outlet</span></a>
-      <a href="stok-opname.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 11l2 2 4-5M5 4h14v16H5zM8 4V2m8 2V2"/></svg></span><span>Stok Opname</span></a>
-      <a href="lihat-stok.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7l8-4 8 4-8 4-8-4Zm0 5 8 4 8-4M4 17l8 4 8-4"/></svg></span><span>Lihat Stok</span></a>
-      <a href="riwayat-transaksi.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.35-5.65M4 4v5h5m3-2v6l4 2"/></svg></span><span>Riwayat Transaksi</span></a>
-      <a href="admin.html" data-admin-menu class="nav-item hidden"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.5-2.8 8.4-7 10-4.2-1.6-7-5.5-7-10V6l7-3Zm-3 9 2 2 4-5"/></svg></span><span>Admin Sistem</span></a>
+    <nav class="sidebar-nav">
+      <div class="menu-section">
+        <p class="menu-label"><span>Overview</span></p>
+        <a href="dashboard.html" class="nav-item active" title="Dashboard"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"></path></svg></span><span class="nav-text">Dashboard</span></a>
+      </div>
+
+      <div class="menu-section">
+        <p class="menu-label"><span>Transaksi Stok</span></p>
+        <a href="input-stok.html" class="nav-item" title="Input Stok"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg></span><span class="nav-text">Input Stok</span></a>
+        <a href="output-stok.html" class="nav-item" title="Output Stok"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21V9m0 0 4 4m-4-4-4 4M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"></path></svg></span><span class="nav-text">Output Stok</span></a>
+      </div>
+
+      <div class="menu-section">
+        <p class="menu-label"><span>Outlet & Produksi</span></p>
+        <a href="transfer-produksi.html" class="nav-item" title="Transfer Produk Outlet"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"></path></svg></span><span class="nav-text">Transfer Produk Outlet</span></a>
+        <a href="produk-outlet.html" class="nav-item" title="Produk Outlet"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16M6 10v10h12V10M8 10V6a4 4 0 0 1 8 0v4M9 15h2m2 0h2"></path></svg></span><span class="nav-text">Produk Outlet</span></a>
+      </div>
+
+      <div class="menu-section">
+        <p class="menu-label"><span>Kontrol Stok</span></p>
+        <a href="stok-opname.html" class="nav-item" title="Stok Opname"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l2 2 4-4M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path></svg></span><span class="nav-text">Stok Opname</span></a>
+        <a href="lihat-stok.html" class="nav-item" title="Lihat Stok"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 0 0-1-1.73L13 2.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16ZM3.3 7.2 12 12l8.7-4.8M12 22V12"></path></svg></span><span class="nav-text">Lihat Stok</span></a>
+      </div>
+
+      <div class="menu-section">
+        <p class="menu-label"><span>Laporan & Sistem</span></p>
+        <a href="riwayat-transaksi.html" class="nav-item" title="Riwayat Transaksi"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v5l3 2M4 4v5h5M4.6 15A8 8 0 1 0 5.7 6.3L4 9"></path></svg></span><span class="nav-text">Riwayat Transaksi</span></a>
+        <a href="admin.html" data-admin-menu class="nav-item hidden" title="Admin Sistem"><span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM19.4 15a1.7 1.7 0 0 0 .34 1.88l.03.03a2 2 0 0 1-2.83 2.83l-.03-.03A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6l-.02.02a2 2 0 0 1-3.96 0L10 20a1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.03.03a2 2 0 0 1-2.83-2.83l.03-.03A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1l-.02-.02a2 2 0 0 1 0-3.96L4 10a1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.03-.03a2 2 0 0 1 2.83-2.83l.03.03A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6l.02-.02a2 2 0 0 1 3.96 0L14 4a1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.03-.03a2 2 0 0 1 2.83 2.83l-.03.03A1.7 1.7 0 0 0 19.4 9c.1.36.3.7.6 1l.02.02a2 2 0 0 1 0 3.96L20 14c-.3.3-.5.64-.6 1Z"></path></svg></span><span class="nav-text">Admin Sistem</span></a>
+      </div>
     </nav>
 
-    <div class="p-4 space-y-3">
-      <div class="sidebar-user flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-black text-white"><span id="sidebarInisial">U</span></div>
-        <div class="min-w-0 flex-1">
-          <p id="sidebarNama" class="text-sm font-extrabold text-white clamp-1">Memuat...</p>
-          <p id="sidebarLevel" class="text-xs clamp-1" style="color:var(--sidebar-muted)">--</p>
-        </div>
-      </div>
-      <button onclick="showLogoutModal()" class="nav-item w-full text-left" style="color:#fda4af"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17l5-5-5-5M20 12H9m3 8H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/></svg></span><span>Logout Sistem</span></button>
+    <div class="sidebar-footer">
+      <button onclick="showLogoutModal()" class="logout-button" title="Logout Sistem">
+        <span class="nav-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l5-5-5-5M21 12H9M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8"></path></svg></span>
+        <span class="logout-text">Logout Sistem</span>
+      </button>
     </div>
   </aside>
 
@@ -409,8 +498,8 @@
       </div>
 
       <div class="flex items-center gap-3 ml-auto">
-        <button type="button" onclick="toggleTheme()" id="themeToggle" class="icon-button" title="Ganti mode gelap/terang"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4V2m0 20v-2m8-8h2M2 12h2m14.95 6.95 1.41 1.41M3.64 3.64l1.41 1.41m13.9-1.41-1.41 1.41M5.05 18.95l-1.41 1.41M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg></button>
-        <button type="button" class="icon-button hide-xs" title="Notifikasi"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/></svg></button>
+        <button type="button" onclick="toggleTheme()" id="themeToggle" class="icon-button" title="Ganti mode gelap/terang"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36-.7-.7M6.34 6.34l-.7-.7m12.02 0-.7.7M6.34 17.66l-.7.7M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path></svg></button>
+        <button type="button" class="icon-button hide-xs" title="Notifikasi"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 0 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"></path></svg></button>
         <div class="flex items-center gap-3 pl-1">
           <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white" style="background:linear-gradient(135deg,#c084fc,#7c3aed); box-shadow:0 12px 28px rgba(124,58,237,.20)"><span id="displayInisial">U</span></div>
           <div class="hidden sm:block text-right min-w-0">
@@ -543,7 +632,7 @@
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
     <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
     <div class="relative modal-content pointer-events-auto opacity-0 scale-95 panel max-w-sm w-full p-6 text-center">
-      <div class="mx-auto mb-4 flat-icon-sm tone-rose" style="width:54px;height:54px;border-radius:22px"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+      <div class="mx-auto mb-4 flat-icon-sm tone-rose" style="width:54px;height:54px;border-radius:22px"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0ZM12 9v4m0 4h.01"></path></svg></div>
       <h3 class="text-lg font-black" style="color:var(--text)">Konfirmasi Keluar</h3>
       <p class="text-sm mt-2 mb-6" style="color:var(--muted)">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
       <div class="flex gap-3">
@@ -559,6 +648,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       applyThemeIcon();
+      applySidebarState();
       renderMiniCalendar();
 
       const isSessionActive = localStorage.getItem('APJ_SESSION_ACTIVE');
@@ -570,13 +660,10 @@
       const initial = userName.charAt(0).toUpperCase();
 
       document.getElementById('displayNama').textContent = userName;
-      document.getElementById('sidebarNama').textContent = userName;
       document.getElementById('welcomeNama').textContent = userName;
       document.getElementById('displayLevel').textContent = userLevel;
-      document.getElementById('sidebarLevel').textContent = userLevel;
       document.getElementById('displayInisial').textContent = initial;
-      document.getElementById('sidebarInisial').textContent = initial;
-
+      
       setupAdminMenu(userLevel);
       loadDashboardData(userName, userLevel, permissions);
       document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMobileSidebar));
@@ -907,6 +994,7 @@
       const sidebar = document.getElementById('sidebar');
       const backdrop = document.getElementById('sidebarBackdrop');
       if (!sidebar || !backdrop) return;
+      sidebar.classList.remove('sidebar-collapsed');
       sidebar.classList.remove('-translate-x-full');
       backdrop.classList.remove('hidden');
       document.body.classList.add('overflow-hidden');
@@ -920,7 +1008,25 @@
       document.body.classList.remove('overflow-hidden');
     }
     document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMobileSidebar(); });
-    window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeMobileSidebar(); });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) closeMobileSidebar();
+      applySidebarState();
+    });
+
+    function applySidebarState() {
+      const sidebar = document.getElementById('sidebar');
+      if (!sidebar) return;
+      const collapsed = localStorage.getItem('APJ_SIDEBAR_COLLAPSED') === 'true';
+      if (window.innerWidth >= 1024 && collapsed) sidebar.classList.add('sidebar-collapsed');
+      else sidebar.classList.remove('sidebar-collapsed');
+    }
+    function toggleSidebarCollapse() {
+      const sidebar = document.getElementById('sidebar');
+      if (!sidebar || window.innerWidth < 1024) return;
+      const next = !sidebar.classList.contains('sidebar-collapsed');
+      sidebar.classList.toggle('sidebar-collapsed', next);
+      localStorage.setItem('APJ_SIDEBAR_COLLAPSED', next ? 'true' : 'false');
+    }
 
     function toggleTheme() {
       const current = document.documentElement.getAttribute('data-theme') || 'light';
@@ -975,17 +1081,17 @@
       if (tone === 'slate') return iconGrid();
       return iconChart();
     }
-    function iconSun(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4V2m0 20v-2m8-8h2M2 12h2m14.95 6.95 1.41 1.41M3.64 3.64l1.41 1.41m13.9-1.41-1.41 1.41M5.05 18.95l-1.41 1.41M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg>`; }
-    function iconMoon(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z"/></svg>`; }
-    function iconBell(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/></svg>`; }
-    function iconChart(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5m4 14v-7m4 7V8m4 11v-4m4 4H4"/></svg>`; }
-    function iconBox(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5 12 3l8 4.5-8 4.5-8-4.5Zm0 0V16l8 5 8-5V7.5M12 12v9"/></svg>`; }
-    function iconArrowDown(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v13m0 0 5-5m-5 5-5-5M5 21h14"/></svg>`; }
-    function iconWarning(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>`; }
-    function iconTransfer(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/></svg>`; }
-    function iconStore(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16l-1-5H5l-1 5Zm1 0v10h14V10M9 20v-6h6v6"/></svg>`; }
-    function iconGrid(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>`; }
-    function iconCheck(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 6 9 17l-5-5"/></svg>`; }
+    function iconSun(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36-.7-.7M6.34 6.34l-.7-.7m12.02 0-.7.7M6.34 17.66l-.7.7M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path></svg>`; }
+    function iconMoon(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"></path></svg>`; }
+    function iconBell(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 0 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"></path></svg>`; }
+    function iconChart(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19V5m4 14v-7m4 7V8m4 11v-4m4 4H4"></path></svg>`; }
+    function iconBox(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16ZM3.3 7.2 12 12l8.7-4.8M12 22V12"></path></svg>`; }
+    function iconArrowDown(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v14m0 0 5-5m-5 5-5-5M5 21h14"></path></svg>`; }
+    function iconWarning(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0ZM12 9v4m0 4h.01"></path></svg>`; }
+    function iconTransfer(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"></path></svg>`; }
+    function iconStore(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16M6 10v10h12V10M8 10V6a4 4 0 0 1 8 0v4M9 15h2m2 0h2"></path></svg>`; }
+    function iconGrid(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"></path></svg>`; }
+    function iconCheck(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 6 9 17l-5-5"></path></svg>`; }
   </script>
 </body>
 </html>
