@@ -1,478 +1,565 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Sistem Inventori APJ</title>
+  <script>
+    (function(){
+      const saved = localStorage.getItem('APJ_THEME');
+      const theme = saved || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f5f7fb;
-      --bg-soft: #eef3fb;
-      --surface: rgba(255, 255, 255, .84);
+      --bg: #f6f7fb;
+      --bg-2: #eef2ff;
+      --surface: rgba(255,255,255,.82);
       --surface-solid: #ffffff;
-      --surface-soft: rgba(255, 255, 255, .62);
-      --sidebar: rgba(255, 255, 255, .74);
-      --sidebar-solid: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --muted-2: #94a3b8;
+      --surface-soft: rgba(255,255,255,.62);
+      --text: #111827;
+      --muted: #667085;
+      --muted-2: #98a2b3;
       --border: rgba(15, 23, 42, .10);
       --border-strong: rgba(15, 23, 42, .16);
-      --shadow: 0 20px 60px rgba(15, 23, 42, .10);
-      --shadow-soft: 0 10px 30px rgba(15, 23, 42, .08);
-      --primary: #0284c7;
-      --primary-soft: rgba(14, 165, 233, .12);
-      --accent: #f59e0b;
-      --ring: rgba(14, 165, 233, .26);
-      --danger: #e11d48;
-      --success: #059669;
-      --warning: #d97706;
+      --shadow: 0 20px 60px rgba(15, 23, 42, .08);
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, .06);
+      --sidebar-bg: #080b16;
+      --sidebar-card: rgba(255,255,255,.06);
+      --sidebar-border: rgba(255,255,255,.10);
+      --sidebar-text: #f9fafb;
+      --sidebar-muted: rgba(255,255,255,.58);
+      --primary: #7c3aed;
+      --primary-soft: rgba(124,58,237,.12);
+      --blue: #3b82f6;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --amber: #f59e0b;
+      --violet: #8b5cf6;
+      --sky: #0ea5e9;
+      --pink: #ec4899;
     }
-    html[data-theme="dark"] {
+
+    [data-theme="dark"] {
       --bg: #0b1120;
-      --bg-soft: #0f172a;
-      --surface: rgba(15, 23, 42, .76);
+      --bg-2: #111827;
+      --surface: rgba(15, 23, 42, .78);
       --surface-solid: #111827;
-      --surface-soft: rgba(30, 41, 59, .58);
-      --sidebar: rgba(2, 6, 23, .72);
-      --sidebar-solid: #020617;
+      --surface-soft: rgba(15, 23, 42, .58);
       --text: #f8fafc;
       --muted: #94a3b8;
       --muted-2: #64748b;
-      --border: rgba(148, 163, 184, .14);
-      --border-strong: rgba(148, 163, 184, .22);
-      --shadow: 0 24px 80px rgba(0, 0, 0, .28);
-      --shadow-soft: 0 12px 40px rgba(0, 0, 0, .22);
-      --primary: #38bdf8;
-      --primary-soft: rgba(56, 189, 248, .14);
-      --accent: #f59e0b;
-      --ring: rgba(56, 189, 248, .25);
-      --danger: #fb7185;
-      --success: #34d399;
-      --warning: #fbbf24;
+      --border: rgba(148, 163, 184, .16);
+      --border-strong: rgba(148, 163, 184, .24);
+      --shadow: 0 26px 70px rgba(0, 0, 0, .28);
+      --shadow-soft: 0 12px 32px rgba(0, 0, 0, .20);
+      --sidebar-bg: #030712;
+      --sidebar-card: rgba(255,255,255,.07);
+      --sidebar-border: rgba(255,255,255,.12);
+      --sidebar-text: #ffffff;
+      --sidebar-muted: rgba(255,255,255,.56);
     }
+
     * { box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
+      min-height: 100vh;
       background:
-        radial-gradient(circle at 12% 12%, rgba(14, 165, 233, .16), transparent 30%),
-        radial-gradient(circle at 90% 8%, rgba(245, 158, 11, .12), transparent 25%),
-        linear-gradient(135deg, var(--bg), var(--bg-soft));
+        radial-gradient(circle at top left, rgba(167, 139, 250, .20), transparent 34%),
+        radial-gradient(circle at top right, rgba(14, 165, 233, .14), transparent 30%),
+        var(--bg);
       color: var(--text);
-      transition: background .25s ease, color .25s ease;
+      overflow: hidden;
     }
-    .animate-fade-in { animation: fadeIn .45s ease-out forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .app-sidebar {
-      background: var(--sidebar);
-      border-right: 1px solid var(--border);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+    .animate-fade-in { animation: fadeIn .45s cubic-bezier(.16, 1, .3, 1) forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .apj-sidebar {
+      background:
+        radial-gradient(circle at 88% 8%, rgba(216, 180, 254, .30), transparent 22%),
+        linear-gradient(180deg, rgba(8, 11, 22, .98), var(--sidebar-bg));
+      color: var(--sidebar-text);
+      border-right: 1px solid var(--sidebar-border);
+      box-shadow: 18px 0 55px rgba(2, 6, 23, .22);
     }
-    .app-main { background: transparent; }
-    .app-header {
-      background: color-mix(in srgb, var(--surface) 82%, transparent);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+    .logo-mark {
+      width: 46px; height: 46px;
+      border-radius: 18px;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, #ffffff, #e9d5ff 46%, #a78bfa);
+      color:#0f172a;
+      font-weight:900;
+      letter-spacing:-.04em;
+      box-shadow: 0 16px 34px rgba(167, 139, 250, .20);
     }
-    .brand-mark {
-      width: 38px; height: 38px; border-radius: 14px;
-      display: inline-flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, var(--primary), #6366f1);
-      color: white; box-shadow: 0 12px 30px rgba(14, 165, 233, .26);
-    }
-    .eyebrow { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
-    .muted { color: var(--muted); }
-    .muted-2 { color: var(--muted-2); }
-    .text-main { color: var(--text); }
-    .nav-link {
-      display: flex; align-items: center; gap: .75rem;
-      padding: .72rem .78rem;
-      border-radius: 16px;
-      color: var(--muted);
-      font-size: .875rem;
+    .nav-item {
+      display:flex; align-items:center; gap:12px;
+      min-height: 46px;
+      padding: 10px 14px;
+      border-radius: 18px;
+      color: var(--sidebar-muted);
+      font-size: 14px;
       font-weight: 650;
+      transition: all .18s ease;
       border: 1px solid transparent;
-      transition: all .18s ease;
     }
-    .nav-link:hover {
-      color: var(--text);
-      background: var(--surface-soft);
-      border-color: var(--border);
-      transform: translateX(2px);
+    .nav-item:hover { color: var(--sidebar-text); background: rgba(255,255,255,.065); transform: translateX(2px); }
+    .nav-item.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(124,58,237,.46), rgba(14,165,233,.18));
+      border-color: rgba(216, 180, 254, .20);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 14px 30px rgba(124,58,237,.18);
     }
-    .nav-link.active {
-      color: var(--primary);
-      background: var(--primary-soft);
-      border-color: color-mix(in srgb, var(--primary) 25%, transparent);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    .nav-icon {
+      width:22px; height:22px;
+      display:flex; align-items:center; justify-content:center;
+      flex: 0 0 auto;
+      opacity: .92;
     }
-    .nav-icon { width: 18px; height: 18px; flex-shrink: 0; stroke-width: 2; }
-    .glass-card, .panel, .kpi-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-soft);
+    .nav-icon svg { width:20px; height:20px; stroke-width: 1.9; }
+    .sidebar-user {
+      border:1px solid var(--sidebar-border);
+      background: var(--sidebar-card);
+      border-radius: 24px;
+      padding: 14px;
+      backdrop-filter: blur(16px);
+    }
+
+    .apj-main { min-width:0; background: transparent; }
+    .topbar {
+      height: 88px;
+      display:flex; align-items:center; justify-content:space-between; gap: 18px;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.38);
       backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+      position: sticky; top: 0; z-index: 20;
     }
-    .glass-card { border-radius: 28px; }
-    .panel { border-radius: 24px; padding: 1.15rem; }
-    @media (min-width: 640px) { .panel { padding: 1.25rem; } }
-    .hero-card {
-      position: relative; overflow: hidden;
-      background:
-        radial-gradient(circle at 88% 20%, rgba(14, 165, 233, .24), transparent 28%),
-        radial-gradient(circle at 14% 12%, rgba(245, 158, 11, .16), transparent 26%),
-        linear-gradient(135deg, var(--surface), color-mix(in srgb, var(--surface-solid) 70%, transparent));
-    }
-    .hero-orb { position:absolute; width: 240px; height: 240px; border-radius:999px; right:-80px; top:-100px; background: rgba(14,165,233,.18); filter: blur(18px); }
-    .ios-badge {
-      display: inline-flex; align-items: center; gap: .45rem;
+    [data-theme="dark"] .topbar { background: rgba(11,17,32,.58); }
+    .search-pill {
+      height: 48px;
+      max-width: 520px;
+      flex: 1;
+      display:flex; align-items:center; gap: 12px;
       border: 1px solid var(--border);
-      background: var(--surface-soft);
-      color: var(--primary);
-      border-radius: 999px;
-      padding: .42rem .75rem;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: .07em;
-      text-transform: uppercase;
-    }
-    .theme-toggle, .mobile-menu-btn, .avatar-circle {
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
-      color: var(--text);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 0 16px;
+      color: var(--muted);
       box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
     }
-    .theme-toggle {
-      height: 42px;
-      display: inline-flex; align-items: center; gap: .55rem;
-      padding: 0 .85rem;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--text);
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-    }
-    .theme-toggle:hover { transform: translateY(-1px); border-color: var(--border-strong); }
-    .mobile-menu-btn { border-radius: 15px; }
-    .avatar-circle { border-radius: 999px; color: var(--primary); font-weight: 800; }
-    .quick-pill {
-      display: inline-flex; align-items: center; gap: .45rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
-      color: var(--text);
-      padding: .58rem .82rem;
-      font-size: 12px;
-      font-weight: 750;
-      transition: all .18s ease;
-    }
-    .quick-pill:hover { transform: translateY(-1px); border-color: var(--border-strong); }
-    .kpi-card { border-radius: 22px; padding: 1rem; position: relative; overflow: hidden; }
-    .kpi-card::after { content:""; position:absolute; right:-28px; top:-36px; width: 110px; height:110px; border-radius:999px; background: currentColor; opacity:.08; filter: blur(8px); }
-    .kpi-icon {
-      width: 38px; height: 38px; border-radius: 14px;
-      display: inline-flex; align-items:center; justify-content:center;
-      margin-bottom: .78rem;
-    }
-    .mini-card {
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
+    .icon-button {
+      width: 48px; height: 48px;
       border-radius: 18px;
-      padding: .85rem;
-    }
-    .list-card {
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
-      border-radius: 18px;
-      padding: .92rem;
-      transition: border-color .18s ease, transform .18s ease;
-    }
-    .list-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
-    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-    .table-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
-    .table-scroll::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 35%, transparent); border-radius: 999px; }
-    .ios-table { color: var(--text); }
-    .ios-table thead { color: var(--muted); border-bottom: 1px solid var(--border); }
-    .ios-table tbody tr { border-bottom: 1px solid var(--border); }
-    .ios-table tbody tr:hover { background: var(--surface-soft); }
-    .sync-pill { border: 1px solid var(--border); background: var(--surface-soft); color: var(--muted); border-radius:999px; padding:.36rem .7rem; font-size: 11px; font-weight:700; }
-    .toast {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -44%) scale(.96);
-      opacity: 0;
-      pointer-events: none;
-      transition: all .25s ease;
-      z-index: 9999;
-      width: calc(100% - 2rem);
-      max-width: 430px;
-      border-radius: 22px;
-      padding: 1rem 1.1rem;
+      display:flex; align-items:center; justify-content:center;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text);
+      box-shadow: var(--shadow-soft);
+      transition: transform .15s ease, border-color .15s ease;
+      backdrop-filter: blur(16px);
+    }
+    .icon-button:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+
+    .dashboard-scroll { overflow: auto; height: calc(100dvh - 88px); padding: 22px 24px 30px; }
+    .dashboard-wrap { max-width: 1500px; margin: 0 auto; }
+    .dashboard-layout { display:grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items:start; }
+    .left-layout { min-width: 0; display:flex; flex-direction:column; gap: 18px; }
+    .right-layout { min-width:0; display:flex; flex-direction:column; gap:18px; }
+
+    .hero-card {
+      position:relative;
+      overflow:hidden;
+      border-radius: 32px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at 80% 12%, rgba(236,72,153,.20), transparent 26%),
+        radial-gradient(circle at 18% 95%, rgba(14,165,233,.18), transparent 30%),
+        var(--surface);
+      padding: 24px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
     }
-    .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    .toast-success { border-color: rgba(16,185,129,.28); }
-    .toast-error { border-color: rgba(244,63,94,.32); }
-    .modal-overlay { transition: opacity .25s ease-out; background: rgba(2,6,23,.62); backdrop-filter: blur(10px); }
-    .modal-content { transition: transform .25s ease-out, opacity .25s ease-out; background: var(--surface); border: 1px solid var(--border); color: var(--text); box-shadow: var(--shadow); backdrop-filter: blur(24px); }
-    .btn-secondary { background: var(--surface-soft); border: 1px solid var(--border); color: var(--text); }
-    .btn-danger { background: #e11d48; color: white; }
-    .tone-text-blue { color: #0ea5e9; } html[data-theme="dark"] .tone-text-blue { color:#38bdf8; }
-    .tone-text-emerald { color: #059669; } html[data-theme="dark"] .tone-text-emerald { color:#34d399; }
-    .tone-text-rose { color: #e11d48; } html[data-theme="dark"] .tone-text-rose { color:#fb7185; }
-    .tone-text-amber { color: #d97706; } html[data-theme="dark"] .tone-text-amber { color:#fbbf24; }
-    .tone-text-violet { color: #7c3aed; } html[data-theme="dark"] .tone-text-violet { color:#a78bfa; }
-    .tone-text-cyan { color: #0891b2; } html[data-theme="dark"] .tone-text-cyan { color:#22d3ee; }
-    .tone-text-slate { color: var(--text); }
-    .tone-soft-blue { background: rgba(14,165,233,.12); }
-    .tone-soft-emerald { background: rgba(16,185,129,.12); }
-    .tone-soft-rose { background: rgba(244,63,94,.12); }
-    .tone-soft-amber { background: rgba(245,158,11,.14); }
-    .tone-soft-violet { background: rgba(139,92,246,.13); }
-    .tone-soft-cyan { background: rgba(6,182,212,.13); }
-    .tone-soft-slate { background: var(--surface-soft); }
-    .tone-border-blue { border-color: rgba(14,165,233,.20); }
-    .tone-border-emerald { border-color: rgba(16,185,129,.20); }
-    .tone-border-rose { border-color: rgba(244,63,94,.22); }
-    .tone-border-amber { border-color: rgba(245,158,11,.24); }
-    .tone-border-violet { border-color: rgba(139,92,246,.22); }
-    .tone-border-cyan { border-color: rgba(6,182,212,.22); }
-    .tone-border-slate { border-color: var(--border); }
-    .badge { display:inline-flex; align-items:center; border-radius:999px; border:1px solid currentColor; padding:.2rem .5rem; font-size:10px; font-weight:800; line-height:1; background: color-mix(in srgb, currentColor 10%, transparent); }
-    .status-dot { width:.58rem; height:.58rem; border-radius:999px; display:inline-block; }
-    .loading-spinner { width: 36px; height: 36px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 999px; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @media (max-width: 1023px) { input, select, textarea { font-size: 16px; } main { width:100%; } }
-    @media screen and (max-width: 768px) {
-      .table-scroll { overflow-x: visible !important; }
-      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
-      .table-scroll thead { display: none !important; }
-      .table-scroll tbody { display: block !important; width: 100% !important; }
-      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid var(--border) !important; border-radius: 18px !important; background: var(--surface-soft) !important; }
-      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed var(--border) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
-      .table-scroll td:last-child { border-bottom: 0 !important; }
-      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
-      .table-scroll td > * { max-width: 58%; }
-      .table-scroll .text-center { text-align: right !important; }
+    .hero-title { color: var(--text); font-size: clamp(28px, 3vw, 42px); font-weight: 900; line-height: 1.05; letter-spacing:-.04em; }
+    .hero-desc { color: var(--muted); max-width: 720px; font-size: 14px; line-height: 1.6; margin-top: 10px; }
+    .soft-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 11px;
+      border-radius:999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border:1px solid rgba(124,58,237,.16);
+      font-size: 11px;
+      font-weight:800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .panel, .kpi-card, .mini-stat {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(20px);
+    }
+    .panel { border-radius: 28px; padding: 18px; overflow:hidden; }
+    .panel-title { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom: 14px; }
+    .panel-title h3 { font-size: 16px; font-weight: 850; color: var(--text); letter-spacing:-.02em; }
+    .panel-title p { font-size: 12px; color: var(--muted); margin-top: 4px; line-height:1.45; }
+
+    .kpi-grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .kpi-card {
+      min-height: 154px;
+      border-radius: 28px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .kpi-card::after {
+      content:""; position:absolute; inset:auto -40px -40px auto; width:120px; height:120px;
+      border-radius:999px; opacity:.24; filter: blur(8px); background: var(--tone, var(--blue));
+    }
+    .kpi-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; position:relative; z-index:1; }
+    .kpi-label { font-size: 13px; color: var(--text); font-weight: 750; line-height:1.25; white-space: nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .kpi-icon {
+      width: 50px; height: 50px; border-radius: 20px;
+      display:flex; align-items:center; justify-content:center;
+      background: color-mix(in srgb, var(--tone, var(--blue)) 18%, transparent);
+      color: var(--tone, var(--blue));
+      flex:0 0 auto;
+    }
+    .kpi-icon svg { width:24px; height:24px; stroke-width: 1.9; }
+    .kpi-value { position:relative; z-index:1; display:flex; align-items:baseline; gap:8px; margin-top:18px; }
+    .kpi-value strong { font-size: 34px; line-height:1; color: var(--text); font-weight:900; letter-spacing:-.04em; }
+    .kpi-value span { color: var(--muted); font-size: 12px; font-weight:700; }
+    .kpi-footer { position:relative; z-index:1; padding-top:12px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; color: var(--muted); font-size:12px; }
+    .kpi-footer b { color: var(--tone, var(--blue)); }
+
+    .mini-kpi-grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .mini-stat { border-radius: 22px; padding: 13px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; min-width:0; }
+    .mini-stat p { color: var(--muted); font-size: 11px; font-weight:800; text-transform:uppercase; letter-spacing:.045em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mini-stat strong { color: var(--text); font-size: 18px; font-weight:900; white-space:nowrap; }
+
+    .content-grid { display:grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); gap: 18px; }
+    .list-stack { display:flex; flex-direction:column; gap: 10px; }
+    .soft-row {
+      border:1px solid var(--border);
+      background: var(--surface-soft);
+      border-radius: 20px;
+      padding: 12px;
+      min-width:0;
+    }
+    .row-title { color: var(--text); font-size: 13px; font-weight: 800; white-space: nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .row-sub { color: var(--muted); font-size: 12px; margin-top:3px; line-height:1.35; }
+    .pill {
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 5px 9px; border-radius:999px;
+      font-size: 11px; font-weight:800;
+      border:1px solid transparent;
+      white-space:nowrap;
+    }
+    .tone-blue { --tone: var(--blue); }
+    .tone-emerald { --tone: var(--emerald); }
+    .tone-rose { --tone: var(--rose); }
+    .tone-amber { --tone: var(--amber); }
+    .tone-violet { --tone: var(--violet); }
+    .tone-sky { --tone: var(--sky); }
+    .tone-slate { --tone: #64748b; }
+    .pill.tone-blue, .pill.tone-emerald, .pill.tone-rose, .pill.tone-amber, .pill.tone-violet, .pill.tone-sky, .pill.tone-slate {
+      color: var(--tone);
+      background: color-mix(in srgb, var(--tone) 10%, transparent);
+      border-color: color-mix(in srgb, var(--tone) 22%, transparent);
+    }
+
+    .category-row { display:grid; grid-template-columns: minmax(0,1fr) auto; gap:12px; align-items:center; }
+    .bar-line { height: 8px; border-radius:999px; background: rgba(148,163,184,.18); overflow:hidden; margin-top:9px; display:flex; }
+    .bar-seg { height:100%; }
+    .bar-ok { background: var(--emerald); }
+    .bar-warn { background: var(--amber); }
+    .bar-bad { background: var(--rose); }
+
+    .calendar-card { padding: 20px; }
+    .calendar-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top:14px; text-align:center; }
+    .cal-head { color: var(--muted); font-size: 10px; font-weight:800; text-transform:uppercase; }
+    .cal-day { height: 34px; border-radius: 12px; display:flex; align-items:center; justify-content:center; color: var(--text); font-size: 12px; font-weight:650; }
+    .cal-day.muted { color: var(--muted-2); opacity:.65; }
+    .cal-day.today { color:#fff; background: linear-gradient(135deg, var(--pink), var(--violet)); box-shadow: 0 10px 22px rgba(236,72,153,.25); }
+    .agenda-line { display:grid; grid-template-columns: 52px minmax(0,1fr); gap:12px; padding: 10px 0; border-bottom:1px solid var(--border); }
+    .agenda-line:last-child { border-bottom:0; }
+    .agenda-time { font-size:12px; font-weight:900; color: var(--tone, var(--blue)); }
+
+    .flat-icon-sm { width:38px; height:38px; border-radius:16px; display:flex; align-items:center; justify-content:center; background: color-mix(in srgb, var(--tone, var(--blue)) 13%, transparent); color: var(--tone, var(--blue)); flex:0 0 auto; }
+    .flat-icon-sm svg { width:19px; height:19px; stroke-width:1.9; }
+    .quick-card { display:flex; align-items:center; gap:12px; color:inherit; transition: all .16s ease; }
+    .quick-card:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+
+    .toast {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(.96);
+      opacity:0; pointer-events:none; transition: all .28s cubic-bezier(.16, 1, .3, 1); z-index: 9999;
+    }
+    .toast.show { top: 50%; opacity:1; transform: translate(-50%, -50%) scale(1); }
+    .toast-card { border-radius:22px; box-shadow: 0 28px 90px rgba(0,0,0,.25); min-width:280px; max-width: min(460px, calc(100vw - 32px)); }
+    .modal-overlay { transition: opacity .25s ease-out; }
+    .modal-content { transition: transform .25s ease-out, opacity .25s ease-out; }
+
+    .clamp-1 { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .table-scroll::-webkit-scrollbar { height: 8px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: rgba(100,116,139,.45); border-radius:999px; }
+
+    @media (max-width: 1279px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+      .right-layout { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .calendar-card { grid-column: span 2; }
+    }
+    @media (max-width: 1023px) {
+      body { overflow:hidden; }
+      .apj-sidebar { width: 288px; }
+      .topbar { height: 78px; padding-left: 68px; }
+      .search-pill { display:none; }
+      .dashboard-scroll { height: calc(100dvh - 78px); padding: 16px; }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mini-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .content-grid { grid-template-columns: 1fr; }
+      input, select, textarea { font-size:16px; }
+    }
+    @media (max-width: 640px) {
+      .topbar { gap:10px; }
+      .hero-card { padding:18px; border-radius:26px; }
+      .kpi-grid, .mini-kpi-grid, .right-layout { grid-template-columns:1fr; }
+      .calendar-card { grid-column:auto; }
+      .kpi-card { min-height: 132px; }
+      .kpi-value strong { font-size:30px; }
+      .hide-xs { display:none; }
     }
   </style>
 </head>
-<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
+<body class="flex h-[100dvh] lg:h-screen antialiased">
   <div id="customToast" class="toast" role="alert">
-    <div class="flex items-start gap-3">
-      <div id="toastIconWrap" class="kpi-icon tone-soft-blue tone-text-blue !mb-0 !w-9 !h-9"></div>
-      <div class="min-w-0">
-        <div id="toastTitle" class="text-sm font-extrabold text-main">Notifikasi</div>
-        <div class="mt-0.5 text-sm muted" id="toastMessage"></div>
+    <div id="toastCard" class="toast-card border backdrop-blur-xl p-4">
+      <div class="flex items-start gap-3">
+        <div id="toastIcon" class="flat-icon-sm tone-emerald"></div>
+        <div class="min-w-0">
+          <p id="toastTitle" class="text-sm font-extrabold">Notifikasi</p>
+          <p id="toastMessage" class="mt-1 text-sm leading-relaxed"></p>
+        </div>
       </div>
     </div>
   </div>
 
-  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="mobile-menu-btn fixed top-4 left-4 z-50 lg:hidden inline-flex h-11 w-11 items-center justify-center active:scale-95 transition">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16"></path></svg>
+  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden icon-button active:scale-95 transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
   </button>
   <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/60 backdrop-blur-sm lg:hidden"></div>
 
-  <aside id="sidebar" class="app-sidebar fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-72 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
-    <div class="h-20 flex items-center px-5 border-b" style="border-color: var(--border);">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="brand-mark">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M7 17h10"></path></svg>
+  <aside id="sidebar" class="apj-sidebar fixed lg:static inset-y-0 left-0 z-40 w-72 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none">
+    <div class="px-5 py-5">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="logo-mark">APJ</div>
+          <div class="min-w-0">
+            <p class="text-[22px] leading-none font-black tracking-tight text-white">APJ</p>
+            <p class="text-xs font-extrabold tracking-[.18em] text-violet-300">INVENTORI</p>
+          </div>
         </div>
-        <div class="min-w-0">
-          <div class="text-sm font-extrabold tracking-wide text-main truncate">APJ Inventori</div>
-          <div class="text-[10px] font-bold uppercase tracking-[.18em] muted">iOS Slate Ops</div>
-        </div>
+        <button type="button" onclick="closeMobileSidebar()" class="lg:hidden w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10 text-white">×</button>
       </div>
     </div>
 
-    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-      <p class="px-3 text-[10px] font-extrabold muted-2 uppercase tracking-wider mb-2">Menu Utama</p>
-      <a href="dashboard.html" class="nav-link active"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-4H4v4Z"/></svg><span>Dashboard</span></a>
-      <a href="input-stok.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5"/></svg><span>Input Stok</span></a>
-      <a href="output-stok.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0-5-5m5 5-5 5"/></svg><span>Output Stok</span></a>
-      <a href="transfer-produksi.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/></svg><span>Transfer Produk Outlet</span></a>
-      <a href="produk-outlet.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16l-1.4-4.2A2 2 0 0016.7 4H7.3a2 2 0 00-1.9 1.8L4 10Zm2 0v9h12v-9M9 19v-5h6v5"/></svg><span>Produk Outlet</span></a>
-      <a href="stok-opname.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5h6m-7 4h8m-8 4h5m-7 8h12a2 2 0 002-2V7l-4-4H6a2 2 0 00-2 2v14a2 2 0 002 2Z"/></svg><span>Stok Opname</span></a>
-      <a href="lihat-stok.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7c0 1.7 3.6 3 8 3s8-1.3 8-3-3.6-3-8-3-8 1.3-8 3Zm0 0v5c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5"/></svg><span>Lihat Stok</span></a>
-      <a href="riwayat-transaksi.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 101.9-5.2M4 5v5h5m3-2v5l3 2"/></svg><span>Riwayat Transaksi</span></a>
-      <a id="adminMenuLink" href="admin.html" class="nav-link hidden"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4Zm0 7a2 2 0 100-4 2 2 0 000 4Zm-4 7a4 4 0 018 0"/></svg><span>Admin Sistem</span></a>
+    <nav class="flex-1 overflow-y-auto px-4 pb-4 space-y-1.5">
+      <p class="px-3 pt-5 pb-2 text-[10px] font-black uppercase tracking-[.18em]" style="color:var(--sidebar-muted)">Menu Utama</p>
+      <a href="dashboard.html" class="nav-item active"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 11.5 12 4l9 7.5M5 10.5V20h5v-5h4v5h5v-9.5"/></svg></span><span>Dashboard</span></a>
+      <a href="input-stok.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-7-7h14M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/></svg></span><span>Input Stok</span></a>
+      <a href="output-stok.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10M7 12h6m-6 5h10M4 5a2 2 0 0 1 2-2h8l6 6v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/></svg></span><span>Output Stok</span></a>
+      <a href="transfer-produksi.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/></svg></span><span>Transfer Produk Outlet</span></a>
+      <a href="produk-outlet.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16l-1-5H5l-1 5Zm1 0v10h14V10M9 20v-6h6v6"/></svg></span><span>Produk Outlet</span></a>
+      <a href="stok-opname.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 11l2 2 4-5M5 4h14v16H5zM8 4V2m8 2V2"/></svg></span><span>Stok Opname</span></a>
+      <a href="lihat-stok.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7l8-4 8 4-8 4-8-4Zm0 5 8 4 8-4M4 17l8 4 8-4"/></svg></span><span>Lihat Stok</span></a>
+      <a href="riwayat-transaksi.html" class="nav-item"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.35-5.65M4 4v5h5m3-2v6l4 2"/></svg></span><span>Riwayat Transaksi</span></a>
+      <a href="admin.html" data-admin-menu class="nav-item hidden"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.5-2.8 8.4-7 10-4.2-1.6-7-5.5-7-10V6l7-3Zm-3 9 2 2 4-5"/></svg></span><span>Admin Sistem</span></a>
     </nav>
 
-    <div class="p-4 border-t" style="border-color: var(--border);">
-      <button onclick="showLogoutModal()" class="nav-link w-full !text-rose-500 hover:!text-rose-500">
-        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-        <span>Logout Sistem</span>
-      </button>
+    <div class="p-4 space-y-3">
+      <div class="sidebar-user flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-black text-white"><span id="sidebarInisial">U</span></div>
+        <div class="min-w-0 flex-1">
+          <p id="sidebarNama" class="text-sm font-extrabold text-white clamp-1">Memuat...</p>
+          <p id="sidebarLevel" class="text-xs clamp-1" style="color:var(--sidebar-muted)">--</p>
+        </div>
+      </div>
+      <button onclick="showLogoutModal()" class="nav-item w-full text-left" style="color:#fda4af"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17l5-5-5-5M20 12H9m3 8H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/></svg></span><span>Logout Sistem</span></button>
     </div>
   </aside>
 
-  <main class="app-main flex-1 flex flex-col min-w-0">
-    <header class="app-header min-h-20 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 sticky top-0 z-10">
-      <div class="min-w-0">
-        <div class="flex items-center gap-2">
-          <h2 class="text-base sm:text-xl font-extrabold text-main truncate">Dashboard Inventori</h2>
-          <span class="hidden sm:inline-flex status-dot tone-soft-emerald"></span>
-        </div>
-        <p class="hidden sm:block text-xs muted mt-1">Kontrol stok, produksi, outlet, dan aktivitas harian dalam satu layar.</p>
+  <main class="apj-main flex-1 flex flex-col">
+    <header class="topbar">
+      <div class="search-pill">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z"></path></svg>
+        <span class="text-sm font-medium">Cari menu, produk, transaksi...</span>
+        <span class="ml-auto hide-xs rounded-xl border px-2 py-1 text-xs font-bold" style="border-color:var(--border);color:var(--muted)">⌘ K</span>
       </div>
-      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-        <button id="themeToggle" type="button" onclick="toggleTheme()" class="theme-toggle" aria-label="Ganti mode tampilan">
-          <span id="themeIcon" class="inline-flex"></span>
-          <span id="themeText" class="hidden sm:inline">Dark</span>
-        </button>
-        <div class="hidden sm:block text-right min-w-0">
-          <p id="displayNama" class="text-sm font-extrabold text-main leading-tight truncate max-w-[180px]">Memuat...</p>
-          <p id="displayLevel" class="text-[10px] uppercase tracking-wider tone-text-blue font-extrabold">--</p>
+
+      <div class="flex items-center gap-3 ml-auto">
+        <button type="button" onclick="toggleTheme()" id="themeToggle" class="icon-button" title="Ganti mode gelap/terang"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4V2m0 20v-2m8-8h2M2 12h2m14.95 6.95 1.41 1.41M3.64 3.64l1.41 1.41m13.9-1.41-1.41 1.41M5.05 18.95l-1.41 1.41M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg></button>
+        <button type="button" class="icon-button hide-xs" title="Notifikasi"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/></svg></button>
+        <div class="flex items-center gap-3 pl-1">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white" style="background:linear-gradient(135deg,#c084fc,#7c3aed); box-shadow:0 12px 28px rgba(124,58,237,.20)"><span id="displayInisial">U</span></div>
+          <div class="hidden sm:block text-right min-w-0">
+            <p id="displayNama" class="text-sm font-extrabold clamp-1" style="color:var(--text)">Memuat...</p>
+            <p id="displayLevel" class="text-xs font-bold uppercase tracking-wide" style="color:var(--muted)">--</p>
+          </div>
         </div>
-        <div class="avatar-circle w-11 h-11 flex items-center justify-center flex-shrink-0"><span id="displayInisial">U</span></div>
       </div>
     </header>
 
-    <section class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-      <div class="max-w-[1500px] mx-auto animate-fade-in opacity-0 space-y-5">
-        <div id="heroCard" class="hero-card glass-card p-5 sm:p-6 lg:p-7">
-          <div class="hero-orb"></div>
-          <div class="relative grid grid-cols-1 xl:grid-cols-12 gap-5 items-end">
-            <div class="xl:col-span-8">
-              <div class="ios-badge mb-4">
-                <span id="modeBadge">Mode Dashboard</span>
-              </div>
-              <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-main leading-tight">Halo, <span id="welcomeNama" class="tone-text-blue">Pengguna</span></h1>
-              <p id="modeDescription" class="mt-3 text-sm sm:text-base muted max-w-3xl leading-relaxed">Memuat data dashboard...</p>
-            </div>
-            <div class="xl:col-span-4">
-              <div class="mini-card">
-                <p class="eyebrow mb-3">Aksi Cepat</p>
-                <div class="flex flex-wrap gap-2" id="quickActionMini"></div>
-              </div>
-            </div>
-          </div>
+    <section class="dashboard-scroll">
+      <div class="dashboard-wrap animate-fade-in opacity-0">
+        <div id="loadingState" class="panel text-center py-8" style="color:var(--muted)">
+          <div class="mx-auto mb-4 w-10 h-10 rounded-full border-4 border-slate-200 border-t-violet-500 animate-spin"></div>
+          <p class="font-bold">Menarik data dashboard dari database...</p>
+          <p class="text-xs mt-1" style="color:var(--muted)">Mohon tunggu sebentar.</p>
         </div>
 
-        <div id="loadingState" class="panel text-center muted">
-          <div class="loading-spinner mx-auto mb-3"></div>
-          Menarik data dashboard dari database...
-        </div>
+        <div id="dashboardContent" class="hidden dashboard-layout">
+          <div class="left-layout">
+            <div id="heroCard" class="hero-card">
+              <div class="relative z-10 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5">
+                <div class="min-w-0">
+                  <span class="soft-badge"><span id="modeBadge">Mode Dashboard</span></span>
+                  <h1 class="hero-title mt-4">Selamat pagi, <span id="welcomeNama" style="color:var(--primary)">Pengguna</span> 👋</h1>
+                  <p id="modeDescription" class="hero-desc">Memuat data dashboard...</p>
+                </div>
+                <div class="flex flex-wrap gap-2 shrink-0" id="quickActionMini"></div>
+              </div>
+            </div>
 
-        <div id="dashboardContent" class="hidden space-y-5">
-          <div id="kpiGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+            <div id="kpiGrid" class="kpi-grid"></div>
+            <div id="miniKpiGrid" class="mini-kpi-grid"></div>
 
-          <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
-            <div class="xl:col-span-8 space-y-5">
+            <div class="content-grid">
               <div class="panel">
-                <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="panel-title">
                   <div>
-                    <h3 class="text-base font-extrabold text-main">Prioritas Hari Ini</h3>
-                    <p class="text-xs muted mt-1">Kesimpulan cepat: apa yang perlu dilihat dulu.</p>
+                    <h3 id="primaryPanelTitle">Ringkasan Kategori Stok</h3>
+                    <p id="primaryPanelDesc">Komposisi stok per kategori.</p>
+                  </div>
+                  <span id="syncDate" class="pill" style="border-color:var(--border);background:var(--surface-soft);color:var(--muted)">--</span>
+                </div>
+                <div id="categoryList" class="list-stack"></div>
+              </div>
+
+              <div class="panel">
+                <div class="panel-title">
+                  <div>
+                    <h3>Pergerakan Hari Ini</h3>
+                    <p>Item dengan qty transaksi terbesar.</p>
                   </div>
                 </div>
-                <div id="insightList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                <div id="movementList" class="list-stack"></div>
               </div>
+            </div>
 
+            <div class="content-grid">
               <div class="panel">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                <div class="panel-title">
                   <div>
-                    <h3 id="primaryPanelTitle" class="text-base font-extrabold text-main">Ringkasan Kategori</h3>
-                    <p id="primaryPanelDesc" class="text-xs muted mt-1">Komposisi stok per kategori.</p>
+                    <h3 id="attentionTitle">Stok Perlu Perhatian</h3>
+                    <p id="attentionDesc">Prioritas stok kritis dan waspada.</p>
                   </div>
-                  <span id="syncDate" class="sync-pill">--</span>
+                  <a href="lihat-stok.html" class="text-xs font-extrabold" style="color:var(--primary)">Lihat Stok</a>
                 </div>
-                <div class="table-scroll overflow-x-auto rounded-2xl border" style="border-color: var(--border);">
-                  <table class="ios-table w-full min-w-[680px] text-left border-collapse">
-                    <thead class="text-xs uppercase tracking-wider">
-                      <tr>
-                        <th class="py-3 px-4">Kategori</th>
-                        <th class="py-3 px-4 text-center">Total Item</th>
-                        <th class="py-3 px-4 text-center">Aman</th>
-                        <th class="py-3 px-4 text-center">Waspada</th>
-                        <th class="py-3 px-4 text-center">Kritis</th>
-                      </tr>
-                    </thead>
-                    <tbody id="categoryBody"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <div class="xl:col-span-4 space-y-5">
-              <div class="panel">
-                <h3 id="attentionTitle" class="text-base font-extrabold text-main mb-1">Stok Perlu Perhatian</h3>
-                <p id="attentionDesc" class="text-xs muted mb-4">Item dengan status waspada/kritis.</p>
-                <div id="criticalList" class="space-y-3"></div>
+                <div id="criticalList" class="list-stack"></div>
               </div>
 
               <div class="panel">
-                <h3 class="text-base font-extrabold text-main mb-1">Menu Cepat</h3>
-                <p id="quickMenuDesc" class="text-xs muted mb-4">Akses sesuai role dan permission.</p>
-                <div id="quickMenuGrid" class="grid grid-cols-1 gap-3"></div>
+                <div class="panel-title">
+                  <div>
+                    <h3 id="activityTitle">Aktivitas Terbaru</h3>
+                    <p id="activityDesc">Riwayat transaksi paling baru.</p>
+                  </div>
+                  <a href="riwayat-transaksi.html" class="text-xs font-extrabold" style="color:var(--primary)">Lihat Semua</a>
+                </div>
+                <div id="activityList" class="list-stack"></div>
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
-            <div class="panel">
-              <h3 class="text-base font-extrabold text-main mb-1">Ringkasan Lokasi</h3>
-              <p class="text-xs muted mb-4">Stok per PUSAT/outlet dari STOK_AKHIR.</p>
-              <div id="locationList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-            </div>
-            <div class="panel">
-              <h3 class="text-base font-extrabold text-main mb-1">Pergerakan Hari Ini</h3>
-              <p class="text-xs muted mb-4">Item dengan qty transaksi terbesar hari ini.</p>
-              <div id="movementList" class="space-y-3"></div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="flex items-center justify-between gap-3 mb-4">
-              <div>
-                <h3 id="activityTitle" class="text-base font-extrabold text-main">Aktivitas Terbaru</h3>
-                <p id="activityDesc" class="text-xs muted mt-1">Riwayat transaksi paling baru.</p>
+          <aside class="right-layout">
+            <div class="panel calendar-card">
+              <div class="panel-title">
+                <div>
+                  <h3>Kalender</h3>
+                  <p id="calendarMonth">Bulan ini</p>
+                </div>
+                <span class="pill" style="color:var(--primary);background:var(--primary-soft);border-color:rgba(124,58,237,.14)">Hari ini</span>
               </div>
+              <div id="calendarGrid" class="calendar-grid"></div>
             </div>
-            <div id="activityList" class="grid grid-cols-1 xl:grid-cols-2 gap-3"></div>
-          </div>
+
+            <div class="panel">
+              <div class="panel-title">
+                <div>
+                  <h3>Menu Cepat</h3>
+                  <p id="quickMenuDesc">Akses sesuai role dan permission.</p>
+                </div>
+              </div>
+              <div id="quickMenuGrid" class="list-stack"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">
+                <div>
+                  <h3>Ringkasan Lokasi</h3>
+                  <p>Stok per PUSAT/outlet.</p>
+                </div>
+              </div>
+              <div id="locationList" class="list-stack"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">
+                <div>
+                  <h3>Agenda Hari Ini</h3>
+                  <p>Diambil dari aktivitas terbaru.</p>
+                </div>
+              </div>
+              <div id="agendaList"></div>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
   </main>
 
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
-    <div class="absolute inset-0 opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
-    <div class="relative rounded-3xl modal-content p-5 sm:p-6 w-full max-w-sm transform scale-95 opacity-0 pointer-events-auto">
-      <div class="flex items-center justify-center w-12 h-12 rounded-2xl tone-soft-rose tone-text-rose mb-4 mx-auto">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5 19h14a2 2 0 001.73-3L13.73 4a2 2 0 00-3.46 0L3.27 16A2 2 0 005 19z"></path></svg>
-      </div>
-      <h3 class="text-lg font-extrabold text-main text-center mb-2">Konfirmasi Keluar</h3>
-      <p class="text-sm muted text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
+    <div class="relative modal-content pointer-events-auto opacity-0 scale-95 panel max-w-sm w-full p-6 text-center">
+      <div class="mx-auto mb-4 flat-icon-sm tone-rose" style="width:54px;height:54px;border-radius:22px"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+      <h3 class="text-lg font-black" style="color:var(--text)">Konfirmasi Keluar</h3>
+      <p class="text-sm mt-2 mb-6" style="color:var(--muted)">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
       <div class="flex gap-3">
-        <button onclick="closeLogoutModal()" class="btn-secondary flex-1 px-4 py-2.5 text-sm font-bold rounded-2xl transition">Batal</button>
-        <button onclick="executeLogout()" class="btn-danger flex-1 px-4 py-2.5 text-sm font-bold rounded-2xl transition shadow-lg">Ya, Keluar</button>
+        <button onclick="closeLogoutModal()" class="flex-1 rounded-2xl border px-4 py-3 text-sm font-extrabold" style="border-color:var(--border);color:var(--text);background:var(--surface-soft)">Batal</button>
+        <button onclick="executeLogout()" class="flex-1 rounded-2xl px-4 py-3 text-sm font-extrabold text-white" style="background:var(--rose)">Ya, Keluar</button>
       </div>
     </div>
   </div>
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
-    const THEME_KEY = 'APJ_THEME_MODE';
     let dashboardMode = 'operator';
 
     document.addEventListener('DOMContentLoaded', () => {
-      initTheme();
+      applyThemeIcon();
+      renderMiniCalendar();
 
       const isSessionActive = localStorage.getItem('APJ_SESSION_ACTIVE');
       if (isSessionActive !== 'true' || !localStorage.getItem('APJ_SESSION_TOKEN')) { window.location.href = 'index.html'; return; }
@@ -480,43 +567,20 @@
       const userName = localStorage.getItem('APJ_USER_NAME') || 'Pengguna';
       const userLevel = localStorage.getItem('APJ_USER_LEVEL') || 'Unknown Level';
       const permissions = safeParseJSON(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
+      const initial = userName.charAt(0).toUpperCase();
 
       document.getElementById('displayNama').textContent = userName;
+      document.getElementById('sidebarNama').textContent = userName;
       document.getElementById('welcomeNama').textContent = userName;
       document.getElementById('displayLevel').textContent = userLevel;
-      document.getElementById('displayInisial').textContent = userName.charAt(0).toUpperCase();
+      document.getElementById('sidebarLevel').textContent = userLevel;
+      document.getElementById('displayInisial').textContent = initial;
+      document.getElementById('sidebarInisial').textContent = initial;
 
-      showAdminMenuForAuthorizedRoles();
+      setupAdminMenu(userLevel);
       loadDashboardData(userName, userLevel, permissions);
       document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMobileSidebar));
     });
-
-    function initTheme() {
-      const saved = localStorage.getItem(THEME_KEY) || 'dark';
-      applyTheme(saved === 'light' ? 'light' : 'dark');
-    }
-
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      applyTheme(current === 'dark' ? 'light' : 'dark');
-    }
-
-    function applyTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem(THEME_KEY, theme);
-      const themeText = document.getElementById('themeText');
-      const themeIcon = document.getElementById('themeIcon');
-      if (themeText) themeText.textContent = theme === 'dark' ? 'Dark' : 'Light';
-      if (themeIcon) themeIcon.innerHTML = theme === 'dark' ? flatIcon('moon', 'w-4 h-4') : flatIcon('sun', 'w-4 h-4');
-    }
-
-    function showAdminMenuForAuthorizedRoles() {
-      const adminMenuLink = document.getElementById('adminMenuLink');
-      if (!adminMenuLink) return;
-      const level = String(localStorage.getItem('APJ_USER_LEVEL') || '').trim().toLowerCase();
-      const allowedLevels = ['owner', 'superadmin', 'super admin', 'supervisor'];
-      if (allowedLevels.includes(level)) adminMenuLink.classList.remove('hidden');
-    }
 
     async function loadDashboardData(userName, userLevel, permissions) {
       try {
@@ -530,7 +594,7 @@
         if (!result.success) throw new Error(result.message || 'Gagal memuat dashboard.');
         renderDashboard(result);
       } catch (error) {
-        document.getElementById('loadingState').innerHTML = `<div class="tone-text-rose font-extrabold mb-1">Dashboard gagal dimuat.</div><div class="text-xs muted">${escapeHtml(error.message || 'Periksa deploy Code.gs terbaru.')}</div>`;
+        document.getElementById('loadingState').innerHTML = `<div class="text-rose-500 font-extrabold mb-1">Dashboard gagal dimuat.</div><div class="text-xs" style="color:var(--muted)">${escapeHtml(error.message || 'Periksa deploy Code.gs terbaru.')}</div>`;
         showToast('Gagal memuat data dashboard. Pastikan Code.gs terbaru sudah dideploy.', 'error');
       }
     }
@@ -544,18 +608,17 @@
       const isOwner = dashboardMode === 'owner';
       document.getElementById('modeBadge').textContent = isOwner ? 'Mode Owner' : 'Mode Operasional';
       document.getElementById('modeDescription').textContent = isOwner
-        ? 'Pantau transaksi seluruh tim, kesehatan stok, item kritis, dan aktivitas terbaru dalam tampilan yang lebih ringkas.'
-        : 'Lihat menu sesuai izin, aktivitas milik sendiri, dan stok relevan dengan hak akses login.';
+        ? 'Ringkasan stok, produksi, transfer outlet, dan aktivitas tim dibuat ringkas supaya keputusan cepat tanpa dashboard terasa penuh.'
+        : 'Tampilan menyesuaikan izin role, aktivitas pribadi, dan menu yang boleh diakses.';
       document.getElementById('primaryPanelTitle').textContent = isOwner ? 'Ringkasan Kategori Stok' : 'Kategori Sesuai Akses';
-      document.getElementById('primaryPanelDesc').textContent = isOwner ? 'Pantauan semua kategori stok yang tercatat di STOK_AKHIR.' : 'Kategori yang tampil mengikuti permission role login.';
+      document.getElementById('primaryPanelDesc').textContent = isOwner ? 'Komposisi stok semua kategori yang tercatat di STOK_AKHIR.' : 'Kategori mengikuti permission role login.';
       document.getElementById('attentionTitle').textContent = isOwner ? 'Stok Perlu Perhatian' : 'Perhatian Operasional';
-      document.getElementById('attentionDesc').textContent = isOwner ? 'Prioritas owner: habis/kritis dulu, baru waspada.' : 'Item kritis dari kategori yang boleh diakses.';
+      document.getElementById('attentionDesc').textContent = isOwner ? 'Dipadatkan agar item kritis mudah terlihat.' : 'Item kritis dari kategori yang boleh diakses.';
       document.getElementById('activityTitle').textContent = isOwner ? 'Aktivitas Terbaru Semua Tim' : 'Aktivitas Saya Terbaru';
       document.getElementById('activityDesc').textContent = isOwner ? 'Gabungan input, output, produksi, transfer, dan opname.' : 'Hanya transaksi dengan nama petugas login.';
       document.getElementById('quickMenuDesc').textContent = isOwner ? 'Semua modul terbuka untuk owner.' : 'Menu disaring berdasarkan permission role.';
 
       renderKpis(data);
-      renderInsights(data.insights || []);
       renderLocations(data.locationSummary || []);
       renderMovements(data.topMovements || []);
       renderCategories(data.categorySummary || []);
@@ -563,179 +626,178 @@
       renderQuickMenus(data.quickMenus || []);
       renderMiniActions(data.quickMenus || []);
       renderActivities(data.recentActivities || []);
+      renderAgenda(data.recentActivities || []);
     }
 
     function renderKpis(data) {
       const k = data.kpi || {};
       const isOwner = data.mode === 'owner';
-      const cards = isOwner ? [
-        { label: 'Transaksi Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue', icon:'activity' },
-        { label: 'Input Hari Ini', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald', icon:'input' },
-        { label: 'Output Hari Ini', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose', icon:'output' },
-        { label: 'Produksi Hari Ini', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber', icon:'chef' },
-        { label: 'Transfer Hari Ini', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet', icon:'transfer' },
-        { label: 'Stok Kosong', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose', icon:'alert' },
-        { label: 'Stok Kritis', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber', icon:'warning' },
-        { label: 'Lokasi Aktif', value: k.lokasiAktif || 0, suffix: 'Lokasi', tone: 'cyan', icon:'store' }
+      const mainCards = isOwner ? [
+        { label: 'Transaksi', value: k.transaksiHariIni || 0, suffix: 'Hari ini', tone: 'blue', trend: 'Semua modul' },
+        { label: 'Input', value: k.inputHariIni || 0, suffix: 'Barang masuk', tone: 'emerald', trend: 'Stok bertambah' },
+        { label: 'Output', value: k.outputHariIni || 0, suffix: 'Barang keluar', tone: 'rose', trend: 'Operasional' },
+        { label: 'Stok Kritis', value: k.stokKritis || 0, suffix: 'Butuh cek', tone: 'amber', trend: 'Prioritas' }
       ] : [
-        { label: 'Aktivitas Saya Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue', icon:'activity' },
-        { label: 'Input Saya', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald', icon:'input' },
-        { label: 'Output Saya', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose', icon:'output' },
-        { label: 'Produksi Saya', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber', icon:'chef' },
-        { label: 'Transfer Saya', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet', icon:'transfer' },
-        { label: 'Stok Kosong Aksesku', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose', icon:'alert' },
-        { label: 'Stok Kritis Aksesku', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber', icon:'warning' },
-        { label: 'Menu Aktif', value: k.aksesAktif || 0, suffix: 'Akses', tone: 'cyan', icon:'menu' }
+        { label: 'Aktivitas', value: k.transaksiHariIni || 0, suffix: 'Hari ini', tone: 'blue', trend: 'Data saya' },
+        { label: 'Input', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald', trend: 'Role saya' },
+        { label: 'Output', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose', trend: 'Role saya' },
+        { label: 'Menu Aktif', value: k.aksesAktif || 0, suffix: 'Akses', tone: 'violet', trend: 'Permission' }
+      ];
+      const miniCards = isOwner ? [
+        { label:'Produksi', value:k.produksiHariIni || 0, tone:'amber' },
+        { label:'Transfer', value:k.transferHariIni || 0, tone:'violet' },
+        { label:'Stok Kosong', value:k.stokKosong || 0, tone:'rose' },
+        { label:'Lokasi', value:k.lokasiAktif || 0, tone:'slate' }
+      ] : [
+        { label:'Produksi', value:k.produksiHariIni || 0, tone:'amber' },
+        { label:'Transfer', value:k.transferHariIni || 0, tone:'violet' },
+        { label:'Kosong', value:k.stokKosong || 0, tone:'rose' },
+        { label:'Kritis', value:k.stokKritis || 0, tone:'amber' }
       ];
 
-      document.getElementById('kpiGrid').innerHTML = cards.map(card => `
-        <div class="kpi-card tone-border-${card.tone} tone-text-${card.tone}">
-          <div class="relative z-[1]">
-            <div class="kpi-icon tone-soft-${card.tone} tone-text-${card.tone}">${flatIcon(card.icon, 'w-5 h-5')}</div>
-            <p class="eyebrow mb-1">${escapeHtml(card.label)}</p>
-            <div class="flex items-end gap-2">
-              <h4 class="text-3xl font-extrabold text-main leading-none">${escapeHtml(String(card.value))}</h4>
-              <span class="text-xs font-bold muted mb-0.5">${escapeHtml(card.suffix)}</span>
+      document.getElementById('kpiGrid').innerHTML = mainCards.map(card => `
+        <div class="kpi-card tone-${escapeHtml(card.tone)}">
+          <div class="kpi-top">
+            <div class="min-w-0">
+              <p class="kpi-label">${escapeHtml(card.label)}</p>
+              <p class="text-xs mt-1" style="color:var(--muted)">${escapeHtml(card.suffix)}</p>
             </div>
+            <div class="kpi-icon">${iconForTone(card.tone)}</div>
+          </div>
+          <div>
+            <div class="kpi-value"><strong>${escapeHtml(formatNumber(card.value))}</strong></div>
+            <div class="kpi-footer"><span>${escapeHtml(card.trend)}</span><b>Live</b></div>
           </div>
         </div>
       `).join('');
-    }
 
-    function renderInsights(items) {
-      const el = document.getElementById('insightList');
-      if (!items.length) {
-        el.innerHTML = `<div class="list-card text-sm muted md:col-span-2">Belum ada insight yang bisa ditampilkan.</div>`;
-        return;
-      }
-      el.innerHTML = items.map(item => {
-        const tone = normalizeTone(item.tone || 'blue');
-        return `
-          <div class="list-card tone-border-${tone}">
-            <div class="flex gap-3">
-              <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(toneIcon(tone), 'w-5 h-5')}</div>
-              <div class="min-w-0">
-                <p class="text-sm font-extrabold text-main">${escapeHtml(item.title || '-')}</p>
-                <p class="text-xs muted mt-1 leading-relaxed">${escapeHtml(item.text || '')}</p>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
+      document.getElementById('miniKpiGrid').innerHTML = miniCards.map(card => `
+        <div class="mini-stat tone-${escapeHtml(card.tone)}">
+          <div class="min-w-0"><p>${escapeHtml(card.label)}</p><strong>${escapeHtml(formatNumber(card.value))}</strong></div>
+          <span class="flat-icon-sm">${iconForTone(card.tone)}</span>
+        </div>
+      `).join('');
     }
 
     function renderLocations(rows) {
       const el = document.getElementById('locationList');
       if (!rows.length) {
-        el.innerHTML = `<div class="list-card text-sm muted sm:col-span-2">Belum ada data lokasi.</div>`;
+        el.innerHTML = emptyState('Belum ada data lokasi.');
         return;
       }
-      el.innerHTML = rows.slice(0, 8).map(r => `
-        <div class="list-card">
-          <div class="flex items-center justify-between gap-3 mb-3">
-            <div class="flex items-center gap-2 min-w-0">
-              <span class="kpi-icon tone-soft-cyan tone-text-cyan !mb-0 !w-9 !h-9">${flatIcon('store','w-4 h-4')}</span>
-              <p class="text-sm font-extrabold text-main truncate">${escapeHtml(r.lokasi || 'PUSAT')}</p>
-            </div>
-            <span class="text-[11px] muted font-bold">${escapeHtml(String(r.totalItem || 0))} item</span>
-          </div>
-          <div class="grid grid-cols-4 gap-2 text-center">
-            <div class="mini-card !p-2"><p class="text-[10px] muted">Aman</p><p class="text-sm font-extrabold tone-text-emerald">${escapeHtml(String(r.aman || 0))}</p></div>
-            <div class="mini-card !p-2"><p class="text-[10px] muted">Waspada</p><p class="text-sm font-extrabold tone-text-amber">${escapeHtml(String(r.waspada || 0))}</p></div>
-            <div class="mini-card !p-2"><p class="text-[10px] muted">Kritis</p><p class="text-sm font-extrabold tone-text-rose">${escapeHtml(String(r.kritis || 0))}</p></div>
-            <div class="mini-card !p-2"><p class="text-[10px] muted">Kosong</p><p class="text-sm font-extrabold tone-text-rose">${escapeHtml(String(r.kosong || 0))}</p></div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderMovements(items) {
-      const el = document.getElementById('movementList');
-      if (!items.length) {
-        el.innerHTML = `<div class="list-card text-sm muted">Belum ada pergerakan transaksi hari ini.</div>`;
-        return;
-      }
-      el.innerHTML = items.map(item => {
-        const tone = activityTone(item.jenis);
+      el.innerHTML = rows.slice(0, 5).map(r => {
+        const kritis = Number(r.kritis || 0) + Number(r.kosong || 0);
+        const tone = kritis ? 'rose' : Number(r.waspada || 0) ? 'amber' : 'emerald';
         return `
-          <div class="list-card">
+          <div class="soft-row">
             <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0 flex gap-3">
-                <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(activityIcon(item.jenis), 'w-5 h-5')}</div>
-                <div class="min-w-0">
-                  <span class="badge tone-text-${tone}">${escapeHtml(item.jenis || '-')}</span>
-                  <p class="mt-2 text-sm font-extrabold text-main truncate">${escapeHtml(item.nama || '-')}</p>
-                  <p class="text-xs muted mt-1">${escapeHtml(item.lokasi || 'PUSAT')}</p>
-                </div>
+              <div class="min-w-0">
+                <p class="row-title">${escapeHtml(r.lokasi || 'PUSAT')}</p>
+                <p class="row-sub">${escapeHtml(String(r.totalItem || 0))} item • ${escapeHtml(String(r.aman || 0))} aman</p>
               </div>
-              <p class="text-sm font-extrabold text-main text-right flex-shrink-0">${escapeHtml(String(item.qty || 0))}<br><span class="text-xs font-normal muted">${escapeHtml(item.satuan || '')}</span></p>
+              <span class="pill tone-${tone}" style="color:var(--${tone});background:color-mix(in srgb, var(--${tone}) 10%, transparent);border-color:color-mix(in srgb, var(--${tone}) 20%, transparent)">${escapeHtml(String(kritis))} prioritas</span>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    function renderCategories(rows) {
-      if (!rows.length) {
-        document.getElementById('categoryBody').innerHTML = `<tr><td colspan="5" class="py-8 px-4 text-center muted">Belum ada data kategori yang bisa ditampilkan.</td></tr>`;
+    function renderMovements(items) {
+      const el = document.getElementById('movementList');
+      if (!items.length) {
+        el.innerHTML = emptyState('Belum ada pergerakan transaksi hari ini.');
         return;
       }
-      document.getElementById('categoryBody').innerHTML = rows.map(r => `
-        <tr class="text-sm">
-          <td class="py-3 px-4 font-extrabold text-main">${escapeHtml(r.kategori || '-')}</td>
-          <td class="py-3 px-4 text-center muted font-bold">${escapeHtml(String(r.totalItem || 0))}</td>
-          <td class="py-3 px-4 text-center tone-text-emerald font-extrabold">${escapeHtml(String(r.aman || 0))}</td>
-          <td class="py-3 px-4 text-center tone-text-amber font-extrabold">${escapeHtml(String(r.waspada || 0))}</td>
-          <td class="py-3 px-4 text-center tone-text-rose font-extrabold">${escapeHtml(String(r.kritis || 0))}</td>
-        </tr>
+      el.innerHTML = items.slice(0, 6).map(item => `
+        <div class="soft-row">
+          <div class="flex items-center gap-3">
+            <span class="flat-icon-sm tone-${toneFromJenis(item.jenis)}">${iconForTone(toneFromJenis(item.jenis))}</span>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 mb-1"><span class="pill ${activityBadge(item.jenis)}">${escapeHtml(item.jenis || '-')}</span></div>
+              <p class="row-title">${escapeHtml(item.nama || '-')}</p>
+              <p class="row-sub">${escapeHtml(item.lokasi || 'PUSAT')}</p>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="font-black" style="color:var(--text)">${escapeHtml(formatNumber(item.qty || 0))}</p>
+              <p class="text-xs" style="color:var(--muted)">${escapeHtml(item.satuan || '')}</p>
+            </div>
+          </div>
+        </div>
       `).join('');
     }
 
-    function renderCriticalItems(items) {
-      if (!items.length) {
-        document.getElementById('criticalList').innerHTML = `<div class="list-card tone-border-emerald text-sm tone-text-emerald font-semibold">Tidak ada stok kritis/waspada. Aman, tapi tetap jangan lengah—stok suka drama pas weekend.</div>`;
+    function renderCategories(rows) {
+      const el = document.getElementById('categoryList');
+      if (!rows.length) {
+        el.innerHTML = emptyState('Belum ada data kategori yang bisa ditampilkan.');
         return;
       }
-      document.getElementById('criticalList').innerHTML = items.map(item => {
-        const tone = item.level === 'kritis' ? 'rose' : 'amber';
+      el.innerHTML = rows.slice(0, 7).map(r => {
+        const total = Math.max(Number(r.totalItem || 0), 1);
+        const aman = Number(r.aman || 0);
+        const waspada = Number(r.waspada || 0);
+        const kritis = Number(r.kritis || 0);
+        const pctAman = Math.max(0, Math.min(100, aman / total * 100));
+        const pctWaspada = Math.max(0, Math.min(100, waspada / total * 100));
+        const pctKritis = Math.max(0, Math.min(100, kritis / total * 100));
         return `
-          <div class="list-card tone-border-${tone}">
-            <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0 flex gap-3">
-                <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(tone === 'rose' ? 'alert' : 'warning', 'w-5 h-5')}</div>
-                <div class="min-w-0">
-                  <p class="text-sm font-extrabold text-main truncate">${escapeHtml(item.nama || '-')}</p>
-                  <p class="text-xs muted mt-1">${escapeHtml(item.kategori || '-')} • ${escapeHtml(item.id || '-')}</p>
-                </div>
+          <div class="soft-row">
+            <div class="category-row">
+              <div class="min-w-0">
+                <p class="row-title">${escapeHtml(r.kategori || '-')}</p>
+                <p class="row-sub">${escapeHtml(String(r.totalItem || 0))} item • ${escapeHtml(String(aman))} aman • ${escapeHtml(String(waspada))} waspada • ${escapeHtml(String(kritis))} kritis</p>
+                <div class="bar-line"><span class="bar-seg bar-ok" style="width:${pctAman}%"></span><span class="bar-seg bar-warn" style="width:${pctWaspada}%"></span><span class="bar-seg bar-bad" style="width:${pctKritis}%"></span></div>
               </div>
-              <span class="badge tone-text-${tone}">${escapeHtml(item.status || '-')}</span>
+              <span class="pill" style="background:var(--surface-solid);border-color:var(--border);color:var(--text)">${escapeHtml(String(r.totalItem || 0))}</span>
             </div>
-            <p class="mt-3 text-sm tone-text-${tone} font-extrabold">${escapeHtml(item.qty || '0')} ${escapeHtml(item.satuan || '')}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCriticalItems(items) {
+      const el = document.getElementById('criticalList');
+      if (!items.length) {
+        el.innerHTML = `<div class="soft-row" style="border-color:rgba(16,185,129,.22);background:rgba(16,185,129,.08)"><p class="row-title" style="color:var(--emerald)">Stok aman</p><p class="row-sub">Tidak ada stok kritis/waspada. Tetap cek menjelang weekend.</p></div>`;
+        return;
+      }
+      el.innerHTML = items.slice(0, 5).map(item => {
+        const isCritical = item.level === 'kritis';
+        const tone = isCritical ? 'rose' : 'amber';
+        return `
+          <div class="soft-row">
+            <div class="flex items-center gap-3">
+              <span class="flat-icon-sm tone-${tone}">${iconForTone(tone)}</span>
+              <div class="min-w-0 flex-1">
+                <p class="row-title">${escapeHtml(item.nama || '-')}</p>
+                <p class="row-sub">${escapeHtml(item.kategori || '-')} • ${escapeHtml(item.id || '-')}</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="pill" style="color:var(--${tone});background:color-mix(in srgb, var(--${tone}) 10%, transparent);border-color:color-mix(in srgb, var(--${tone}) 20%, transparent)">${escapeHtml(item.status || '-')}</span>
+                <p class="text-xs font-black mt-1" style="color:var(--${tone})">${escapeHtml(item.qty || '0')} ${escapeHtml(item.satuan || '')}</p>
+              </div>
+            </div>
           </div>
         `;
       }).join('');
     }
 
     function renderQuickMenus(menus) {
-      document.getElementById('quickMenuGrid').innerHTML = menus.map(menu => {
+      const el = document.getElementById('quickMenuGrid');
+      if (!menus.length) { el.innerHTML = emptyState('Belum ada menu aktif.'); return; }
+      el.innerHTML = menus.slice(0, 7).map(menu => {
         const disabled = !!menu.disabled;
         const tag = disabled ? 'div' : 'a';
         const href = disabled ? '' : ` href="${escapeHtml(menu.href)}"`;
-        const disabledClass = disabled ? ' opacity-55 cursor-not-allowed' : ' hover:-translate-y-0.5';
-        const tone = normalizeTone(menu.tone || menuTone(menu));
-        const badge = disabled ? '<span class="badge muted ml-2">Segera</span>' : '';
+        const tone = menu.tone || 'blue';
         return `
-          <${tag}${href} class="list-card block transition${disabledClass}">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(menuIcon(menu), 'w-5 h-5')}</div>
-                <div class="min-w-0">
-                  <p class="text-sm font-extrabold text-main truncate">${escapeHtml(menu.label)}${badge}</p>
-                  <p class="text-xs muted mt-1 truncate">${escapeHtml(menu.desc || '')}</p>
-                </div>
-              </div>
-              <span class="status-dot tone-soft-${tone}"></span>
+          <${tag}${href} class="soft-row quick-card ${disabled ? 'opacity-60 cursor-not-allowed' : ''}">
+            <span class="flat-icon-sm tone-${escapeHtml(tone)}">${iconForTone(tone)}</span>
+            <div class="min-w-0 flex-1">
+              <p class="row-title">${escapeHtml(menu.label || '-')}</p>
+              <p class="row-sub clamp-1">${escapeHtml(menu.desc || '')}</p>
             </div>
+            ${disabled ? '<span class="pill" style="color:var(--muted);border-color:var(--border)">Segera</span>' : '<span style="color:var(--muted)">›</span>'}
           </${tag}>
         `;
       }).join('');
@@ -743,36 +805,26 @@
 
     function renderMiniActions(menus) {
       const visible = menus.filter(m => m.href !== 'dashboard.html' && !m.disabled).slice(0, 3);
-      document.getElementById('quickActionMini').innerHTML = visible.length
-        ? visible.map(menu => `<a href="${escapeHtml(menu.href)}" class="quick-pill">${flatIcon(menuIcon(menu), 'w-4 h-4')}${escapeHtml(menu.label)}</a>`).join('')
-        : `<span class="quick-pill muted">${flatIcon('menu','w-4 h-4')}Belum ada aksi cepat</span>`;
+      document.getElementById('quickActionMini').innerHTML = visible.map(menu => `<a href="${escapeHtml(menu.href)}" class="pill" style="background:var(--surface-solid);border-color:var(--border);color:var(--text);box-shadow:var(--shadow-soft)">${escapeHtml(menu.label)}</a>`).join('');
     }
 
     function renderActivities(items) {
-      if (!items.length) {
-        document.getElementById('activityList').innerHTML = `<div class="list-card text-sm muted xl:col-span-2">Belum ada aktivitas yang tercatat.</div>`;
-        return;
-      }
-      document.getElementById('activityList').innerHTML = items.map(item => {
-        const tone = activityTone(item.jenis);
+      const el = document.getElementById('activityList');
+      if (!items.length) { el.innerHTML = emptyState('Belum ada aktivitas yang tercatat.'); return; }
+      el.innerHTML = items.slice(0, 5).map(item => {
+        const tone = toneFromJenis(item.jenis);
         return `
-          <div class="list-card">
-            <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0 flex gap-3">
-                <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(activityIcon(item.jenis), 'w-5 h-5')}</div>
-                <div class="min-w-0">
-                  <div class="flex flex-wrap items-center gap-2 mb-1">
-                    <span class="badge tone-text-${tone}">${escapeHtml(item.jenis || '-')}</span>
-                    <span class="text-xs muted">${escapeHtml(item.tanggal || '-')}</span>
-                    <span class="text-xs muted-2">${escapeHtml(item.txId || '')}</span>
-                  </div>
-                  <p class="text-sm font-extrabold text-main truncate">${escapeHtml(item.nama || '-')}</p>
-                  <p class="text-xs muted mt-1">${escapeHtml(item.kategori || '-')} ${item.tujuan ? '• ' + escapeHtml(item.tujuan) : ''} • ${escapeHtml(item.petugas || '-')}</p>
-                </div>
+          <div class="soft-row">
+            <div class="flex items-center gap-3">
+              <span class="flat-icon-sm tone-${tone}">${iconForTone(tone)}</span>
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2 mb-1"><span class="pill ${activityBadge(item.jenis)}">${escapeHtml(item.jenis || '-')}</span><span class="text-xs" style="color:var(--muted)">${escapeHtml(item.tanggal || '-')}</span></div>
+                <p class="row-title">${escapeHtml(item.nama || '-')}</p>
+                <p class="row-sub clamp-1">${escapeHtml(item.kategori || '-')} ${item.tujuan ? '• ' + escapeHtml(item.tujuan) : ''} • ${escapeHtml(item.petugas || '-')}</p>
               </div>
-              <div class="text-right flex-shrink-0">
-                <p class="text-sm font-extrabold text-main">${escapeHtml(item.qty || '-')}</p>
-                <p class="text-xs muted">${escapeHtml(item.satuan || '')}</p>
+              <div class="text-right shrink-0">
+                <p class="font-black text-sm" style="color:var(--text)">${escapeHtml(item.qty || '-')}</p>
+                <p class="text-xs" style="color:var(--muted)">${escapeHtml(item.satuan || '')}</p>
               </div>
             </div>
           </div>
@@ -780,20 +832,50 @@
       }).join('');
     }
 
+    function renderAgenda(items) {
+      const el = document.getElementById('agendaList');
+      if (!items.length) {
+        el.innerHTML = `<div class="agenda-line"><div class="agenda-time tone-slate">--:--</div><div><p class="row-title">Belum ada aktivitas</p><p class="row-sub">Agenda akan terisi dari aktivitas terbaru.</p></div></div>`;
+        return;
+      }
+      el.innerHTML = items.slice(0, 4).map((item, idx) => {
+        const tone = toneFromJenis(item.jenis);
+        return `<div class="agenda-line tone-${tone}"><div class="agenda-time">${escapeHtml(timeFromText(item.tanggal) || agendaTime(idx))}</div><div class="min-w-0"><p class="row-title">${escapeHtml(item.jenis || '-')}</p><p class="row-sub clamp-2">${escapeHtml(item.nama || '-')} • ${escapeHtml(item.petugas || '-')}</p></div></div>`;
+      }).join('');
+    }
+
+    function renderMiniCalendar() {
+      const now = new Date();
+      const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      document.getElementById('calendarMonth').textContent = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+      const first = new Date(now.getFullYear(), now.getMonth(), 1);
+      const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      const prevLast = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+      const start = (first.getDay() + 6) % 7;
+      const heads = ['MO','TU','WE','TH','FR','SA','SU'].map(d => `<div class="cal-head">${d}</div>`).join('');
+      let cells = '';
+      for (let i = 0; i < 35; i++) {
+        const day = i - start + 1;
+        if (day < 1) cells += `<div class="cal-day muted">${prevLast + day}</div>`;
+        else if (day > last.getDate()) cells += `<div class="cal-day muted">${day - last.getDate()}</div>`;
+        else cells += `<div class="cal-day ${day === now.getDate() ? 'today' : ''}">${day}</div>`;
+      }
+      document.getElementById('calendarGrid').innerHTML = heads + cells;
+    }
+
     function showToast(message, type = 'success') {
       const toast = document.getElementById('customToast');
-      const title = document.getElementById('toastTitle');
-      const iconWrap = document.getElementById('toastIconWrap');
+      const card = document.getElementById('toastCard');
+      const icon = document.getElementById('toastIcon');
+      document.getElementById('toastTitle').textContent = type === 'success' ? 'Berhasil' : 'Perhatian';
       document.getElementById('toastMessage').textContent = message;
-      const ok = type === 'success';
-      title.textContent = ok ? 'Berhasil' : 'Perhatian';
-      iconWrap.className = ok
-        ? 'kpi-icon tone-soft-emerald tone-text-emerald !mb-0 !w-9 !h-9'
-        : 'kpi-icon tone-soft-rose tone-text-rose !mb-0 !w-9 !h-9';
-      iconWrap.innerHTML = flatIcon(ok ? 'check' : 'alert', 'w-5 h-5');
-      toast.className = ok ? 'toast show toast-success' : 'toast show toast-error';
-      clearTimeout(window.__apjToastTimer);
-      window.__apjToastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+      const tone = type === 'success' ? 'emerald' : 'rose';
+      icon.className = `flat-icon-sm tone-${tone}`;
+      icon.innerHTML = type === 'success' ? iconCheck() : iconWarning();
+      card.style.background = 'var(--surface)';
+      card.style.borderColor = type === 'success' ? 'rgba(16,185,129,.28)' : 'rgba(244,63,94,.28)';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3300);
     }
 
     const modal = document.getElementById('logoutModal');
@@ -840,119 +922,70 @@
     document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMobileSidebar(); });
     window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeMobileSidebar(); });
 
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('APJ_THEME', next);
+      applyThemeIcon();
+    }
+    function applyThemeIcon() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const btn = document.getElementById('themeToggle');
+      if (btn) btn.innerHTML = current === 'dark' ? iconMoon() : iconSun();
+    }
+    function setupAdminMenu(level) {
+      const allowed = ['owner', 'superadmin', 'super admin', 'supervisor'].includes(String(level || '').trim().toLowerCase());
+      document.querySelectorAll('[data-admin-menu]').forEach(el => el.classList.toggle('hidden', !allowed));
+    }
+
     function safeParseJSON(text) { try { return JSON.parse(text); } catch (e) { return {}; } }
-    function escapeHtml(value) {
-      return String(value ?? '').replace(/[&<>'"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[ch]));
+    function escapeHtml(value) { return String(value ?? '').replace(/[&<>'"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[ch])); }
+    function formatNumber(value) {
+      const n = Number(value || 0);
+      if (!Number.isFinite(n)) return String(value || 0);
+      return new Intl.NumberFormat('id-ID').format(n);
     }
-    function normalizeTone(tone) {
-      const t = String(tone || '').toLowerCase();
-      if (['blue','emerald','rose','amber','violet','cyan','slate'].includes(t)) return t;
-      if (t === 'green') return 'emerald';
-      if (t === 'red') return 'rose';
-      if (t === 'yellow' || t === 'orange') return 'amber';
-      return 'blue';
-    }
-    function toneIcon(tone) {
-      return { blue:'activity', emerald:'check', rose:'alert', amber:'warning', violet:'spark', cyan:'store', slate:'menu' }[tone] || 'activity';
-    }
-    function activityTone(jenis) {
+    function emptyState(text) { return `<div class="soft-row"><p class="row-sub">${escapeHtml(text)}</p></div>`; }
+    function toneFromJenis(jenis) {
       const j = String(jenis || '').toLowerCase();
       if (j.includes('input')) return 'emerald';
-      if (j.includes('output')) return 'rose';
+      if (j.includes('output') || j.includes('terjual')) return 'rose';
       if (j.includes('produksi')) return 'amber';
       if (j.includes('opname')) return 'violet';
       if (j.includes('transfer')) return 'blue';
-      if (j.includes('outlet')) return 'cyan';
       return 'slate';
     }
-    function activityIcon(jenis) {
-      const j = String(jenis || '').toLowerCase();
-      if (j.includes('input')) return 'input';
-      if (j.includes('output')) return 'output';
-      if (j.includes('produksi')) return 'chef';
-      if (j.includes('opname')) return 'opname';
-      if (j.includes('transfer')) return 'transfer';
-      if (j.includes('outlet')) return 'store';
-      return 'activity';
+    function activityBadge(jenis) {
+      const tone = toneFromJenis(jenis);
+      return `tone-${tone}`;
     }
-    function menuIcon(menu) {
-      const text = `${menu.href || ''} ${menu.label || ''}`.toLowerCase();
-      if (text.includes('input')) return 'input';
-      if (text.includes('output')) return 'output';
-      if (text.includes('transfer')) return 'transfer';
-      if (text.includes('produk-outlet') || text.includes('outlet')) return 'store';
-      if (text.includes('opname')) return 'opname';
-      if (text.includes('lihat') || text.includes('stok')) return 'stock';
-      if (text.includes('riwayat')) return 'history';
-      if (text.includes('admin')) return 'admin';
-      return 'menu';
+    function timeFromText(value) {
+      const m = String(value || '').match(/\b(\d{1,2}:\d{2})\b/);
+      return m ? m[1] : '';
     }
-    function menuTone(menu) {
-      const text = `${menu.href || ''} ${menu.label || ''}`.toLowerCase();
-      if (text.includes('input')) return 'blue';
-      if (text.includes('output')) return 'rose';
-      if (text.includes('transfer')) return 'violet';
-      if (text.includes('produk-outlet') || text.includes('outlet')) return 'cyan';
-      if (text.includes('opname')) return 'amber';
-      if (text.includes('lihat')) return 'emerald';
-      if (text.includes('riwayat')) return 'blue';
-      if (text.includes('admin')) return 'violet';
-      return 'slate';
-    }
+    function agendaTime(idx) { return ['09:00','11:30','14:00','16:00'][idx] || '--:--'; }
 
-    function navIcon(name) { return flatIcon(name, 'nav-icon'); }
-
-    function flatIcon(name, cls = 'w-5 h-5') {
-      const icons = {
-        dashboard: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-4H4v4Z"/>',
-        input: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5"/>',
-        output: '<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0-5-5m5 5-5 5"/>',
-        transfer: '<path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/>',
-        store: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16l-1.4-4.2A2 2 0 0016.7 4H7.3a2 2 0 00-1.9 1.8L4 10Zm2 0v9h12v-9M9 19v-5h6v5"/>',
-        opname: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5h6m-7 4h8m-8 4h5m-7 8h12a2 2 0 002-2V7l-4-4H6a2 2 0 00-2 2v14a2 2 0 002 2Z"/>',
-        stock: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 7c0 1.7 3.6 3 8 3s8-1.3 8-3-3.6-3-8-3-8 1.3-8 3Zm0 0v5c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5"/>',
-        history: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 101.9-5.2M4 5v5h5m3-2v5l3 2"/>',
-        admin: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4Zm0 7a2 2 0 100-4 2 2 0 000 4Zm-4 7a4 4 0 018 0"/>',
-        activity: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 13h4l2-6 4 10 2-4h4"/>',
-        chef: '<path stroke-linecap="round" stroke-linejoin="round" d="M7 11a4 4 0 114-6 4 4 0 114 6v8H7v-8Zm0 4h10"/>',
-        alert: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M5 20h14a2 2 0 001.7-3L13.7 5a2 2 0 00-3.4 0L3.3 17A2 2 0 005 20Z"/>',
-        warning: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01M10.3 4.8 2.9 17.5A2 2 0 004.6 20h14.8a2 2 0 001.7-2.5L13.7 4.8a2 2 0 00-3.4 0Z"/>',
-        check: '<path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/>',
-        menu: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/>',
-        moon: '<path stroke-linecap="round" stroke-linejoin="round" d="M20 15.5A8.5 8.5 0 018.5 4 7 7 0 1020 15.5Z"/>',
-        sun: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 4V2m0 20v-2m8-8h2M2 12h2m14.4-6.4 1.4-1.4M4.2 19.8l1.4-1.4m0-12.8L4.2 4.2m15.6 15.6-1.4-1.4M12 16a4 4 0 100-8 4 4 0 000 8Z"/>',
-        spark: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Zm6 11 .8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>'
-      };
-      return `<svg class="${cls}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">${icons[name] || icons.menu}</svg>`;
+    function iconForTone(tone) {
+      if (tone === 'emerald') return iconBox();
+      if (tone === 'rose') return iconArrowDown();
+      if (tone === 'amber') return iconWarning();
+      if (tone === 'violet') return iconTransfer();
+      if (tone === 'sky') return iconStore();
+      if (tone === 'slate') return iconGrid();
+      return iconChart();
     }
-  </script>
-
-  <script>
-    (function(){
-      function headersFor(table){
-        return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
-      }
-      function labelTable(table){
-        var headers = headersFor(table);
-        if (!headers.length) return;
-        Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
-          Array.from(row.children).forEach(function(cell, idx){
-            if (!cell || cell.tagName !== 'TD') return;
-            if (!cell.getAttribute('data-label')) cell.setAttribute('data-label', headers[idx] || 'Data');
-          });
-        });
-      }
-      function applyResponsiveTableLabels(root){
-        root = root || document;
-        root.querySelectorAll('.table-scroll table').forEach(labelTable);
-      }
-      window.applyResponsiveTableLabels = applyResponsiveTableLabels;
-      document.addEventListener('DOMContentLoaded', function(){
-        applyResponsiveTableLabels(document);
-        var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
-        obs.observe(document.body, { childList:true, subtree:true });
-      });
-    })();
+    function iconSun(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4V2m0 20v-2m8-8h2M2 12h2m14.95 6.95 1.41 1.41M3.64 3.64l1.41 1.41m13.9-1.41-1.41 1.41M5.05 18.95l-1.41 1.41M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/></svg>`; }
+    function iconMoon(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z"/></svg>`; }
+    function iconBell(){ return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/></svg>`; }
+    function iconChart(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5m4 14v-7m4 7V8m4 11v-4m4 4H4"/></svg>`; }
+    function iconBox(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5 12 3l8 4.5-8 4.5-8-4.5Zm0 0V16l8 5 8-5V7.5M12 12v9"/></svg>`; }
+    function iconArrowDown(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v13m0 0 5-5m-5 5-5-5M5 21h14"/></svg>`; }
+    function iconWarning(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>`; }
+    function iconTransfer(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/></svg>`; }
+    function iconStore(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16l-1-5H5l-1 5Zm1 0v10h14V10M9 20v-6h6v6"/></svg>`; }
+    function iconGrid(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>`; }
+    function iconCheck(){ return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 6 9 17l-5-5"/></svg>`; }
   </script>
 </body>
 </html>
