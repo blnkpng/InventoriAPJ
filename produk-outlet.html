@@ -24,21 +24,30 @@
     }
     #printArea80 { display: none; }
     @media print {
-      @page { size: 80mm auto; margin: 3mm; }
       body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
       body > *:not(#printArea80) { display: none !important; }
-      #printArea80 { display: block !important; width: 74mm; max-width: 74mm; font-family: Arial, sans-serif; color: #000 !important; font-size: 10px; line-height: 1.25; }
+      #printArea80 { display: block !important; font-family: Arial, sans-serif; color: #000 !important; line-height: 1.25; }
+      body.print-produk-80 #printArea80 { width: 74mm; max-width: 74mm; font-size: 8.5px; }
+      body.print-produk-a4 #printArea80 { width: auto; max-width: none; font-size: 10pt; font-family: 'Times New Roman', serif; }
       .struk-center { text-align: center; }
       .struk-title { font-size: 14px; font-weight: 800; letter-spacing: .3px; }
+      body.print-produk-a4 .struk-title { font-size: 20pt; }
       .struk-sub { font-size: 11px; font-weight: 700; margin-top: 2px; }
+      body.print-produk-a4 .struk-sub { font-size: 12pt; }
       .struk-line { border-top: 1px dashed #000; margin: 6px 0; }
+      body.print-produk-a4 .struk-line { border-top: 2px solid #000; margin: 10px 0; }
       .struk-meta { display: grid; gap: 2px; margin: 5px 0; }
+      body.print-produk-a4 .struk-meta { grid-template-columns: 1fr 1fr; font-size: 10pt; gap: 4px 24px; }
       .struk-row { display: flex; justify-content: space-between; gap: 6px; }
-      .struk-item { margin: 5px 0; page-break-inside: avoid; }
-      .struk-name { font-weight: 700; font-size: 10.5px; }
-      .struk-small { font-size: 9.5px; }
       .struk-total { font-weight: 800; }
-      .struk-sign { margin-top: 18px; text-align: center; }
+      .struk-sign { margin-top: 18px; text-align: center; page-break-inside: avoid; }
+      .produk-print-table { width: 100%; border-collapse: collapse; }
+      .produk-print-table th, .produk-print-table td { border: 1px solid #000; padding: 2px; color:#000 !important; }
+      .produk-print-table th { font-weight: 800; text-align:center; background:#f2f2f2 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .produk-print-table td { text-align:center; }
+      .produk-print-table td:first-child { text-align:left; }
+      body.print-produk-80 .produk-print-table th, body.print-produk-80 .produk-print-table td { padding: 1.5px; }
+      body.print-produk-a4 .produk-print-table th, body.print-produk-a4 .produk-print-table td { padding: 5px; }
     }
   </style>
 </head>
@@ -91,7 +100,7 @@
       </div>
 
       <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
-        <div class="grid grid-cols-1 lg:grid-cols-7 gap-4 mb-6 no-print">
+        <div class="grid grid-cols-1 lg:grid-cols-8 gap-4 mb-6 no-print">
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal</label>
             <input type="date" id="tanggalInput" onchange="loadProdukOutlet()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-sky-500 focus:outline-none">
@@ -111,7 +120,10 @@
             <button type="button" onclick="openOpnameModal()" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-amber-600/20">Stok Opname</button>
           </div>
           <div class="flex items-end">
-            <button type="button" onclick="printProdukOutlet80()" class="w-full bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-slate-700">Print 80mm</button>
+            <button type="button" onclick="printProdukOutlet('80')" class="w-full bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-slate-700">Print 80mm</button>
+          </div>
+          <div class="flex items-end">
+            <button type="button" onclick="printProdukOutlet('a4')" class="w-full bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-sky-700/20">Print A4</button>
           </div>
         </div>
 
@@ -199,12 +211,16 @@
       <div class="struk-row"><span>Dicetak</span><b id="print80Waktu">-</b></div>
     </div>
     <div class="struk-line"></div>
-    <div id="print80Body"></div>
+    <table class="produk-print-table">
+      <thead><tr><th>Nama</th><th>Kemarin</th><th>Masuk</th><th>Keluar</th><th>Opname</th><th>Sisa</th></tr></thead>
+      <tbody id="print80Body"></tbody>
+    </table>
     <div class="struk-line"></div>
     <div class="struk-meta struk-total">
       <div class="struk-row"><span>Total Produk</span><span id="print80TotalProduk">0</span></div>
       <div class="struk-row"><span>Total Masuk</span><span id="print80TotalMasuk">0</span></div>
-      <div class="struk-row"><span>Total Terjual</span><span id="print80TotalTerjual">0</span></div>
+      <div class="struk-row"><span>Total Keluar</span><span id="print80TotalTerjual">0</span></div>
+      <div class="struk-row"><span>Total Opname</span><span id="print80TotalOpname">0</span></div>
       <div class="struk-row"><span>Total Sisa</span><span id="print80TotalSisa">0</span></div>
     </div>
     <div class="struk-sign">
@@ -317,7 +333,19 @@
       return value;
     }
 
-    function printProdukOutlet80() {
+    function setDynamicPrintPage(mode) {
+      let style = document.getElementById('dynamicPrintPageStyle');
+      if (!style) {
+        style = document.createElement('style');
+        style.id = 'dynamicPrintPageStyle';
+        document.head.appendChild(style);
+      }
+      style.textContent = mode === '80'
+        ? '@media print { @page { size: 80mm auto; margin: 3mm; } }'
+        : '@media print { @page { size: A4 portrait; margin: 10mm; } }';
+    }
+
+    function printProdukOutlet(mode = '80') {
       try {
         if (!currentRows.length) throw new Error('Data produk belum dimuat.');
         const tanggal = document.getElementById('tanggalInput').value;
@@ -327,7 +355,12 @@
         const rows = currentRows.slice();
         const totalMasuk = rows.reduce((sum, r) => sum + parseNumber(r.stokMasuk), 0);
         const totalTerjual = rows.reduce((sum, r) => sum + parseNumber(r.stokTerjual), 0);
+        const totalOpname = rows.reduce((sum, r) => sum + parseNumber(r.selisihOpname), 0);
         const totalSisa = rows.reduce((sum, r) => sum + parseNumber(r.stokSisa), 0);
+
+        setDynamicPrintPage(mode === '80' ? '80' : 'a4');
+        document.body.classList.remove('print-produk-80', 'print-produk-a4');
+        document.body.classList.add(mode === '80' ? 'print-produk-80' : 'print-produk-a4');
 
         document.getElementById('print80Tanggal').textContent = dateToDisplay(tanggal);
         document.getElementById('print80Outlet').textContent = outlet;
@@ -337,21 +370,27 @@
         document.getElementById('print80TotalProduk').textContent = rows.length.toLocaleString('id-ID');
         document.getElementById('print80TotalMasuk').textContent = formatNumber(totalMasuk);
         document.getElementById('print80TotalTerjual').textContent = formatNumber(totalTerjual);
+        document.getElementById('print80TotalOpname').textContent = formatNumber(totalOpname);
         document.getElementById('print80TotalSisa').textContent = formatNumber(totalSisa);
-        document.getElementById('print80Body').innerHTML = rows.map((r, idx) => `
-          <div class="struk-item">
-            <div class="struk-name">${idx + 1}. ${escapeHtml(r.nama || '-')}</div>
-            <div class="struk-small">ID: ${escapeHtml(r.id || '-')} | ${escapeHtml(r.satuan || '-')}</div>
-            <div class="struk-row struk-small"><span>Kemarin</span><span>${escapeHtml(formatNumber(r.stokKemarin))}</span></div>
-            <div class="struk-row struk-small"><span>Masuk</span><span>${escapeHtml(formatNumber(r.stokMasuk))}</span></div>
-            <div class="struk-row struk-small"><span>Terjual</span><span>${escapeHtml(formatNumber(r.stokTerjual))}</span></div>
-            <div class="struk-row struk-small"><b>Sisa</b><b>${escapeHtml(formatNumber(r.stokSisa))}</b></div>
-          </div>
+        document.getElementById('print80Body').innerHTML = rows.map((r) => `
+          <tr>
+            <td>${escapeHtml(r.nama || '-')}</td>
+            <td>${escapeHtml(formatNumber(r.stokKemarin))}</td>
+            <td>${escapeHtml(formatNumber(r.stokMasuk))}</td>
+            <td>${escapeHtml(formatNumber(r.stokTerjual))}</td>
+            <td>${escapeHtml(formatNumber(r.selisihOpname))}</td>
+            <td><b>${escapeHtml(formatNumber(r.stokSisa))}</b></td>
+          </tr>
         `).join('');
         window.print();
+        setTimeout(() => document.body.classList.remove('print-produk-80', 'print-produk-a4'), 500);
       } catch (error) {
-        showToast(error.message || 'Laporan 80mm belum bisa dicetak.', 'error');
+        showToast(error.message || 'Laporan belum bisa dicetak.', 'error');
       }
+    }
+
+    function printProdukOutlet80() {
+      printProdukOutlet('80');
     }
 
     function openTerjualModal() {
