@@ -22,6 +22,29 @@
       input, select, textarea { font-size: 16px; }
       main { width: 100%; }
     }
+
+    #printAreaTransfer { display: none; }
+    @media print {
+      @page { size: A4 portrait; margin: 10mm; }
+      body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
+      body > *:not(#printAreaTransfer) { display: none !important; }
+      #printAreaTransfer { display: block !important; font-family: 'Times New Roman', serif; color: black !important; }
+      .sj-kop { text-align: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
+      .sj-title { font-size: 20pt; font-weight: bold; letter-spacing: .5px; }
+      .sj-subtitle { font-size: 12pt; font-weight: bold; margin-top: 2px; }
+      .sj-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 22px; font-size: 10pt; margin: 12px 0; }
+      .sj-meta div { display: flex; justify-content: space-between; border-bottom: 1px dotted #999; padding: 2px 0; }
+      .sj-meta b { margin-left: 10px; text-align: right; }
+      .sj-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+      .sj-table th, .sj-table td { border: 1px solid #000; padding: 5px; color: #000 !important; }
+      .sj-table th { background: #f2f2f2 !important; text-align: center; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .sj-table td:nth-child(3), .sj-table td:nth-child(6) { text-align: left; }
+      .sj-table td { text-align: center; vertical-align: top; }
+      .sj-note { font-size: 9pt; margin-top: 10px; }
+      .sj-sign { display: flex; justify-content: space-between; gap: 18px; margin-top: 28px; page-break-inside: avoid; }
+      .sj-sign-box { width: 33.333%; text-align: center; font-size: 10pt; }
+      .sj-sign-name { margin-top: 58px; border-top: 1px solid #000; padding-top: 4px; font-weight: bold; }
+    }
   </style>
 </head>
 <body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
@@ -135,13 +158,44 @@
           </table>
         </div>
 
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
           <p id="ringkasanTransfer" class="text-xs text-slate-500">Belum ada qty transfer.</p>
-          <button type="button" id="btnSimpan" onclick="simpanTransfer()" class="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-violet-600/20 w-full sm:w-auto">Simpan Transfer Produk Outlet</button>
+          <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <button type="button" id="btnPrintSJ" onclick="printSuratJalan()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition-colors border border-slate-700 w-full sm:w-auto">Print Surat Jalan A4</button>
+            <button type="button" id="btnSimpan" onclick="simpanTransfer()" class="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-violet-600/20 w-full sm:w-auto">Simpan Transfer Produk Outlet</button>
+          </div>
         </div>
       </div>
     </div>
   </main>
+
+
+  <div id="printAreaTransfer" style="display:none;">
+    <div class="sj-kop">
+      <div class="sj-title">AMPERA PAK JENGGOT</div>
+      <div class="sj-subtitle">SURAT JALAN TRANSFER PRODUK OUTLET</div>
+    </div>
+    <div class="sj-meta">
+      <div>No. Surat Jalan <b id="printSjNo">-</b></div>
+      <div>Tanggal <b id="printSjTanggal">-</b></div>
+      <div>Outlet Tujuan <b id="printSjOutlet">-</b></div>
+      <div>PIC Penerima <b id="printSjPic">-</b></div>
+      <div>Petugas Kirim <b id="printSjPetugas">-</b></div>
+      <div>Dicetak <b id="printSjWaktu">-</b></div>
+    </div>
+    <table class="sj-table">
+      <thead>
+        <tr><th style="width:32px;">No</th><th style="width:95px;">ID</th><th>Nama Produk</th><th style="width:70px;">Qty</th><th style="width:70px;">Satuan</th><th>Catatan</th></tr>
+      </thead>
+      <tbody id="printSjBody"></tbody>
+    </table>
+    <div class="sj-note" id="printSjCatatan">Catatan: -</div>
+    <div class="sj-sign">
+      <div class="sj-sign-box"><div>Mengetahui</div><div class="sj-sign-name">Supervisor</div></div>
+      <div class="sj-sign-box"><div>Pengirim</div><div class="sj-sign-name" id="printSjPengirim">Petugas</div></div>
+      <div class="sj-sign-box"><div>Penerima</div><div class="sj-sign-name" id="printSjPenerima">PIC</div></div>
+    </div>
+  </div>
 
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
@@ -383,6 +437,65 @@
         showToast(error.message || 'Data belum valid.', 'error');
         btn.disabled = false;
         btn.textContent = 'Simpan Transfer Produk Outlet';
+      }
+    }
+
+
+    function dateToDisplay(value) {
+      if (!value) return '-';
+      const parts = String(value).split('-');
+      if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      return value;
+    }
+
+    function pad2(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function buildSuratJalanNumber() {
+      const d = new Date();
+      return `SJ-${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}-${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
+    }
+
+    function printSuratJalan() {
+      try {
+        const tanggal = document.getElementById('tanggalInput').value;
+        const outlet = document.getElementById('outletSelect').value;
+        const pic = document.getElementById('picSelect').value;
+        const petugas = localStorage.getItem('APJ_USER_NAME') || '-';
+        const catatanUmum = document.getElementById('catatanUmum').value.trim();
+
+        if (!tanggal) throw new Error('Tanggal transfer wajib diisi sebelum print surat jalan.');
+        if (!outlet) throw new Error('Outlet tujuan wajib dipilih sebelum print surat jalan.');
+        if (!pic) throw new Error('PIC penerima wajib dipilih sebelum print surat jalan.');
+
+        const rows = collectRows(true);
+        if (!rows.length) throw new Error('Isi minimal 1 Qty Transfer sebelum print surat jalan.');
+        validateStock(rows);
+
+        const now = new Date();
+        document.getElementById('printSjNo').textContent = buildSuratJalanNumber();
+        document.getElementById('printSjTanggal').textContent = dateToDisplay(tanggal);
+        document.getElementById('printSjOutlet').textContent = outlet;
+        document.getElementById('printSjPic').textContent = pic;
+        document.getElementById('printSjPetugas').textContent = petugas;
+        document.getElementById('printSjWaktu').textContent = now.toLocaleString('id-ID');
+        document.getElementById('printSjPengirim').textContent = petugas;
+        document.getElementById('printSjPenerima').textContent = pic;
+        document.getElementById('printSjCatatan').textContent = `Catatan: ${catatanUmum || '-'}`;
+        document.getElementById('printSjBody').innerHTML = rows.map((r, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${escapeHtml(r.idProduk || '-')}</td>
+            <td>${escapeHtml(r.namaProduk || '-')}</td>
+            <td>${escapeHtml(formatNumber(r.qtyTransfer))}</td>
+            <td>${escapeHtml(r.satuan || '-')}</td>
+            <td>${escapeHtml(r.catatan || '-')}</td>
+          </tr>
+        `).join('');
+        window.print();
+      } catch (error) {
+        showToast(error.message || 'Data surat jalan belum valid.', 'error');
       }
     }
 
