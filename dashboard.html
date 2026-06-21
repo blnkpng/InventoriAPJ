@@ -24,6 +24,24 @@
       input, select, textarea { font-size: 16px; }
       main { width: 100%; }
     }
+  
+
+    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
+    @media screen and (max-width: 768px) {
+      .table-scroll { overflow-x: visible !important; }
+      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
+      .table-scroll thead { display: none !important; }
+      .table-scroll tbody { display: block !important; width: 100% !important; }
+      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
+      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
+      .table-scroll td:last-child { border-bottom: 0 !important; }
+      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
+      .table-scroll td > * { max-width: 58%; }
+      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
+      .table-scroll .text-center { text-align: right !important; }
+      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
+    }
+
   </style>
 </head>
 <body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
@@ -515,5 +533,36 @@
       return 'bg-slate-500/10 text-slate-300 border border-slate-500/20';
     }
   </script>
+
+
+  <script>
+    // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
+    (function(){
+      function headersFor(table){
+        return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
+      }
+      function labelTable(table){
+        var headers = headersFor(table);
+        if (!headers.length) return;
+        Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
+          Array.from(row.children).forEach(function(cell, idx){
+            if (!cell || cell.tagName !== 'TD') return;
+            if (!cell.getAttribute('data-label')) cell.setAttribute('data-label', headers[idx] || 'Data');
+          });
+        });
+      }
+      function applyResponsiveTableLabels(root){
+        root = root || document;
+        root.querySelectorAll('.table-scroll table').forEach(labelTable);
+      }
+      window.applyResponsiveTableLabels = applyResponsiveTableLabels;
+      document.addEventListener('DOMContentLoaded', function(){
+        applyResponsiveTableLabels(document);
+        var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
+        obs.observe(document.body, { childList:true, subtree:true });
+      });
+    })();
+  </script>
+
 </body>
 </html>
