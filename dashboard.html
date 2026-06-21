@@ -118,13 +118,14 @@
     .apj-sidebar {
       background: var(--sidebar-bg);
       color: var(--sidebar-text);
-      border: 1px solid var(--sidebar-border);
-      box-shadow: 0 26px 90px rgba(0,0,0,.50), inset 0 1px 0 rgba(255,255,255,.04);
+      border: 0;
+      border-right: 1px solid var(--sidebar-border);
+      box-shadow: 18px 0 50px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04);
       backdrop-filter: blur(18px);
       width: 286px;
-      height: calc(100dvh - 32px);
-      margin: 16px 0 16px 16px;
-      border-radius: 32px;
+      height: 100dvh;
+      margin: 0;
+      border-radius: 0;
       overflow: hidden;
     }
     .sidebar-head { padding: 18px 18px 10px; }
@@ -159,7 +160,7 @@
     .logout-button:hover { background:rgba(244,63,94,.20); color:#fecdd3; transform:translateY(-1px); }
     .logout-button .nav-icon { color:#fb7185; }
 
-    #sidebar.sidebar-collapsed { width:88px; border-radius:30px; }
+    #sidebar.sidebar-collapsed { width:88px; border-radius:0; }
     #sidebar.sidebar-collapsed .brand-text, #sidebar.sidebar-collapsed .nav-text, #sidebar.sidebar-collapsed .menu-label span, #sidebar.sidebar-collapsed .logout-text { display:none; }
     #sidebar.sidebar-collapsed .sidebar-head { padding:18px 14px 12px; }
     #sidebar.sidebar-collapsed .brand-toggle { justify-content:center; }
@@ -268,7 +269,7 @@
     .table-scroll { -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
     .table-scroll::-webkit-scrollbar { height:8px; } .table-scroll::-webkit-scrollbar-thumb { background:rgba(100,116,139,.45); border-radius:999px; }
     @media (max-width:1279px) { .dashboard-layout { grid-template-columns:1fr; } .right-layout { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .calendar-card { grid-column:span 2; } }
-    @media (max-width:1023px) { body { overflow:hidden; } .apj-sidebar { width:288px; height:calc(100dvh - 28px); margin:14px 0 14px 14px; border-radius:30px; } .topbar { height:78px; padding-left:68px; } .topbar-title p { display:none; } .dashboard-scroll { height:calc(100dvh - 78px); padding:16px; } .kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .mini-kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .content-grid { grid-template-columns:1fr; } input,select,textarea{font-size:16px;} }
+    @media (max-width:1023px) { body { overflow:hidden; } .apj-sidebar { width:288px; height:100dvh; margin:0; border-radius:0; } .topbar { height:78px; padding-left:68px; } .topbar-title p { display:none; } .dashboard-scroll { height:calc(100dvh - 78px); padding:16px; } .kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .mini-kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .content-grid { grid-template-columns:1fr; } input,select,textarea{font-size:16px;} }
     @media (max-width:640px) { .topbar { gap:10px; } .topbar-title-mark { display:none; } .hero-card { padding:18px; border-radius:24px; } .kpi-grid,.mini-kpi-grid,.right-layout { grid-template-columns:1fr; } .calendar-card { grid-column:auto; } .kpi-card { min-height:128px; } .kpi-value strong { font-size:30px; } .hide-xs { display:none; } }
   </style>
 </head>
