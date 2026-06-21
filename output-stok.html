@@ -370,6 +370,70 @@
     </section>
   </main>
 
+  <button id="outputHelpFab" type="button" onclick="openOutputHelpModal(false)" class="help-fab" aria-label="Buka panduan output stok" title="Panduan Output Stok">
+    <span class="help-fab-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span>
+    <span>Panduan Output</span>
+  </button>
+
+  <div id="outputHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
+    <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeOutputHelpModal()"></div>
+    <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
+      <div class="relative z-10">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <p class="inline-flex items-center gap-2 rounded-full border border-rose-500/25 bg-rose-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-rose-200">
+              <span class="h-1.5 w-1.5 rounded-full bg-rose-300"></span> Panduan Modul
+            </p>
+            <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-tight text-white">Cara pakai Output Stok</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-400">Popup ini membantu petugas mencatat barang keluar, transfer, dan produksi supaya stok APJ tetap akurat.</p>
+          </div>
+          <button type="button" onclick="closeOutputHelpModal()" class="w-11 h-11 rounded-2xl border border-slate-700 bg-slate-950/70 text-slate-300 hover:text-white hover:bg-slate-800 transition" aria-label="Tutup panduan">×</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+          <div class="help-step flex gap-3">
+            <div class="help-step-number">1</div>
+            <div>
+              <p class="text-sm font-black text-white">Pilih tanggal & kategori</p>
+              <p class="mt-1 text-xs leading-5 text-slate-400">Tanggal adalah tanggal barang keluar. Kategori menentukan barang yang akan muncul.</p>
+            </div>
+          </div>
+          <div class="help-step flex gap-3">
+            <div class="help-step-number">2</div>
+            <div>
+              <p class="text-sm font-black text-white">Pilih mode output</p>
+              <p class="mt-1 text-xs leading-5 text-slate-400">Mode <b class="text-rose-200">General</b> untuk barang keluar biasa. Mode <b class="text-cyan-200">Produksi</b> untuk lauk jadi yang memakai bahan mentah.</p>
+            </div>
+          </div>
+          <div class="help-step flex gap-3">
+            <div class="help-step-number">3</div>
+            <div>
+              <p class="text-sm font-black text-white">Isi qty & tujuan</p>
+              <p class="mt-1 text-xs leading-5 text-slate-400">Isi qty keluar sesuai barang fisik. Jika tujuan transfer, pastikan outlet dan PIC penerima sudah benar.</p>
+            </div>
+          </div>
+          <div class="help-step flex gap-3">
+            <div class="help-step-number">4</div>
+            <div>
+              <p class="text-sm font-black text-white">Cek sebelum simpan</p>
+              <p class="mt-1 text-xs leading-5 text-slate-400">Periksa nama barang, qty, satuan, tujuan, outlet, PIC, dan catatan sebelum klik <b class="text-rose-200">Simpan Output Stok</b>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-amber-500/22 bg-amber-500/10 p-4 mb-5">
+          <p class="text-sm font-black text-amber-100">Catatan penting</p>
+          <p class="mt-1 text-xs sm:text-sm leading-6 text-amber-100/75">Output stok akan mengurangi stok sistem. Untuk mode produksi, sistem juga mencatat hasil produksi dan penggunaan bahan sesuai data yang diisi.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol mengambang di pojok kanan bawah.</p>
+          <button type="button" onclick="closeOutputHelpModal()" class="btn-rose px-5 py-3 text-sm">Mengerti, lanjut output</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
     <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
@@ -425,6 +489,9 @@
 
       buildKategoriOptions();
       await loadOutputInit();
+      setTimeout(() => {
+        if (sessionStorage.getItem('APJ_OUTPUT_HELP_SEEN') !== 'true') openOutputHelpModal(true);
+      }, 450);
     });
 
     
@@ -495,6 +562,34 @@ function buildKategoriOptions() {
         ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md"
         : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
       setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    const outputHelpModal = () => document.getElementById('outputHelpModal');
+    function openOutputHelpModal(autoOpen = false) {
+      const modal = outputHelpModal();
+      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+      const content = modal ? modal.querySelector('.modal-content') : null;
+      if (!modal || !overlay || !content) return;
+      if (autoOpen) modal.dataset.autoOpen = 'true';
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      overlay.classList.add('opacity-100');
+      overlay.classList.remove('opacity-0');
+      content.classList.add('scale-100', 'opacity-100');
+      content.classList.remove('scale-95', 'opacity-0');
+    }
+
+    function closeOutputHelpModal() {
+      const modal = outputHelpModal();
+      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+      const content = modal ? modal.querySelector('.modal-content') : null;
+      if (!modal || !overlay || !content) return;
+      sessionStorage.setItem('APJ_OUTPUT_HELP_SEEN', 'true');
+      overlay.classList.remove('opacity-100');
+      overlay.classList.add('opacity-0');
+      content.classList.remove('scale-100', 'opacity-100');
+      content.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 250);
     }
 
     async function handleKategoriChange() {
@@ -981,7 +1076,7 @@ function buildKategoriOptions() {
     }
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeMobileSidebar();
+      if (event.key === 'Escape') { closeMobileSidebar(); closeOutputHelpModal(); }
     });
 
     window.addEventListener('resize', () => {
@@ -1044,7 +1139,7 @@ function buildKategoriOptions() {
     }
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeMobileSidebar();
+      if (event.key === 'Escape') { closeMobileSidebar(); closeOutputHelpModal(); }
     });
 
     window.addEventListener('resize', applySidebarState);
