@@ -29,7 +29,7 @@
       --border-strong: rgba(15, 23, 42, .16);
       --shadow: 0 20px 60px rgba(15, 23, 42, .08);
       --shadow-soft: 0 10px 30px rgba(15, 23, 42, .06);
-      --sidebar-bg: #080b16;
+      --sidebar-bg: #020204;
       --sidebar-card: rgba(255,255,255,.06);
       --sidebar-border: rgba(255,255,255,.10);
       --sidebar-text: #f9fafb;
@@ -58,7 +58,7 @@
       --border-strong: rgba(148, 163, 184, .24);
       --shadow: 0 26px 70px rgba(0, 0, 0, .28);
       --shadow-soft: 0 12px 32px rgba(0, 0, 0, .20);
-      --sidebar-bg: #030712;
+      --sidebar-bg: #020204;
       --sidebar-card: rgba(255,255,255,.07);
       --sidebar-border: rgba(255,255,255,.12);
       --sidebar-text: #ffffff;
@@ -80,22 +80,21 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
     .apj-sidebar {
-      background:
-        radial-gradient(circle at 88% 8%, rgba(216, 180, 254, .30), transparent 22%),
-        linear-gradient(180deg, rgba(8, 11, 22, .98), var(--sidebar-bg));
+      background: #020204;
       color: var(--sidebar-text);
-      border-right: 1px solid var(--sidebar-border);
-      box-shadow: 18px 0 55px rgba(2, 6, 23, .22);
-    }
-    .apj-sidebar {
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 18px 24px 70px rgba(2, 6, 23, .24);
       width: 292px;
+      height: calc(100dvh - 32px);
+      margin: 16px 0 16px 16px;
+      border-radius: 32px;
       overflow: hidden;
     }
     .sidebar-head { padding: 18px 18px 12px; }
     .sidebar-toggle {
       width: 38px; height: 38px;
       border-radius: 16px;
-      display:none; align-items:center; justify-content:center;
+      display:flex; align-items:center; justify-content:center;
       background: rgba(255,255,255,.09);
       border: 1px solid rgba(255,255,255,.10);
       color: rgba(255,255,255,.84);
@@ -130,7 +129,7 @@
       padding: 10px 14px;
       display:flex; align-items:center; gap:12px;
       background: rgba(244, 63, 94, .12);
-      border:1px solid rgba(244, 63, 94, .20);
+      border:1px solid rgba(244, 63, 94, .24);
       color:#fb7185;
       font-size:14px;
       font-weight:850;
@@ -141,6 +140,7 @@
 
     #sidebar.sidebar-collapsed {
       width: 88px;
+      border-radius: 30px;
     }
     #sidebar.sidebar-collapsed .brand-text,
     #sidebar.sidebar-collapsed .nav-text,
@@ -385,9 +385,6 @@
     .table-scroll::-webkit-scrollbar { height: 8px; }
     .table-scroll::-webkit-scrollbar-thumb { background: rgba(100,116,139,.45); border-radius:999px; }
 
-    @media (min-width: 1024px) {
-      .sidebar-toggle { display:flex; }
-    }
     @media (max-width: 1279px) {
       .dashboard-layout { grid-template-columns: 1fr; }
       .right-layout { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -395,7 +392,12 @@
     }
     @media (max-width: 1023px) {
       body { overflow:hidden; }
-      .apj-sidebar { width: 288px; }
+      .apj-sidebar {
+        width: 288px;
+        height: calc(100dvh - 28px);
+        margin: 14px 0 14px 14px;
+        border-radius: 30px;
+      }
       .topbar { height: 78px; padding-left: 68px; }
       .search-pill { display:none; }
       .dashboard-scroll { height: calc(100dvh - 78px); padding: 16px; }
@@ -524,7 +526,7 @@
               <div class="relative z-10 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5">
                 <div class="min-w-0">
                   <span class="soft-badge"><span id="modeBadge">Mode Dashboard</span></span>
-                  <h1 class="hero-title mt-4">Selamat pagi, <span id="welcomeNama" style="color:var(--primary)">Pengguna</span> 👋</h1>
+                  <h1 class="hero-title mt-4"><span id="greetingText">Selamat pagi</span>, <span id="welcomeNama" style="color:var(--primary)">Pengguna</span> 👋</h1>
                   <p id="modeDescription" class="hero-desc">Memuat data dashboard...</p>
                 </div>
                 <div class="flex flex-wrap gap-2 shrink-0" id="quickActionMini"></div>
@@ -660,6 +662,8 @@
       const initial = userName.charAt(0).toUpperCase();
 
       document.getElementById('displayNama').textContent = userName;
+      const greetingEl = document.getElementById('greetingText');
+      if (greetingEl) greetingEl.textContent = getGreetingLabel();
       document.getElementById('welcomeNama').textContent = userName;
       document.getElementById('displayLevel').textContent = userLevel;
       document.getElementById('displayInisial').textContent = initial;
@@ -668,6 +672,14 @@
       loadDashboardData(userName, userLevel, permissions);
       document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMobileSidebar));
     });
+
+    function getGreetingLabel(date = new Date()) {
+      const hour = date.getHours();
+      if (hour >= 4 && hour < 11) return 'Selamat pagi';
+      if (hour >= 11 && hour < 15) return 'Selamat siang';
+      if (hour >= 15 && hour < 18) return 'Selamat sore';
+      return 'Selamat malam';
+    }
 
     async function loadDashboardData(userName, userLevel, permissions) {
       try {
