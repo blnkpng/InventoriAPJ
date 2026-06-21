@@ -281,7 +281,7 @@
     let currentMode = 'general';
 
     document.addEventListener('DOMContentLoaded', async () => {
-      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') {
+      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true' || !localStorage.getItem('APJ_SESSION_TOKEN')) {
         window.location.href = 'index.html';
         return;
       }
@@ -362,7 +362,20 @@ function buildKategoriOptions() {
     }
 
     function parseNumber(value) {
-      const n = parseFloat(String(value ?? '').replace(/\./g, '').replace(',', '.'));
+      if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+      const raw = String(value ?? '').trim().replace(/\s/g, '');
+      if (!raw) return 0;
+      const commaIndex = raw.lastIndexOf(',');
+      const dotIndex = raw.lastIndexOf('.');
+      let cleaned = raw;
+      if (commaIndex !== -1 && dotIndex !== -1) {
+        cleaned = commaIndex > dotIndex ? raw.replace(/\./g, '').replace(',', '.') : raw.replace(/,/g, '');
+      } else if (commaIndex !== -1) {
+        cleaned = raw.replace(',', '.');
+      } else if ((raw.match(/\./g) || []).length > 1) {
+        cleaned = raw.replace(/\./g, '');
+      }
+      const n = parseFloat(cleaned);
       return Number.isFinite(n) ? n : 0;
     }
 
@@ -376,6 +389,7 @@ function buildKategoriOptions() {
     }
 
     async function fetchApi(payload) {
+      payload = Object.assign({ sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '' }, payload || {});
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -659,6 +673,7 @@ function buildKategoriOptions() {
 
     function executeLogout() {
       localStorage.removeItem('APJ_SESSION_ACTIVE');
+      localStorage.removeItem('APJ_SESSION_TOKEN');
       localStorage.removeItem('APJ_USER_NAME');
       localStorage.removeItem('APJ_USER_LEVEL');
       localStorage.removeItem('APJ_USER_OUTLET');

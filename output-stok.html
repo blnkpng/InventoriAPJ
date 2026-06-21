@@ -163,7 +163,7 @@
     ];
 
     document.addEventListener('DOMContentLoaded', async () => {
-      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
+      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true' || !localStorage.getItem('APJ_SESSION_TOKEN')) { window.location.href = 'index.html'; return; }
 
       document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
@@ -221,7 +221,7 @@ function buildKategoriOptions() {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getOutputInit' })
+          body: JSON.stringify({ action: 'getOutputInit', sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '' })
         });
         const result = await res.json();
         if (result.success) {
@@ -271,7 +271,7 @@ function buildKategoriOptions() {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getBarang', sheetName, context: 'operasional' })
+          body: JSON.stringify({ action: 'getBarang', sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '', sheetName, context: 'operasional' })
         });
         const result = await response.json();
         if (result.success) {
@@ -296,7 +296,7 @@ function buildKategoriOptions() {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getBarangProduksi' })
+          body: JSON.stringify({ action: 'getBarangProduksi', sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '' })
         });
         const result = await response.json();
         if (result.success) {
@@ -615,6 +615,7 @@ function buildKategoriOptions() {
       const btn = document.getElementById('btnSimpan');
       btn.disabled = true;
       btn.innerText = 'Menyimpan...';
+      payload = Object.assign({ sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '' }, payload || {});
 
       try {
         const response = await fetch(APPS_SCRIPT_URL, {
@@ -640,8 +641,21 @@ function buildKategoriOptions() {
     }
 
     function parseNumber(value) {
-      if (value === null || typeof value === 'undefined' || value === '') return 0;
-      return parseFloat(String(value).replace(',', '.')) || 0;
+      if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+      const raw = String(value ?? '').trim().replace(/\s/g, '');
+      if (!raw) return 0;
+      const commaIndex = raw.lastIndexOf(',');
+      const dotIndex = raw.lastIndexOf('.');
+      let cleaned = raw;
+      if (commaIndex !== -1 && dotIndex !== -1) {
+        cleaned = commaIndex > dotIndex ? raw.replace(/\./g, '').replace(',', '.') : raw.replace(/,/g, '');
+      } else if (commaIndex !== -1) {
+        cleaned = raw.replace(',', '.');
+      } else if ((raw.match(/\./g) || []).length > 1) {
+        cleaned = raw.replace(/\./g, '');
+      }
+      const n = parseFloat(cleaned);
+      return Number.isFinite(n) ? n : 0;
     }
 
     function escapeHtml(value) {
@@ -679,6 +693,7 @@ function buildKategoriOptions() {
 
     function executeLogout() {
       localStorage.removeItem('APJ_SESSION_ACTIVE');
+      localStorage.removeItem('APJ_SESSION_TOKEN');
       localStorage.removeItem('APJ_USER_NAME');
       localStorage.removeItem('APJ_USER_LEVEL');
       localStorage.removeItem('APJ_USER_OUTLET');

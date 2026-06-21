@@ -216,7 +216,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const isSessionActive = localStorage.getItem('APJ_SESSION_ACTIVE');
-      if (isSessionActive !== 'true') { window.location.href = 'index.html'; return; }
+      if (isSessionActive !== 'true' || !localStorage.getItem('APJ_SESSION_TOKEN')) { window.location.href = 'index.html'; return; }
 
       const userName = localStorage.getItem('APJ_USER_NAME') || 'Pengguna';
       const userLevel = localStorage.getItem('APJ_USER_LEVEL') || 'Unknown Level';
@@ -237,7 +237,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getDashboardData', userName, level: userLevel, permissions })
+          body: JSON.stringify({ action: 'getDashboardData', sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '', userName, level: userLevel, permissions })
         });
         const result = await response.json();
         if (!result.success) throw new Error(result.message || 'Gagal memuat dashboard.');
@@ -478,6 +478,7 @@
     }
     function executeLogout() {
       localStorage.removeItem('APJ_SESSION_ACTIVE');
+      localStorage.removeItem('APJ_SESSION_TOKEN');
       localStorage.removeItem('APJ_USER_NAME');
       localStorage.removeItem('APJ_USER_LEVEL');
       localStorage.removeItem('APJ_USER_OUTLET');

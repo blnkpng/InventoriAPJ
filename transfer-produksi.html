@@ -319,7 +319,7 @@
     let printFilterTimer = null;
 
     document.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
+      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true' || !localStorage.getItem('APJ_SESSION_TOKEN')) { window.location.href = 'index.html'; return; }
       document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
       document.getElementById('printTanggalInput').value = new Date().toISOString().split('T')[0];
@@ -345,7 +345,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getTransferProduksiInit' })
+          body: JSON.stringify({ action: 'getTransferProduksiInit', sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '' })
         });
         const result = await response.json();
         if (!result.success) throw new Error(result.message || 'Gagal memuat data transfer.');
@@ -406,7 +406,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getTransferProduksiInit', outlet })
+          body: JSON.stringify({ action: 'getTransferProduksiInit', sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '', outlet })
         });
         const result = await response.json();
         if (!result.success) throw new Error(result.message || 'Gagal memuat produk outlet.');
@@ -530,7 +530,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'simpanTransferProduksi', tanggal, petugas, outlet, pic, rows })
+          body: JSON.stringify({ action: 'simpanTransferProduksi', sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '', tanggal, petugas, outlet, pic, rows })
         });
         const result = await response.json();
         if (!result.success) throw new Error(result.message || 'Gagal menyimpan transfer.');
@@ -564,6 +564,7 @@
     }
 
     async function fetchApi(payload) {
+      payload = Object.assign({ sessionToken: localStorage.getItem('APJ_SESSION_TOKEN') || '' }, payload || {});
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -896,8 +897,21 @@
     }
 
     function parseNumber(value) {
-      if (value === null || typeof value === 'undefined' || value === '') return 0;
-      return parseFloat(String(value).replace(/\./g, '').replace(',', '.')) || 0;
+      if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+      const raw = String(value ?? '').trim().replace(/\s/g, '');
+      if (!raw) return 0;
+      const commaIndex = raw.lastIndexOf(',');
+      const dotIndex = raw.lastIndexOf('.');
+      let cleaned = raw;
+      if (commaIndex !== -1 && dotIndex !== -1) {
+        cleaned = commaIndex > dotIndex ? raw.replace(/\./g, '').replace(',', '.') : raw.replace(/,/g, '');
+      } else if (commaIndex !== -1) {
+        cleaned = raw.replace(',', '.');
+      } else if ((raw.match(/\./g) || []).length > 1) {
+        cleaned = raw.replace(/\./g, '');
+      }
+      const n = parseFloat(cleaned);
+      return Number.isFinite(n) ? n : 0;
     }
 
     function formatNumber(value) {
@@ -938,6 +952,7 @@
 
     function executeLogout() {
       localStorage.removeItem('APJ_SESSION_ACTIVE');
+      localStorage.removeItem('APJ_SESSION_TOKEN');
       localStorage.removeItem('APJ_USER_NAME');
       localStorage.removeItem('APJ_USER_LEVEL');
       localStorage.removeItem('APJ_USER_OUTLET');
