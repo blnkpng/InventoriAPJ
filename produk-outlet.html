@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Produk Outlet | APJ Inventori v14.4</title>
+  <title>Produk Outlet | APJ Inventori</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -26,34 +26,39 @@
     @media print {
       body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
       body > *:not(#printArea80) { display: none !important; }
-      #printArea80 { display: block !important; font-family: Arial, sans-serif; color: #000 !important; line-height: 1.12; }
-      body.print-produk-80 #printArea80 { width: 72mm; max-width: 72mm; font-size: 7.2px; }
-      body.print-produk-a4 #printArea80 {
-        width: 190mm; max-width: 190mm; font-size: 7.6pt; font-family: 'Times New Roman', serif;
-        line-height: 1.12; zoom: var(--produk-print-zoom, .88); page-break-after: avoid; page-break-inside: avoid;
-      }
+      #printArea80 { display: block !important; font-family: Arial, sans-serif; color: #000 !important; line-height: 1.25; }
+      body.print-produk-58 #printArea80 { width: 54mm; max-width: 54mm; font-size: 7.8px; line-height: 1.14; page-break-inside: avoid; break-inside: avoid; }
+      body.print-produk-a4 #printArea80 { width: auto; max-width: none; font-size: 10pt; font-family: 'Times New Roman', serif; }
       .struk-center { text-align: center; }
-      .struk-title { font-size: 11px; font-weight: 800; letter-spacing: .1px; }
-      body.print-produk-a4 .struk-title { font-size: 15pt; }
-      .struk-sub { font-size: 8px; font-weight: 700; margin-top: 1px; }
-      body.print-produk-a4 .struk-sub { font-size: 9pt; }
-      .struk-line { border-top: 1px dashed #000; margin: 3px 0; }
-      body.print-produk-a4 .struk-line { border-top: 1.5px solid #000; margin: 5px 0; }
-      .struk-meta { display: grid; gap: 1px; margin: 3px 0; }
-      body.print-produk-a4 .struk-meta { grid-template-columns: 1fr 1fr; font-size: 7.6pt; gap: 2px 14px; }
-      .struk-row { display: flex; justify-content: space-between; gap: 4px; }
+      .struk-title { font-size: 14px; font-weight: 800; letter-spacing: .3px; }
+      body.print-produk-a4 .struk-title { font-size: 20pt; }
+      .struk-sub { font-size: 11px; font-weight: 700; margin-top: 2px; }
+      body.print-produk-a4 .struk-sub { font-size: 12pt; }
+      .struk-line { border-top: 1px dashed #000; margin: 6px 0; }
+      body.print-produk-a4 .struk-line { border-top: 2px solid #000; margin: 10px 0; }
+      .struk-meta { display: grid; gap: 2px; margin: 5px 0; }
+      body.print-produk-a4 .struk-meta { grid-template-columns: 1fr 1fr; font-size: 10pt; gap: 4px 24px; }
+      .struk-row { display: flex; justify-content: space-between; gap: 6px; }
       .struk-total { font-weight: 800; }
-      .struk-sign { margin-top: 5px; text-align: center; page-break-inside: avoid; font-size: 7px; }
-      body.print-produk-a4 .struk-sign { margin-top: 8px; font-size: 8pt; }
-      .sign-blank { height: 10px; }
-      body.print-produk-a4 .sign-blank { height: 18px; }
+      .struk-sign { margin-top: 18px; text-align: center; page-break-inside: avoid; }
       .produk-print-table { width: 100%; border-collapse: collapse; }
-      .produk-print-table th, .produk-print-table td { border: 1px solid #000; color:#000 !important; }
+      .produk-print-table th, .produk-print-table td { border: 1px solid #000; padding: 2px; color:#000 !important; }
       .produk-print-table th { font-weight: 800; text-align:center; background:#f2f2f2 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .produk-print-table td { text-align:center; }
       .produk-print-table td:first-child { text-align:left; }
-      body.print-produk-80 .produk-print-table th, body.print-produk-80 .produk-print-table td { padding: .7px; font-size: 6.6px; }
-      body.print-produk-a4 .produk-print-table th, body.print-produk-a4 .produk-print-table td { padding: 1.8px 2.2px; font-size: 7.4pt; }
+      body.print-produk-58 .produk-print-table th, body.print-produk-58 .produk-print-table td { padding: 1.5px; }
+      body.print-produk-58 .produk-print-table thead { display:none; }
+      body.print-produk-58 .produk-print-table, body.print-produk-58 .produk-print-table tbody, body.print-produk-58 .produk-print-table tr, body.print-produk-58 .produk-print-table td { display:block; width:100%; border-left:0; border-right:0; border-top:0; }
+      body.print-produk-58 .produk-print-table td { border-bottom:1px dashed #000; padding:2px 0; page-break-inside: avoid; break-inside: avoid; }
+      body.print-produk-58 .produk-item-name { font-weight:800; font-size:7.8px; margin-bottom:1px; }
+      body.print-produk-58 .produk-item-detail { display:block; white-space:normal; font-size:7.2px; }
+      body.print-produk-58 .struk-title { font-size:10.5px; }
+      body.print-produk-58 .struk-sub { font-size:8px; }
+      body.print-produk-58 .struk-line { margin:4px 0; }
+      body.print-produk-58 .struk-meta { font-size:7.3px; }
+      body.print-produk-58 .struk-sign { margin-top:7px; font-size:7.2px; }
+      body.print-produk-58 .sign-blank { height:10px; }
+      body.print-produk-a4 .produk-print-table th, body.print-produk-a4 .produk-print-table td { padding: 5px; }
     }
   </style>
 </head>
@@ -126,7 +131,7 @@
             <button type="button" onclick="openOpnameModal()" class="w-full bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-amber-600/20">Stok Opname</button>
           </div>
           <div class="flex items-end">
-            <button type="button" onclick="printProdukOutlet('80')" class="w-full bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-slate-700">Print 80mm</button>
+            <button type="button" onclick="printProdukOutlet('58')" class="w-full bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-slate-700">Print 58mm</button>
           </div>
           <div class="flex items-end">
             <button type="button" onclick="printProdukOutlet('a4')" class="w-full bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-sky-700/20">Print A4</button>
@@ -231,7 +236,7 @@
     </div>
     <div class="struk-sign">
       <div>Kasir / PIC Outlet</div>
-      <div class="sign-blank"></div>
+      <br><br><br>
       <div>( <span id="print80NamaPetugas">........................</span> )</div>
     </div>
   </div>
@@ -346,20 +351,13 @@
         style.id = 'dynamicPrintPageStyle';
         document.head.appendChild(style);
       }
-      style.textContent = mode === '80'
-        ? '@media print { @page { size: 80mm auto; margin: 3mm; } }'
+      const isThermal = mode === '58' || mode === '80';
+      style.textContent = isThermal
+        ? '@media print { @page { size: 58mm auto; margin: 2mm; } }'
         : '@media print { @page { size: A4 portrait; margin: 6mm; } }';
     }
 
-    function getProdukA4Zoom(rowCount) {
-      if (rowCount <= 22) return '.92';
-      if (rowCount <= 32) return '.84';
-      if (rowCount <= 44) return '.75';
-      if (rowCount <= 58) return '.66';
-      return '.58';
-    }
-
-    function printProdukOutlet(mode = '80') {
+    function printProdukOutlet(mode = '58') {
       try {
         if (!currentRows.length) throw new Error('Data produk belum dimuat.');
         const tanggal = document.getElementById('tanggalInput').value;
@@ -372,10 +370,10 @@
         const totalOpname = rows.reduce((sum, r) => sum + parseNumber(r.selisihOpname), 0);
         const totalSisa = rows.reduce((sum, r) => sum + parseNumber(r.stokSisa), 0);
 
-        setDynamicPrintPage(mode === '80' ? '80' : 'a4');
-        document.documentElement.style.setProperty('--produk-print-zoom', mode === '80' ? '1' : getProdukA4Zoom(rows.length));
-        document.body.classList.remove('print-produk-80', 'print-produk-a4');
-        document.body.classList.add(mode === '80' ? 'print-produk-80' : 'print-produk-a4');
+        const is58 = mode === '58' || mode === '80';
+        setDynamicPrintPage(is58 ? '58' : 'a4');
+        document.body.classList.remove('print-produk-58', 'print-produk-a4');
+        document.body.classList.add(is58 ? 'print-produk-58' : 'print-produk-a4');
 
         document.getElementById('print80Tanggal').textContent = dateToDisplay(tanggal);
         document.getElementById('print80Outlet').textContent = outlet;
@@ -387,7 +385,15 @@
         document.getElementById('print80TotalTerjual').textContent = formatNumber(totalTerjual);
         document.getElementById('print80TotalOpname').textContent = formatNumber(totalOpname);
         document.getElementById('print80TotalSisa').textContent = formatNumber(totalSisa);
-        document.getElementById('print80Body').innerHTML = rows.map((r) => `
+        document.getElementById('print80Body').innerHTML = rows.map((r) => is58 ? `
+          <tr>
+            <td colspan="6">
+              <div class="produk-item-name">${escapeHtml(r.nama || '-')}</div>
+              <span class="produk-item-detail">Kmr:${escapeHtml(formatNumber(r.stokKemarin))} | Msk:${escapeHtml(formatNumber(r.stokMasuk))} | Klr:${escapeHtml(formatNumber(r.stokTerjual))}</span>
+              <span class="produk-item-detail">Opn:${escapeHtml(formatNumber(r.selisihOpname))} | Sisa:<b>${escapeHtml(formatNumber(r.stokSisa))}</b></span>
+            </td>
+          </tr>
+        ` : `
           <tr>
             <td>${escapeHtml(r.nama || '-')}</td>
             <td>${escapeHtml(formatNumber(r.stokKemarin))}</td>
@@ -398,17 +404,14 @@
           </tr>
         `).join('');
         window.print();
-        setTimeout(() => {
-          document.body.classList.remove('print-produk-80', 'print-produk-a4');
-          document.documentElement.style.removeProperty('--produk-print-zoom');
-        }, 500);
+        setTimeout(() => document.body.classList.remove('print-produk-58', 'print-produk-a4'), 500);
       } catch (error) {
         showToast(error.message || 'Laporan belum bisa dicetak.', 'error');
       }
     }
 
     function printProdukOutlet80() {
-      printProdukOutlet('80');
+      printProdukOutlet('58');
     }
 
     function openTerjualModal() {
