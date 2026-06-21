@@ -83,9 +83,263 @@
       .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
     }
 
+  
+
+    /* ================= APJ INVENTORI v15 UI PRO ================= */
+    :root {
+      --apj-blue: #3b82f6;
+      --apj-sky: #38bdf8;
+      --apj-emerald: #34d399;
+      --apj-amber: #f59e0b;
+      --apj-rose: #fb7185;
+      --apj-violet: #a78bfa;
+      --apj-bg: #0f172a;
+      --apj-card: rgba(15, 23, 42, .86);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(59,130,246,.18), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(167,139,250,.14), transparent 24%),
+        radial-gradient(circle at 80% 100%, rgba(52,211,153,.10), transparent 30%),
+        #0f172a !important;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, rgba(0,0,0,.72), transparent 72%);
+    }
+    aside, main, #customToast, .apj-help-fab, .apj-mobile-menu, .apj-sidebar-backdrop, .apj-guide-modal { position: relative; z-index: 1; }
+    aside {
+      background: linear-gradient(180deg, rgba(2,6,23,.98), rgba(15,23,42,.96)) !important;
+      border-right-color: rgba(51,65,85,.85) !important;
+      box-shadow: 18px 0 50px rgba(0,0,0,.18);
+    }
+    aside nav a {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid transparent;
+    }
+    aside nav a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,.08), transparent 45%);
+      opacity: 0;
+      transform: translateX(-30%);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    aside nav a:hover::after { opacity: 1; transform: translateX(0); }
+    .apj-nav-ico {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      background: rgba(15,23,42,.85);
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .apj-active-link {
+      background: linear-gradient(135deg, rgba(59,130,246,.18), rgba(14,165,233,.08)) !important;
+      border-color: rgba(59,130,246,.35) !important;
+      color: #fff !important;
+      box-shadow: 0 14px 35px rgba(37,99,235,.12);
+    }
+    .apj-card-glow, .bg-slate-950, .bg-slate-900\/80 {
+      box-shadow: 0 22px 70px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .apj-lift, .bg-slate-950.border, .bg-slate-900.border {
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .apj-lift:hover, .bg-slate-950.border:hover {
+      transform: translateY(-2px);
+      border-color: rgba(96,165,250,.35) !important;
+      box-shadow: 0 24px 70px rgba(15,23,42,.38), 0 0 0 1px rgba(96,165,250,.06) inset;
+    }
+    .apj-soft-animate { animation: apjSoftEnter .45s ease-out both; }
+    @keyframes apjSoftEnter { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes apjPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.35); } 50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
+    .apj-help-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 60;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,.35);
+      background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(14,165,233,.9));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 22px 60px rgba(37,99,235,.32);
+      transition: transform .2s ease, filter .2s ease;
+      animation: apjPulse 2.2s ease-in-out infinite;
+    }
+    .apj-help-fab:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.08); }
+    .apj-guide-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .apj-guide-modal.show { display: flex; }
+    .apj-guide-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(2,6,23,.82);
+      backdrop-filter: blur(10px);
+    }
+    .apj-guide-card {
+      position: relative;
+      width: min(760px, 100%);
+      max-height: 90dvh;
+      overflow: auto;
+      border-radius: 24px;
+      border: 1px solid rgba(148,163,184,.22);
+      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
+      box-shadow: 0 30px 120px rgba(0,0,0,.55);
+      padding: 22px;
+      transform: translateY(10px) scale(.98);
+      opacity: 0;
+      transition: transform .24s ease, opacity .24s ease;
+    }
+    .apj-guide-modal.show .apj-guide-card { transform: translateY(0) scale(1); opacity: 1; }
+    .apj-guide-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .apj-guide-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      background: linear-gradient(135deg, rgba(59,130,246,.2), rgba(14,165,233,.10));
+      border: 1px solid rgba(96,165,250,.28);
+    }
+    .apj-guide-steps { display: grid; gap: 10px; margin: 16px 0; }
+    .apj-guide-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(15,23,42,.78);
+      border: 1px solid rgba(71,85,105,.55);
+    }
+    .apj-step-no {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+    }
+    .apj-guide-note {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(245,158,11,.28);
+      background: rgba(120,53,15,.20);
+      color: #fde68a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .apj-guide-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+    .apj-btn-soft {
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(15,23,42,.9);
+      color: #e2e8f0;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .apj-btn-primary {
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      color: white;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 14px 40px rgba(37,99,235,.22);
+    }
+    .apj-mobile-menu {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 70;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.28);
+      background: rgba(2,6,23,.88);
+      color: white;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 18px 45px rgba(0,0,0,.28);
+    }
+    .apj-sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 65;
+      display: none;
+      background: rgba(2,6,23,.68);
+      backdrop-filter: blur(7px);
+    }
+    .apj-sidebar-backdrop.show { display: block; }
+    @media (max-width: 1023px) {
+      body { min-height: 100dvh; }
+      .apj-mobile-menu { display: inline-flex; }
+      aside {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: min(290px, 86vw) !important;
+        z-index: 80 !important;
+        transform: translateX(-105%);
+        transition: transform .28s ease !important;
+      }
+      aside.apj-open { transform: translateX(0) !important; }
+      main header { padding-left: 68px !important; }
+      input, select, textarea { font-size: 16px !important; }
+      .apj-help-fab { right: 14px; bottom: 14px; padding: 11px 13px; }
+      .apj-help-fab span:last-child { display: none; }
+    }
+    @media print {
+      .apj-help-fab, .apj-guide-modal, .apj-mobile-menu, .apj-sidebar-backdrop { display: none !important; }
+      body::before { display: none !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    }
+    /* ================= /APJ INVENTORI v15 UI PRO ================= */
+
   </style>
 </head>
-<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
+<body data-apj-page="produk-outlet.html" class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
   <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition no-print">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
   </button>
@@ -618,6 +872,245 @@
       });
     })();
   </script>
+
+
+<script>
+(function APJ_UI_PRO_BOOT(){
+  const page = (document.body.getAttribute('data-apj-page') || (location.pathname.split('/').pop() || '')).toLowerCase();
+  const icons = {
+    'dashboard.html':'🏠',
+    'input-stok.html':'📥',
+    'output-stok.html':'📤',
+    'transfer-produksi.html':'🚚',
+    'produk-outlet.html':'🏪',
+    'stok-opname.html':'🧮',
+    'lihat-stok.html':'📊',
+    'riwayat-transaksi.html':'🧾'
+  };
+  const tones = {
+    'dashboard.html':'apj-active-link',
+    'input-stok.html':'apj-active-link',
+    'output-stok.html':'apj-active-link',
+    'transfer-produksi.html':'apj-active-link',
+    'produk-outlet.html':'apj-active-link',
+    'stok-opname.html':'apj-active-link',
+    'lihat-stok.html':'apj-active-link',
+    'riwayat-transaksi.html':'apj-active-link'
+  };
+  const guide = {
+    'input-stok.html': {
+      icon:'📥', title:'Panduan Input Stok', subtitle:'Dipakai untuk mencatat barang masuk dari pembelian atau penambahan stok awal.',
+      steps:[
+        'Pilih Tanggal Transaksi sesuai tanggal barang datang.',
+        'Pilih Kategori Transaksi, misalnya Bahan Mentah, Bahan Baku, Kemasan, Minuman, atau Kebersihan.',
+        'Pilih Nama Barang. Kalau baris kurang, tekan tombol + Tambah Baris Barang.',
+        'Isi Qty Masuk (Beli) sesuai nota/belanja, lalu isi Qty Stok (Riil) sesuai jumlah yang benar-benar masuk ke stok.',
+        'Cek satuan beli dan satuan stok. Pastikan tidak tertukar antara Kg, Pcs, Porsi, Botol, atau satuan lain.',
+        'Tekan Simpan Transaksi Input. Jika sukses, sistem membuat ID transaksi otomatis.'
+      ],
+      note:'Khusus barang parent seperti Ayam Potong, isi hasil riil sesuai stok yang siap dipakai. Jangan asal “kira-kira”; stok itu ibarat kompas dapur, kalau meleset semua ikut muter.'
+    },
+    'output-stok.html': {
+      icon:'📤', title:'Panduan Output Stok', subtitle:'Dipakai untuk mencatat barang keluar, pemakaian dapur, atau proses produksi.',
+      steps:[
+        'Pilih Tanggal Keluar sesuai tanggal barang dipakai atau dikeluarkan.',
+        'Pilih Kategori Transaksi. Untuk produksi, pilih mode/kategori produksi jika tersedia.',
+        'Pilih barang atau produk yang dikeluarkan. Perhatikan stok tersedia sebelum mengisi qty.',
+        'Isi Qty Keluar dengan angka yang benar. Gunakan koma/titik seperlunya, sistem akan membaca sebagai angka.',
+        'Isi Keterangan/Tujuan supaya audit jelas, misalnya Masak Pagi, Produksi Lauk, atau Outlet tertentu.',
+        'Tekan Simpan Output Stok dan tunggu notifikasi berhasil.'
+      ],
+      note:'Kalau stok tersedia terlihat kecil atau nol, jangan dipaksa. Cek fisik dulu atau lakukan input/opname. Sistem ini membantu, tapi mata gudang tetap panglima.'
+    },
+    'stok-opname.html': {
+      icon:'🧮', title:'Panduan Stok Opname', subtitle:'Dipakai untuk menyamakan stok sistem dengan stok fisik di lapangan.',
+      steps:[
+        'Pilih Tanggal Opname sesuai hari pengecekan fisik.',
+        'Pilih Kategori Transaksi yang akan dicek.',
+        'Pilih Nama Barang. Stok Sistem akan menjadi pembanding.',
+        'Isi Stok Fisik sesuai hasil hitung nyata di gudang/dapur/outlet.',
+        'Periksa Selisih. Plus berarti fisik lebih banyak, minus berarti fisik lebih sedikit.',
+        'Isi Alasan Koreksi secara singkat, misalnya salah input, susut, rusak, atau stok ditemukan.',
+        'Tekan Simpan Stok Opname.'
+      ],
+      note:'Opname bukan tempat menebak-nebak. Hitung fisik dulu, baru input. Tradisi lama: barang dihitung pakai mata; sistem baru: hasilnya dikunci rapi.'
+    },
+    'lihat-stok.html': {
+      icon:'📊', title:'Panduan Lihat Stok', subtitle:'Dipakai untuk memantau stok terkini dan menyiapkan laporan PDF.',
+      steps:[
+        'Pilih Kategori Stok yang ingin dilihat.',
+        'Gunakan kolom Cari Barang untuk mencari ID atau nama barang.',
+        'Tekan Refresh jika data terasa belum terbaru.',
+        'Perhatikan Qty Stok, Satuan, Lokasi, Last Update, dan Status.',
+        'Tekan PDF jika ingin mencetak laporan. Pilih penandatangan jika diminta.',
+        'Gunakan status kritis/waspada sebagai prioritas belanja atau produksi.'
+      ],
+      note:'Lihat stok itu bukan sekadar melihat angka. Ini radar operasional: mana yang aman, mana yang mulai teriak minta dibeli.'
+    },
+    'produk-outlet.html': {
+      icon:'🏪', title:'Panduan Produk Outlet', subtitle:'Dipakai untuk mencatat produk outlet, stok outlet, produk terjual, dan opname outlet.',
+      steps:[
+        'Pilih Tanggal dan Outlet yang sedang dikerjakan.',
+        'Gunakan Cari Produk untuk mempercepat pencarian item.',
+        'Tekan Input Terjual untuk mencatat produk yang laku hari itu.',
+        'Isi Qty Terjual sesuai catatan penjualan outlet, lalu simpan.',
+        'Jika stok fisik outlet berbeda dengan sistem, tekan Stok Opname lalu isi stok fisik dan alasan.',
+        'Gunakan Print 58mm atau Print A4 untuk laporan outlet sesuai kebutuhan.'
+      ],
+      note:'Outlet wajib disiplin. Yang terjual dicatat, yang sisa dicek. Kalau tidak, stok jadi drama berseri—episode habisnya banyak.'
+    },
+    'transfer-produksi.html': {
+      icon:'🚚', title:'Panduan Transfer Produk Outlet', subtitle:'Dipakai untuk mengirim produk siap jual dari PUSAT ke outlet dan mencetak Surat Jalan.',
+      steps:[
+        'Pilih Tanggal Transfer.',
+        'Pilih Outlet Tujuan. Produk aktif outlet akan muncul otomatis dari MASTER_PRODUK_OUTLET.',
+        'Pilih PIC Penerima agar tanggung jawab jelas.',
+        'Cari produk jika daftar panjang, lalu isi Qty Transfer hanya pada produk yang dikirim.',
+        'Isi Catatan bila ada informasi tambahan, misalnya tambahan order atau barang pengganti.',
+        'Tekan Simpan Transfer. Baris kosong atau qty 0 tidak akan ikut disimpan.',
+        'Untuk cetak Surat Jalan, tekan Cetak Surat Jalan, pilih transaksi, lalu pilih A4 atau 58mm.'
+      ],
+      note:'Surat Jalan itu bukti jalan barang. Pastikan outlet, PIC, dan qty benar sebelum cetak. Sekali salah, kertas ikut menatap kecewa.'
+    },
+    'riwayat-transaksi.html': {
+      icon:'🧾', title:'Panduan Riwayat Transaksi', subtitle:'Dipakai untuk audit gabungan input, output, produksi, transfer, produk outlet, dan opname.',
+      steps:[
+        'Pilih Tanggal Dari dan Tanggal Sampai.',
+        'Pilih Jenis transaksi, atau pilih Semua untuk audit lengkap.',
+        'Gunakan kolom Cari untuk mencari ID transaksi, nama barang, petugas, outlet, atau kata kunci lain.',
+        'Tekan Muat untuk mengambil data.',
+        'Baca ringkasan dan detail tabel. Cek tanggal, jenis, barang, qty, petugas, dan keterangan.',
+        'Tekan PDF jika laporan perlu disimpan atau dibagikan.'
+      ],
+      note:'Kalau ada angka stok yang aneh, mulai investigasi dari sini. Riwayat transaksi adalah CCTV-nya data.'
+    }
+  };
+
+  function ready(fn){ if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+  function fileNameFromHref(href){ try { return (href || '').split('/').pop().split('?')[0].split('#')[0].toLowerCase(); } catch(e){ return ''; } }
+  function currentFile(){ return page || fileNameFromHref(location.href); }
+  function safe(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function renderSidebar(){
+    const nav = document.querySelector('aside nav');
+    if (!nav) return;
+    const active = currentFile();
+    const menu = [
+      ['dashboard.html','Dashboard'], ['input-stok.html','Input Stok'], ['output-stok.html','Output Stok'],
+      ['transfer-produksi.html','Transfer Produk Outlet'], ['produk-outlet.html','Produk Outlet'],
+      ['stok-opname.html','Stok Opname'], ['lihat-stok.html','Lihat Stok'], ['riwayat-transaksi.html','Riwayat Transaksi']
+    ];
+    nav.innerHTML = '<p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>' + menu.map(([href,label]) => {
+      const isActive = active === href;
+      const cls = isActive ? 'apj-active-link flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors' : 'flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors';
+      return `<a href="${href}" class="${cls}"><span class="apj-nav-ico">${icons[href] || '•'}</span><span>${label}</span></a>`;
+    }).join('');
+  }
+
+  function ensureLogout(){
+    const aside = document.querySelector('aside');
+    if (!aside) return;
+    if (aside.textContent.toLowerCase().includes('logout sistem')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'p-4 border-t border-slate-800';
+    wrap.innerHTML = '<button type="button" onclick="APJUI_logout()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50"><span class="apj-nav-ico">🚪</span><span>Logout Sistem</span></button>';
+    aside.appendChild(wrap);
+  }
+
+  window.APJUI_logout = function(){
+    ['APJ_SESSION_ACTIVE','APJ_USER_NAME','APJ_USER_LEVEL','APJ_USER_PERMISSIONS'].forEach(k => localStorage.removeItem(k));
+    window.location.href = 'index.html';
+  };
+
+  function setupMobileSidebar(){
+    const aside = document.querySelector('aside');
+    if (!aside || document.querySelector('.apj-mobile-menu') || document.getElementById('mobileMenuBtn')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'apj-mobile-menu';
+    btn.setAttribute('aria-label','Buka menu');
+    btn.innerHTML = '☰';
+    const backdrop = document.createElement('div');
+    backdrop.className = 'apj-sidebar-backdrop';
+    document.body.appendChild(btn);
+    document.body.appendChild(backdrop);
+    function close(){ aside.classList.remove('apj-open'); backdrop.classList.remove('show'); }
+    function open(){ aside.classList.add('apj-open'); backdrop.classList.add('show'); }
+    btn.addEventListener('click', open);
+    backdrop.addEventListener('click', close);
+    aside.addEventListener('click', (e) => { if (e.target.closest('a') && window.innerWidth < 1024) close(); });
+  }
+
+  function guideData(){ return guide[currentFile()] || null; }
+  function buildGuideModal(){
+    const data = guideData();
+    if (!data || document.getElementById('apjGuideModal')) return;
+    const modal = document.createElement('div');
+    modal.id = 'apjGuideModal';
+    modal.className = 'apj-guide-modal';
+    modal.innerHTML = `
+      <div class="apj-guide-backdrop" onclick="APJUI_closeGuide()"></div>
+      <div class="apj-guide-card" role="dialog" aria-modal="true" aria-labelledby="apjGuideTitle">
+        <div class="apj-guide-title">
+          <div class="apj-guide-icon">${data.icon}</div>
+          <div class="min-w-0">
+            <p class="text-[11px] font-black uppercase tracking-[.18em] text-blue-300 mb-1">Bantuan Cepat APJ</p>
+            <h3 id="apjGuideTitle" class="text-xl sm:text-2xl font-extrabold text-white">${safe(data.title)}</h3>
+            <p class="text-sm text-slate-400 mt-1 leading-relaxed">${safe(data.subtitle)}</p>
+          </div>
+        </div>
+        <div class="apj-guide-steps">
+          ${data.steps.map((step, idx) => `<div class="apj-guide-step"><span class="apj-step-no">${idx+1}</span><p class="text-sm text-slate-200 leading-relaxed">${safe(step)}</p></div>`).join('')}
+        </div>
+        <div class="apj-guide-note"><b>Catatan:</b> ${safe(data.note)}</div>
+        <div class="apj-guide-actions">
+          <button type="button" class="apj-btn-soft" onclick="APJUI_resetGuideAuto()">Tampilkan otomatis lagi</button>
+          <button type="button" class="apj-btn-primary" onclick="APJUI_closeGuide()">Paham, lanjut kerja</button>
+        </div>
+      </div>`;
+    const fab = document.createElement('button');
+    fab.type = 'button';
+    fab.className = 'apj-help-fab';
+    fab.innerHTML = `<span>${data.icon}</span><span>Panduan</span>`;
+    fab.addEventListener('click', () => window.APJUI_openGuide(false));
+    document.body.appendChild(modal);
+    document.body.appendChild(fab);
+  }
+
+  window.APJUI_openGuide = function(auto){
+    const modal = document.getElementById('apjGuideModal');
+    if (!modal) return;
+    modal.classList.add('show');
+    if (auto) localStorage.setItem('APJ_HELP_SEEN_' + currentFile(), 'Y');
+  };
+  window.APJUI_closeGuide = function(){
+    const modal = document.getElementById('apjGuideModal');
+    if (modal) modal.classList.remove('show');
+  };
+  window.APJUI_resetGuideAuto = function(){
+    localStorage.removeItem('APJ_HELP_SEEN_' + currentFile());
+    window.APJUI_closeGuide();
+    setTimeout(() => window.APJUI_openGuide(true), 150);
+  };
+
+  function enhanceCards(){
+    document.querySelectorAll('.bg-slate-950.border, .bg-slate-900.border').forEach(el => el.classList.add('apj-lift'));
+    document.querySelectorAll('main > div, main > section').forEach(el => el.classList.add('apj-soft-animate'));
+  }
+
+  ready(function(){
+    renderSidebar();
+    ensureLogout();
+    setupMobileSidebar();
+    buildGuideModal();
+    enhanceCards();
+    const data = guideData();
+    if (data && !localStorage.getItem('APJ_HELP_SEEN_' + currentFile())) {
+      setTimeout(() => window.APJUI_openGuide(true), 650);
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
