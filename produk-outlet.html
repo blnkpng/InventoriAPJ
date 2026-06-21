@@ -27,7 +27,7 @@
       body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
       body > *:not(#printArea80) { display: none !important; }
       #printArea80 { display: block !important; font-family: Arial, sans-serif; color: #000 !important; line-height: 1.25; }
-      body.print-produk-58 #printArea80 { width: 54mm; max-width: 54mm; font-size: 7.8px; line-height: 1.14; page-break-inside: avoid; break-inside: avoid; }
+      body.print-produk-58 #printArea80 { width: 54mm; max-width: 54mm; font-size: 6.8px; line-height: 1.12; page-break-inside: avoid; break-inside: avoid; }
       body.print-produk-a4 #printArea80 { width: auto; max-width: none; font-size: 10pt; font-family: 'Times New Roman', serif; }
       .struk-center { text-align: center; }
       .struk-title { font-size: 14px; font-weight: 800; letter-spacing: .3px; }
@@ -46,20 +46,43 @@
       .produk-print-table th { font-weight: 800; text-align:center; background:#f2f2f2 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .produk-print-table td { text-align:center; }
       .produk-print-table td:first-child { text-align:left; }
-      body.print-produk-58 .produk-print-table th, body.print-produk-58 .produk-print-table td { padding: 1.5px; }
-      body.print-produk-58 .produk-print-table thead { display:none; }
-      body.print-produk-58 .produk-print-table, body.print-produk-58 .produk-print-table tbody, body.print-produk-58 .produk-print-table tr, body.print-produk-58 .produk-print-table td { display:block; width:100%; border-left:0; border-right:0; border-top:0; }
-      body.print-produk-58 .produk-print-table td { border-bottom:1px dashed #000; padding:2px 0; page-break-inside: avoid; break-inside: avoid; }
-      body.print-produk-58 .produk-item-name { font-weight:800; font-size:7.8px; margin-bottom:1px; }
-      body.print-produk-58 .produk-item-detail { display:block; white-space:normal; font-size:7.2px; }
-      body.print-produk-58 .struk-title { font-size:10.5px; }
-      body.print-produk-58 .struk-sub { font-size:8px; }
+      body.print-produk-58 .produk-print-table th, body.print-produk-58 .produk-print-table td { padding: 1.2px 1px; font-size: 6.3px; line-height: 1.08; }
+      body.print-produk-58 .produk-print-table thead { display: table-header-group; }
+      body.print-produk-58 .produk-print-table { table-layout: fixed; width:100%; border-collapse: collapse; }
+      body.print-produk-58 .produk-print-table th, body.print-produk-58 .produk-print-table td { border:1px solid #000; page-break-inside: avoid; break-inside: avoid; }
+      body.print-produk-58 .produk-item-name { font-weight:700; font-size:6.2px; line-height:1.08; white-space:normal; overflow:hidden; }
+      body.print-produk-58 .produk-item-detail { display:inline; white-space:nowrap; font-size:6.2px; }
+      body.print-produk-58 .struk-title { font-size:9px; }
+      body.print-produk-58 .struk-sub { font-size:6.8px; }
       body.print-produk-58 .struk-line { margin:4px 0; }
-      body.print-produk-58 .struk-meta { font-size:7.3px; }
-      body.print-produk-58 .struk-sign { margin-top:7px; font-size:7.2px; }
+      body.print-produk-58 .struk-meta { font-size:6.4px; }
+      body.print-produk-58 .struk-sign { margin-top:6px; font-size:6.5px; }
       body.print-produk-58 .sign-blank { height:10px; }
+
+      body.print-produk-58 .produk-print-table th:nth-child(1), body.print-produk-58 .produk-print-table td:nth-child(1) { width: 52%; text-align:left; }
+      body.print-produk-58 .produk-print-table th:nth-child(2), body.print-produk-58 .produk-print-table td:nth-child(2),
+      body.print-produk-58 .produk-print-table th:nth-child(3), body.print-produk-58 .produk-print-table td:nth-child(3),
+      body.print-produk-58 .produk-print-table th:nth-child(4), body.print-produk-58 .produk-print-table td:nth-child(4) { width: 16%; text-align:center; }
       body.print-produk-a4 .produk-print-table th, body.print-produk-a4 .produk-print-table td { padding: 5px; }
     }
+  
+
+    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
+    @media screen and (max-width: 768px) {
+      .table-scroll { overflow-x: visible !important; }
+      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
+      .table-scroll thead { display: none !important; }
+      .table-scroll tbody { display: block !important; width: 100% !important; }
+      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
+      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
+      .table-scroll td:last-child { border-bottom: 0 !important; }
+      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
+      .table-scroll td > * { max-width: 58%; }
+      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
+      .table-scroll .text-center { text-align: right !important; }
+      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
+    }
+
   </style>
 </head>
 <body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
@@ -223,7 +246,7 @@
     </div>
     <div class="struk-line"></div>
     <table class="produk-print-table">
-      <thead><tr><th>Nama</th><th>Kemarin</th><th>Masuk</th><th>Keluar</th><th>Opname</th><th>Sisa</th></tr></thead>
+      <thead><tr id="print80Head"><th>Nama</th><th>Kemarin</th><th>Masuk</th><th>Keluar</th><th>Opname</th><th>Sisa</th></tr></thead>
       <tbody id="print80Body"></tbody>
     </table>
     <div class="struk-line"></div>
@@ -357,6 +380,12 @@
         : '@media print { @page { size: A4 portrait; margin: 6mm; } }';
     }
 
+
+    function shortPrintName(value) {
+      const text = String(value || '-').trim();
+      return text.length > 20 ? text.slice(0, 19) + '…' : text;
+    }
+
     function printProdukOutlet(mode = '58') {
       try {
         if (!currentRows.length) throw new Error('Data produk belum dimuat.');
@@ -385,13 +414,18 @@
         document.getElementById('print80TotalTerjual').textContent = formatNumber(totalTerjual);
         document.getElementById('print80TotalOpname').textContent = formatNumber(totalOpname);
         document.getElementById('print80TotalSisa').textContent = formatNumber(totalSisa);
+        const head = document.getElementById('print80Head');
+        if (head) {
+          head.innerHTML = is58
+            ? '<th>Nama</th><th>IN</th><th>OUT</th><th>Sisa</th>'
+            : '<th>Nama</th><th>Kemarin</th><th>Masuk</th><th>Keluar</th><th>Opname</th><th>Sisa</th>';
+        }
         document.getElementById('print80Body').innerHTML = rows.map((r) => is58 ? `
           <tr>
-            <td colspan="6">
-              <div class="produk-item-name">${escapeHtml(r.nama || '-')}</div>
-              <span class="produk-item-detail">Kmr:${escapeHtml(formatNumber(r.stokKemarin))} | Msk:${escapeHtml(formatNumber(r.stokMasuk))} | Klr:${escapeHtml(formatNumber(r.stokTerjual))}</span>
-              <span class="produk-item-detail">Opn:${escapeHtml(formatNumber(r.selisihOpname))} | Sisa:<b>${escapeHtml(formatNumber(r.stokSisa))}</b></span>
-            </td>
+            <td><div class="produk-item-name">${escapeHtml(shortPrintName(r.nama || '-'))}</div></td>
+            <td>${escapeHtml(formatNumber(r.stokMasuk))}</td>
+            <td>${escapeHtml(formatNumber(r.stokTerjual))}</td>
+            <td><b>${escapeHtml(formatNumber(r.stokSisa))}</b></td>
           </tr>
         ` : `
           <tr>
@@ -554,5 +588,36 @@
     function closeLogoutModal() { const m=document.getElementById('logoutModal'), o=m.querySelector('.modal-overlay'), c=m.querySelector('.modal-content'); o.classList.remove('opacity-100'); o.classList.add('opacity-0'); c.classList.remove('scale-100','opacity-100'); c.classList.add('scale-95','opacity-0'); setTimeout(()=>m.classList.add('hidden'),250); }
     function executeLogout() { localStorage.removeItem('APJ_SESSION_ACTIVE'); localStorage.removeItem('APJ_USER_NAME'); localStorage.removeItem('APJ_USER_LEVEL'); localStorage.removeItem('APJ_USER_OUTLET'); localStorage.removeItem('APJ_USER_PERMISSIONS'); window.location.href = 'index.html'; }
   </script>
+
+
+  <script>
+    // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
+    (function(){
+      function headersFor(table){
+        return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
+      }
+      function labelTable(table){
+        var headers = headersFor(table);
+        if (!headers.length) return;
+        Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
+          Array.from(row.children).forEach(function(cell, idx){
+            if (!cell || cell.tagName !== 'TD') return;
+            if (!cell.getAttribute('data-label')) cell.setAttribute('data-label', headers[idx] || 'Data');
+          });
+        });
+      }
+      function applyResponsiveTableLabels(root){
+        root = root || document;
+        root.querySelectorAll('.table-scroll table').forEach(labelTable);
+      }
+      window.applyResponsiveTableLabels = applyResponsiveTableLabels;
+      document.addEventListener('DOMContentLoaded', function(){
+        applyResponsiveTableLabels(document);
+        var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
+        obs.observe(document.body, { childList:true, subtree:true });
+      });
+    })();
+  </script>
+
 </body>
 </html>
