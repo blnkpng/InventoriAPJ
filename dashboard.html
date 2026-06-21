@@ -1,221 +1,479 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | APJ Inventori Emerald Warehouse</title>
+  <title>Dashboard | Sistem Inventori APJ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background: radial-gradient(circle at top right, #064e3b 0%, #052e2b 35%, #020617 100%); color: #ecfdf5; }
+    :root {
+      --bg: #f5f7fb;
+      --bg-soft: #eef3fb;
+      --surface: rgba(255, 255, 255, .84);
+      --surface-solid: #ffffff;
+      --surface-soft: rgba(255, 255, 255, .62);
+      --sidebar: rgba(255, 255, 255, .74);
+      --sidebar-solid: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --muted-2: #94a3b8;
+      --border: rgba(15, 23, 42, .10);
+      --border-strong: rgba(15, 23, 42, .16);
+      --shadow: 0 20px 60px rgba(15, 23, 42, .10);
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, .08);
+      --primary: #0284c7;
+      --primary-soft: rgba(14, 165, 233, .12);
+      --accent: #f59e0b;
+      --ring: rgba(14, 165, 233, .26);
+      --danger: #e11d48;
+      --success: #059669;
+      --warning: #d97706;
+    }
+    html[data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-soft: #0f172a;
+      --surface: rgba(15, 23, 42, .76);
+      --surface-solid: #111827;
+      --surface-soft: rgba(30, 41, 59, .58);
+      --sidebar: rgba(2, 6, 23, .72);
+      --sidebar-solid: #020617;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --muted-2: #64748b;
+      --border: rgba(148, 163, 184, .14);
+      --border-strong: rgba(148, 163, 184, .22);
+      --shadow: 0 24px 80px rgba(0, 0, 0, .28);
+      --shadow-soft: 0 12px 40px rgba(0, 0, 0, .22);
+      --primary: #38bdf8;
+      --primary-soft: rgba(56, 189, 248, .14);
+      --accent: #f59e0b;
+      --ring: rgba(56, 189, 248, .25);
+      --danger: #fb7185;
+      --success: #34d399;
+      --warning: #fbbf24;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at 12% 12%, rgba(14, 165, 233, .16), transparent 30%),
+        radial-gradient(circle at 90% 8%, rgba(245, 158, 11, .12), transparent 25%),
+        linear-gradient(135deg, var(--bg), var(--bg-soft));
+      color: var(--text);
+      transition: background .25s ease, color .25s ease;
+    }
     .animate-fade-in { animation: fadeIn .45s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -42%) scale(.98); opacity: 0; transition: all .28s ease; z-index: 9999; }
-    .toast.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    .modal-overlay { transition: opacity .25s ease-out; }
-    .modal-content { transition: transform .25s ease-out, opacity .25s ease-out; }
-    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-    .table-scroll::-webkit-scrollbar { height: 8px; }
-    .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
-    @media (max-width: 1023px) {
-      .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
-      input, select, textarea { font-size: 16px; }
-      main { width: 100%; }
+    .app-sidebar {
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
     }
-  
-
-    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
+    .app-main { background: transparent; }
+    .app-header {
+      background: color-mix(in srgb, var(--surface) 82%, transparent);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: white; box-shadow: 0 12px 30px rgba(14, 165, 233, .26);
+    }
+    .eyebrow { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+    .muted { color: var(--muted); }
+    .muted-2 { color: var(--muted-2); }
+    .text-main { color: var(--text); }
+    .nav-link {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .72rem .78rem;
+      border-radius: 16px;
+      color: var(--muted);
+      font-size: .875rem;
+      font-weight: 650;
+      border: 1px solid transparent;
+      transition: all .18s ease;
+    }
+    .nav-link:hover {
+      color: var(--text);
+      background: var(--surface-soft);
+      border-color: var(--border);
+      transform: translateX(2px);
+    }
+    .nav-link.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-color: color-mix(in srgb, var(--primary) 25%, transparent);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .nav-icon { width: 18px; height: 18px; flex-shrink: 0; stroke-width: 2; }
+    .glass-card, .panel, .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+    .glass-card { border-radius: 28px; }
+    .panel { border-radius: 24px; padding: 1.15rem; }
+    @media (min-width: 640px) { .panel { padding: 1.25rem; } }
+    .hero-card {
+      position: relative; overflow: hidden;
+      background:
+        radial-gradient(circle at 88% 20%, rgba(14, 165, 233, .24), transparent 28%),
+        radial-gradient(circle at 14% 12%, rgba(245, 158, 11, .16), transparent 26%),
+        linear-gradient(135deg, var(--surface), color-mix(in srgb, var(--surface-solid) 70%, transparent));
+    }
+    .hero-orb { position:absolute; width: 240px; height: 240px; border-radius:999px; right:-80px; top:-100px; background: rgba(14,165,233,.18); filter: blur(18px); }
+    .ios-badge {
+      display: inline-flex; align-items: center; gap: .45rem;
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      color: var(--primary);
+      border-radius: 999px;
+      padding: .42rem .75rem;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .theme-toggle, .mobile-menu-btn, .avatar-circle {
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      color: var(--text);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--shadow-soft);
+    }
+    .theme-toggle {
+      height: 42px;
+      display: inline-flex; align-items: center; gap: .55rem;
+      padding: 0 .85rem;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .theme-toggle:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+    .mobile-menu-btn { border-radius: 15px; }
+    .avatar-circle { border-radius: 999px; color: var(--primary); font-weight: 800; }
+    .quick-pill {
+      display: inline-flex; align-items: center; gap: .45rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      color: var(--text);
+      padding: .58rem .82rem;
+      font-size: 12px;
+      font-weight: 750;
+      transition: all .18s ease;
+    }
+    .quick-pill:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+    .kpi-card { border-radius: 22px; padding: 1rem; position: relative; overflow: hidden; }
+    .kpi-card::after { content:""; position:absolute; right:-28px; top:-36px; width: 110px; height:110px; border-radius:999px; background: currentColor; opacity:.08; filter: blur(8px); }
+    .kpi-icon {
+      width: 38px; height: 38px; border-radius: 14px;
+      display: inline-flex; align-items:center; justify-content:center;
+      margin-bottom: .78rem;
+    }
+    .mini-card {
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      border-radius: 18px;
+      padding: .85rem;
+    }
+    .list-card {
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      border-radius: 18px;
+      padding: .92rem;
+      transition: border-color .18s ease, transform .18s ease;
+    }
+    .list-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .table-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 35%, transparent); border-radius: 999px; }
+    .ios-table { color: var(--text); }
+    .ios-table thead { color: var(--muted); border-bottom: 1px solid var(--border); }
+    .ios-table tbody tr { border-bottom: 1px solid var(--border); }
+    .ios-table tbody tr:hover { background: var(--surface-soft); }
+    .sync-pill { border: 1px solid var(--border); background: var(--surface-soft); color: var(--muted); border-radius:999px; padding:.36rem .7rem; font-size: 11px; font-weight:700; }
+    .toast {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -44%) scale(.96);
+      opacity: 0;
+      pointer-events: none;
+      transition: all .25s ease;
+      z-index: 9999;
+      width: calc(100% - 2rem);
+      max-width: 430px;
+      border-radius: 22px;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .toast-success { border-color: rgba(16,185,129,.28); }
+    .toast-error { border-color: rgba(244,63,94,.32); }
+    .modal-overlay { transition: opacity .25s ease-out; background: rgba(2,6,23,.62); backdrop-filter: blur(10px); }
+    .modal-content { transition: transform .25s ease-out, opacity .25s ease-out; background: var(--surface); border: 1px solid var(--border); color: var(--text); box-shadow: var(--shadow); backdrop-filter: blur(24px); }
+    .btn-secondary { background: var(--surface-soft); border: 1px solid var(--border); color: var(--text); }
+    .btn-danger { background: #e11d48; color: white; }
+    .tone-text-blue { color: #0ea5e9; } html[data-theme="dark"] .tone-text-blue { color:#38bdf8; }
+    .tone-text-emerald { color: #059669; } html[data-theme="dark"] .tone-text-emerald { color:#34d399; }
+    .tone-text-rose { color: #e11d48; } html[data-theme="dark"] .tone-text-rose { color:#fb7185; }
+    .tone-text-amber { color: #d97706; } html[data-theme="dark"] .tone-text-amber { color:#fbbf24; }
+    .tone-text-violet { color: #7c3aed; } html[data-theme="dark"] .tone-text-violet { color:#a78bfa; }
+    .tone-text-cyan { color: #0891b2; } html[data-theme="dark"] .tone-text-cyan { color:#22d3ee; }
+    .tone-text-slate { color: var(--text); }
+    .tone-soft-blue { background: rgba(14,165,233,.12); }
+    .tone-soft-emerald { background: rgba(16,185,129,.12); }
+    .tone-soft-rose { background: rgba(244,63,94,.12); }
+    .tone-soft-amber { background: rgba(245,158,11,.14); }
+    .tone-soft-violet { background: rgba(139,92,246,.13); }
+    .tone-soft-cyan { background: rgba(6,182,212,.13); }
+    .tone-soft-slate { background: var(--surface-soft); }
+    .tone-border-blue { border-color: rgba(14,165,233,.20); }
+    .tone-border-emerald { border-color: rgba(16,185,129,.20); }
+    .tone-border-rose { border-color: rgba(244,63,94,.22); }
+    .tone-border-amber { border-color: rgba(245,158,11,.24); }
+    .tone-border-violet { border-color: rgba(139,92,246,.22); }
+    .tone-border-cyan { border-color: rgba(6,182,212,.22); }
+    .tone-border-slate { border-color: var(--border); }
+    .badge { display:inline-flex; align-items:center; border-radius:999px; border:1px solid currentColor; padding:.2rem .5rem; font-size:10px; font-weight:800; line-height:1; background: color-mix(in srgb, currentColor 10%, transparent); }
+    .status-dot { width:.58rem; height:.58rem; border-radius:999px; display:inline-block; }
+    .loading-spinner { width: 36px; height: 36px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 999px; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 1023px) { input, select, textarea { font-size: 16px; } main { width:100%; } }
     @media screen and (max-width: 768px) {
       .table-scroll { overflow-x: visible !important; }
       .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
       .table-scroll thead { display: none !important; }
       .table-scroll tbody { display: block !important; width: 100% !important; }
-      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid rgba(16,185,129,.25) !important; border-radius: 14px !important; background: rgba(4,47,46,.92) !important; }
-      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(16,185,129,.25) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
+      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid var(--border) !important; border-radius: 18px !important; background: var(--surface-soft) !important; }
+      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed var(--border) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
       .table-scroll td:last-child { border-bottom: 0 !important; }
-      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #a7f3d0; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
+      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
       .table-scroll td > * { max-width: 58%; }
-      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
       .table-scroll .text-center { text-align: right !important; }
-      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
     }
-
   </style>
 </head>
 <body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
-  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert">
-    <div class="ml-3 text-sm font-medium" id="toastMessage"></div>
+  <div id="customToast" class="toast" role="alert">
+    <div class="flex items-start gap-3">
+      <div id="toastIconWrap" class="kpi-icon tone-soft-blue tone-text-blue !mb-0 !w-9 !h-9"></div>
+      <div class="min-w-0">
+        <div id="toastTitle" class="text-sm font-extrabold text-main">Notifikasi</div>
+        <div class="mt-0.5 text-sm muted" id="toastMessage"></div>
+      </div>
+    </div>
   </div>
 
-  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-emerald-800 bg-emerald-950/90 text-emerald-100 shadow-lg backdrop-blur-md active:scale-95 transition">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="mobile-menu-btn fixed top-4 left-4 z-50 lg:hidden inline-flex h-11 w-11 items-center justify-center active:scale-95 transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16"></path></svg>
   </button>
-  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-emerald-950/70 backdrop-blur-sm lg:hidden"></div>
+  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/60 backdrop-blur-sm lg:hidden"></div>
 
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-[#022c22] border-r border-emerald-900/70 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
-    <div class="h-16 flex items-center px-6 border-b border-emerald-900/70">
-      <div class="flex items-center gap-3 text-emerald-400">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-        <div class="leading-tight"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span><div class="text-[10px] font-bold tracking-[0.18em] text-emerald-300/80">WAREHOUSE OPS</div></div>
+  <aside id="sidebar" class="app-sidebar fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-72 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
+    <div class="h-20 flex items-center px-5 border-b" style="border-color: var(--border);">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="brand-mark">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M7 17h10"></path></svg>
+        </div>
+        <div class="min-w-0">
+          <div class="text-sm font-extrabold tracking-wide text-main truncate">APJ Inventori</div>
+          <div class="text-[10px] font-bold uppercase tracking-[.18em] muted">iOS Slate Ops</div>
+        </div>
       </div>
     </div>
 
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-      <p class="px-3 text-[10px] font-semibold text-emerald-100/50 uppercase tracking-wider mb-2">Menu Utama</p>
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-500/10 text-emerald-300 rounded-lg font-semibold text-sm transition-colors border border-emerald-400/30">Dashboard</a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-emerald-100/70 hover:text-white hover:bg-[#052e2b] rounded-lg font-medium text-sm transition-colors">Input Stok</a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-emerald-100/70 hover:text-white hover:bg-[#052e2b] rounded-lg font-medium text-sm transition-colors">Output Stok</a>
-      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-emerald-100/70 hover:text-white hover:bg-[#052e2b] rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
-      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-emerald-100/70 hover:text-white hover:bg-[#052e2b] rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-emerald-100/70 hover:text-white hover:bg-[#052e2b] rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-emerald-100/70 hover:text-white hover:bg-[#052e2b] rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
-      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-emerald-100/70 hover:text-white hover:bg-[#052e2b] rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
-      <a id="adminMenuLink" href="admin.html" class="hidden flex items-center gap-3 px-3 py-2.5 text-teal-200 hover:text-white hover:bg-teal-950/60 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-teal-400/30">Admin Sistem</a>
+      <p class="px-3 text-[10px] font-extrabold muted-2 uppercase tracking-wider mb-2">Menu Utama</p>
+      <a href="dashboard.html" class="nav-link active"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-4H4v4Z"/></svg><span>Dashboard</span></a>
+      <a href="input-stok.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5"/></svg><span>Input Stok</span></a>
+      <a href="output-stok.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0-5-5m5 5-5 5"/></svg><span>Output Stok</span></a>
+      <a href="transfer-produksi.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/></svg><span>Transfer Produk Outlet</span></a>
+      <a href="produk-outlet.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16l-1.4-4.2A2 2 0 0016.7 4H7.3a2 2 0 00-1.9 1.8L4 10Zm2 0v9h12v-9M9 19v-5h6v5"/></svg><span>Produk Outlet</span></a>
+      <a href="stok-opname.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5h6m-7 4h8m-8 4h5m-7 8h12a2 2 0 002-2V7l-4-4H6a2 2 0 00-2 2v14a2 2 0 002 2Z"/></svg><span>Stok Opname</span></a>
+      <a href="lihat-stok.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7c0 1.7 3.6 3 8 3s8-1.3 8-3-3.6-3-8-3-8 1.3-8 3Zm0 0v5c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5"/></svg><span>Lihat Stok</span></a>
+      <a href="riwayat-transaksi.html" class="nav-link"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 101.9-5.2M4 5v5h5m3-2v5l3 2"/></svg><span>Riwayat Transaksi</span></a>
+      <a id="adminMenuLink" href="admin.html" class="nav-link hidden"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4Zm0 7a2 2 0 100-4 2 2 0 000 4Zm-4 7a4 4 0 018 0"/></svg><span>Admin Sistem</span></a>
     </nav>
 
-    <div class="p-4 border-t border-emerald-900/60">
-      <button onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-        Logout Sistem
+    <div class="p-4 border-t" style="border-color: var(--border);">
+      <button onclick="showLogoutModal()" class="nav-link w-full !text-rose-500 hover:!text-rose-500">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+        <span>Logout Sistem</span>
       </button>
     </div>
   </aside>
 
-  <main class="flex-1 flex flex-col min-w-0 bg-[#052e2b]">
-    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-emerald-900/70 bg-[#052e2b]/80 backdrop-blur-sm z-10">
+  <main class="app-main flex-1 flex flex-col min-w-0">
+    <header class="app-header min-h-20 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 sticky top-0 z-10">
       <div class="min-w-0">
-        <h2 class="text-base sm:text-lg font-semibold text-white truncate">Dashboard Inventori</h2>
-        <p class="hidden sm:block text-xs text-emerald-100/50">Kontrol stok, produksi, dan aktivitas harian.</p>
-      </div>
-      <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-        <div class="text-right min-w-0">
-          <p id="displayNama" class="text-sm font-semibold text-white leading-tight truncate max-w-[150px] sm:max-w-none">Memuat...</p>
-          <p id="displayLevel" class="text-[10px] uppercase tracking-wider text-emerald-300 font-medium">--</p>
+        <div class="flex items-center gap-2">
+          <h2 class="text-base sm:text-xl font-extrabold text-main truncate">Dashboard Inventori</h2>
+          <span class="hidden sm:inline-flex status-dot tone-soft-emerald"></span>
         </div>
-        <div class="w-10 h-10 rounded-full bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-200 font-bold shadow-inner flex-shrink-0"><span id="displayInisial">U</span></div>
+        <p class="hidden sm:block text-xs muted mt-1">Kontrol stok, produksi, outlet, dan aktivitas harian dalam satu layar.</p>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <button id="themeToggle" type="button" onclick="toggleTheme()" class="theme-toggle" aria-label="Ganti mode tampilan">
+          <span id="themeIcon" class="inline-flex"></span>
+          <span id="themeText" class="hidden sm:inline">Dark</span>
+        </button>
+        <div class="hidden sm:block text-right min-w-0">
+          <p id="displayNama" class="text-sm font-extrabold text-main leading-tight truncate max-w-[180px]">Memuat...</p>
+          <p id="displayLevel" class="text-[10px] uppercase tracking-wider tone-text-blue font-extrabold">--</p>
+        </div>
+        <div class="avatar-circle w-11 h-11 flex items-center justify-center flex-shrink-0"><span id="displayInisial">U</span></div>
       </div>
     </header>
 
     <section class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-      <div class="max-w-7xl mx-auto animate-fade-in opacity-0 space-y-6">
-        <div id="heroCard" class="relative overflow-hidden rounded-2xl border border-emerald-700/40 bg-gradient-to-r from-emerald-950/80 via-teal-950/70 to-slate-950 p-5 sm:p-6 shadow-xl">
-          <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-emerald-400/10 blur-3xl"></div>
-          <div class="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-            <div>
-              <div class="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-200 mb-3">
+      <div class="max-w-[1500px] mx-auto animate-fade-in opacity-0 space-y-5">
+        <div id="heroCard" class="hero-card glass-card p-5 sm:p-6 lg:p-7">
+          <div class="hero-orb"></div>
+          <div class="relative grid grid-cols-1 xl:grid-cols-12 gap-5 items-end">
+            <div class="xl:col-span-8">
+              <div class="ios-badge mb-4">
                 <span id="modeBadge">Mode Dashboard</span>
               </div>
-              <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">Selamat datang kembali, <span id="welcomeNama" class="text-emerald-300">Pengguna</span>!</h1>
-              <p id="modeDescription" class="mt-2 text-sm text-emerald-100/70 max-w-3xl">Memuat data dashboard...</p>
+              <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-main leading-tight">Halo, <span id="welcomeNama" class="tone-text-blue">Pengguna</span></h1>
+              <p id="modeDescription" class="mt-3 text-sm sm:text-base muted max-w-3xl leading-relaxed">Memuat data dashboard...</p>
             </div>
-            <div class="flex flex-wrap gap-2" id="quickActionMini"></div>
+            <div class="xl:col-span-4">
+              <div class="mini-card">
+                <p class="eyebrow mb-3">Aksi Cepat</p>
+                <div class="flex flex-wrap gap-2" id="quickActionMini"></div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div id="loadingState" class="bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-6 text-center text-emerald-100/80">
-          <div class="mx-auto mb-3 w-8 h-8 rounded-full border-4 border-emerald-800 border-t-emerald-400 animate-spin"></div>
+        <div id="loadingState" class="panel text-center muted">
+          <div class="loading-spinner mx-auto mb-3"></div>
           Menarik data dashboard dari database...
         </div>
 
-        <div id="dashboardContent" class="hidden space-y-6">
+        <div id="dashboardContent" class="hidden space-y-5">
           <div id="kpiGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
 
-          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div class="bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-5 shadow-sm">
-              <h3 class="text-base font-bold text-white mb-1">Prioritas Hari Ini</h3>
-              <p class="text-xs text-emerald-100/50 mb-4">Kesimpulan cepat dari stok dan aktivitas.</p>
-              <div id="insightList" class="space-y-3"></div>
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
+            <div class="xl:col-span-8 space-y-5">
+              <div class="panel">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                  <div>
+                    <h3 class="text-base font-extrabold text-main">Prioritas Hari Ini</h3>
+                    <p class="text-xs muted mt-1">Kesimpulan cepat: apa yang perlu dilihat dulu.</p>
+                  </div>
+                </div>
+                <div id="insightList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+              </div>
+
+              <div class="panel">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                  <div>
+                    <h3 id="primaryPanelTitle" class="text-base font-extrabold text-main">Ringkasan Kategori</h3>
+                    <p id="primaryPanelDesc" class="text-xs muted mt-1">Komposisi stok per kategori.</p>
+                  </div>
+                  <span id="syncDate" class="sync-pill">--</span>
+                </div>
+                <div class="table-scroll overflow-x-auto rounded-2xl border" style="border-color: var(--border);">
+                  <table class="ios-table w-full min-w-[680px] text-left border-collapse">
+                    <thead class="text-xs uppercase tracking-wider">
+                      <tr>
+                        <th class="py-3 px-4">Kategori</th>
+                        <th class="py-3 px-4 text-center">Total Item</th>
+                        <th class="py-3 px-4 text-center">Aman</th>
+                        <th class="py-3 px-4 text-center">Waspada</th>
+                        <th class="py-3 px-4 text-center">Kritis</th>
+                      </tr>
+                    </thead>
+                    <tbody id="categoryBody"></tbody>
+                  </table>
+                </div>
+              </div>
             </div>
 
-            <div class="bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-5 shadow-sm">
-              <h3 class="text-base font-bold text-white mb-1">Ringkasan Lokasi</h3>
-              <p class="text-xs text-emerald-100/50 mb-4">Stok per PUSAT/outlet dari STOK_AKHIR.</p>
-              <div id="locationList" class="space-y-3"></div>
-            </div>
+            <div class="xl:col-span-4 space-y-5">
+              <div class="panel">
+                <h3 id="attentionTitle" class="text-base font-extrabold text-main mb-1">Stok Perlu Perhatian</h3>
+                <p id="attentionDesc" class="text-xs muted mb-4">Item dengan status waspada/kritis.</p>
+                <div id="criticalList" class="space-y-3"></div>
+              </div>
 
-            <div class="bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-5 shadow-sm">
-              <h3 class="text-base font-bold text-white mb-1">Pergerakan Hari Ini</h3>
-              <p class="text-xs text-emerald-100/50 mb-4">Item dengan qty transaksi terbesar hari ini.</p>
+              <div class="panel">
+                <h3 class="text-base font-extrabold text-main mb-1">Menu Cepat</h3>
+                <p id="quickMenuDesc" class="text-xs muted mb-4">Akses sesuai role dan permission.</p>
+                <div id="quickMenuGrid" class="grid grid-cols-1 gap-3"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+            <div class="panel">
+              <h3 class="text-base font-extrabold text-main mb-1">Ringkasan Lokasi</h3>
+              <p class="text-xs muted mb-4">Stok per PUSAT/outlet dari STOK_AKHIR.</p>
+              <div id="locationList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+            </div>
+            <div class="panel">
+              <h3 class="text-base font-extrabold text-main mb-1">Pergerakan Hari Ini</h3>
+              <p class="text-xs muted mb-4">Item dengan qty transaksi terbesar hari ini.</p>
               <div id="movementList" class="space-y-3"></div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div class="xl:col-span-2 bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between gap-3 mb-4">
-                <div>
-                  <h3 id="primaryPanelTitle" class="text-base font-bold text-white">Ringkasan Kategori</h3>
-                  <p id="primaryPanelDesc" class="text-xs text-emerald-100/50 mt-1">Komposisi stok per kategori.</p>
-                </div>
-                <span id="syncDate" class="text-[11px] text-emerald-100/50 bg-[#064e3b]/30 border border-emerald-900/60 rounded-full px-3 py-1">--</span>
-              </div>
-              <div class="table-scroll overflow-x-auto">
-                <table class="w-full min-w-[640px] text-left border-collapse">
-                  <thead class="text-xs uppercase tracking-wider text-emerald-100/50 border-b border-emerald-900/70">
-                    <tr>
-                      <th class="py-3 pr-3">Kategori</th>
-                      <th class="py-3 px-3 text-center">Total Item</th>
-                      <th class="py-3 px-3 text-center">Aman</th>
-                      <th class="py-3 px-3 text-center">Waspada</th>
-                      <th class="py-3 pl-3 text-center">Kritis</th>
-                    </tr>
-                  </thead>
-                  <tbody id="categoryBody" class="divide-y divide-emerald-900/50"></tbody>
-                </table>
+          <div class="panel">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 id="activityTitle" class="text-base font-extrabold text-main">Aktivitas Terbaru</h3>
+                <p id="activityDesc" class="text-xs muted mt-1">Riwayat transaksi paling baru.</p>
               </div>
             </div>
-
-            <div class="bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-5 shadow-sm">
-              <h3 id="attentionTitle" class="text-base font-bold text-white mb-1">Stok Perlu Perhatian</h3>
-              <p id="attentionDesc" class="text-xs text-emerald-100/50 mb-4">Item dengan status waspada/kritis.</p>
-              <div id="criticalList" class="space-y-3"></div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div class="bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-5 shadow-sm">
-              <h3 class="text-base font-bold text-white mb-1">Menu Cepat</h3>
-              <p id="quickMenuDesc" class="text-xs text-emerald-100/50 mb-4">Akses sesuai role dan permission.</p>
-              <div id="quickMenuGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-3"></div>
-            </div>
-
-            <div class="xl:col-span-2 bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between gap-3 mb-4">
-                <div>
-                  <h3 id="activityTitle" class="text-base font-bold text-white">Aktivitas Terbaru</h3>
-                  <p id="activityDesc" class="text-xs text-emerald-100/50 mt-1">Riwayat transaksi paling baru.</p>
-                </div>
-              </div>
-              <div id="activityList" class="space-y-3"></div>
-            </div>
+            <div id="activityList" class="grid grid-cols-1 xl:grid-cols-2 gap-3"></div>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
-    <div class="absolute inset-0 bg-[#022c22]/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
-    <div class="relative bg-[#052e2b] border border-emerald-800 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
-      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 mb-4 mx-auto border border-rose-500/20">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+  <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
+    <div class="absolute inset-0 opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
+    <div class="relative rounded-3xl modal-content p-5 sm:p-6 w-full max-w-sm transform scale-95 opacity-0 pointer-events-auto">
+      <div class="flex items-center justify-center w-12 h-12 rounded-2xl tone-soft-rose tone-text-rose mb-4 mx-auto">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5 19h14a2 2 0 001.73-3L13.73 4a2 2 0 00-3.46 0L3.27 16A2 2 0 005 19z"></path></svg>
       </div>
-      <h3 class="text-lg font-bold text-white text-center mb-2">Konfirmasi Keluar</h3>
-      <p class="text-sm text-emerald-100/70 text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
+      <h3 class="text-lg font-extrabold text-main text-center mb-2">Konfirmasi Keluar</h3>
+      <p class="text-sm muted text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
       <div class="flex gap-3">
-        <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-emerald-950/70 hover:bg-emerald-800/70 text-white text-sm font-medium rounded-lg transition-colors border border-emerald-800">Batal</button>
-        <button onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-rose-600/20">Ya, Keluar</button>
+        <button onclick="closeLogoutModal()" class="btn-secondary flex-1 px-4 py-2.5 text-sm font-bold rounded-2xl transition">Batal</button>
+        <button onclick="executeLogout()" class="btn-danger flex-1 px-4 py-2.5 text-sm font-bold rounded-2xl transition shadow-lg">Ya, Keluar</button>
       </div>
     </div>
   </div>
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
+    const THEME_KEY = 'APJ_THEME_MODE';
     let dashboardMode = 'operator';
 
     document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+
       const isSessionActive = localStorage.getItem('APJ_SESSION_ACTIVE');
       if (isSessionActive !== 'true' || !localStorage.getItem('APJ_SESSION_TOKEN')) { window.location.href = 'index.html'; return; }
 
@@ -228,9 +486,37 @@
       document.getElementById('displayLevel').textContent = userLevel;
       document.getElementById('displayInisial').textContent = userName.charAt(0).toUpperCase();
 
+      showAdminMenuForAuthorizedRoles();
       loadDashboardData(userName, userLevel, permissions);
       document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMobileSidebar));
     });
+
+    function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY) || 'dark';
+      applyTheme(saved === 'light' ? 'light' : 'dark');
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem(THEME_KEY, theme);
+      const themeText = document.getElementById('themeText');
+      const themeIcon = document.getElementById('themeIcon');
+      if (themeText) themeText.textContent = theme === 'dark' ? 'Dark' : 'Light';
+      if (themeIcon) themeIcon.innerHTML = theme === 'dark' ? flatIcon('moon', 'w-4 h-4') : flatIcon('sun', 'w-4 h-4');
+    }
+
+    function showAdminMenuForAuthorizedRoles() {
+      const adminMenuLink = document.getElementById('adminMenuLink');
+      if (!adminMenuLink) return;
+      const level = String(localStorage.getItem('APJ_USER_LEVEL') || '').trim().toLowerCase();
+      const allowedLevels = ['owner', 'superadmin', 'super admin', 'supervisor'];
+      if (allowedLevels.includes(level)) adminMenuLink.classList.remove('hidden');
+    }
 
     async function loadDashboardData(userName, userLevel, permissions) {
       try {
@@ -244,8 +530,8 @@
         if (!result.success) throw new Error(result.message || 'Gagal memuat dashboard.');
         renderDashboard(result);
       } catch (error) {
-        document.getElementById('loadingState').innerHTML = `<div class="text-rose-300 font-semibold mb-1">Dashboard gagal dimuat.</div><div class="text-xs text-emerald-100/50">${escapeHtml(error.message || 'Periksa deploy Code.gs terbaru.')}</div>`;
-        showToast('Gagal memuat data dashboard. Pastikan Code.gs v9 sudah dideploy.', 'error');
+        document.getElementById('loadingState').innerHTML = `<div class="tone-text-rose font-extrabold mb-1">Dashboard gagal dimuat.</div><div class="text-xs muted">${escapeHtml(error.message || 'Periksa deploy Code.gs terbaru.')}</div>`;
+        showToast('Gagal memuat data dashboard. Pastikan Code.gs terbaru sudah dideploy.', 'error');
       }
     }
 
@@ -258,8 +544,8 @@
       const isOwner = dashboardMode === 'owner';
       document.getElementById('modeBadge').textContent = isOwner ? 'Mode Owner' : 'Mode Operasional';
       document.getElementById('modeDescription').textContent = isOwner
-        ? 'Owner melihat gambaran besar: transaksi seluruh tim, kesehatan stok, kategori kritis, dan aktivitas terbaru lintas modul.'
-        : 'Role operasional melihat menu sesuai izin, aktivitas milik sendiri, dan stok yang relevan dengan hak aksesnya.';
+        ? 'Pantau transaksi seluruh tim, kesehatan stok, item kritis, dan aktivitas terbaru dalam tampilan yang lebih ringkas.'
+        : 'Lihat menu sesuai izin, aktivitas milik sendiri, dan stok relevan dengan hak akses login.';
       document.getElementById('primaryPanelTitle').textContent = isOwner ? 'Ringkasan Kategori Stok' : 'Kategori Sesuai Akses';
       document.getElementById('primaryPanelDesc').textContent = isOwner ? 'Pantauan semua kategori stok yang tercatat di STOK_AKHIR.' : 'Kategori yang tampil mengikuti permission role login.';
       document.getElementById('attentionTitle').textContent = isOwner ? 'Stok Perlu Perhatian' : 'Perhatian Operasional';
@@ -283,30 +569,35 @@
       const k = data.kpi || {};
       const isOwner = data.mode === 'owner';
       const cards = isOwner ? [
-        { label: 'Transaksi Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue' },
-        { label: 'Input Hari Ini', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald' },
-        { label: 'Output Hari Ini', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose' },
-        { label: 'Produksi Hari Ini', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber' },
-        { label: 'Transfer Hari Ini', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet' },
-        { label: 'Stok Kosong', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose' },
-        { label: 'Stok Kritis', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber' },
-        { label: 'Lokasi Aktif', value: k.lokasiAktif || 0, suffix: 'Lokasi', tone: 'slate' }
+        { label: 'Transaksi Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue', icon:'activity' },
+        { label: 'Input Hari Ini', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald', icon:'input' },
+        { label: 'Output Hari Ini', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose', icon:'output' },
+        { label: 'Produksi Hari Ini', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber', icon:'chef' },
+        { label: 'Transfer Hari Ini', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet', icon:'transfer' },
+        { label: 'Stok Kosong', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose', icon:'alert' },
+        { label: 'Stok Kritis', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber', icon:'warning' },
+        { label: 'Lokasi Aktif', value: k.lokasiAktif || 0, suffix: 'Lokasi', tone: 'cyan', icon:'store' }
       ] : [
-        { label: 'Aktivitas Saya Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue' },
-        { label: 'Input Saya', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald' },
-        { label: 'Output Saya', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose' },
-        { label: 'Produksi Saya', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber' },
-        { label: 'Transfer Saya', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet' },
-        { label: 'Stok Kosong Aksesku', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose' },
-        { label: 'Stok Kritis Aksesku', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber' },
-        { label: 'Menu Aktif', value: k.aksesAktif || 0, suffix: 'Akses', tone: 'slate' }
+        { label: 'Aktivitas Saya Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue', icon:'activity' },
+        { label: 'Input Saya', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald', icon:'input' },
+        { label: 'Output Saya', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose', icon:'output' },
+        { label: 'Produksi Saya', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber', icon:'chef' },
+        { label: 'Transfer Saya', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet', icon:'transfer' },
+        { label: 'Stok Kosong Aksesku', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose', icon:'alert' },
+        { label: 'Stok Kritis Aksesku', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber', icon:'warning' },
+        { label: 'Menu Aktif', value: k.aksesAktif || 0, suffix: 'Akses', tone: 'cyan', icon:'menu' }
       ];
 
       document.getElementById('kpiGrid').innerHTML = cards.map(card => `
-        <div class="bg-[#042f2e]/70 border border-emerald-900/60 rounded-xl p-5 shadow-sm overflow-hidden relative">
-          <div class="absolute right-0 top-0 w-24 h-24 ${toneBg(card.tone)} rounded-full blur-3xl opacity-40"></div>
-          <p class="relative text-[11px] font-bold text-emerald-100/50 uppercase tracking-wider mb-2">${escapeHtml(card.label)}</p>
-          <h4 class="relative text-3xl font-extrabold ${toneText(card.tone)}">${escapeHtml(String(card.value))} <span class="text-sm font-normal text-emerald-100/50 ml-1">${escapeHtml(card.suffix)}</span></h4>
+        <div class="kpi-card tone-border-${card.tone} tone-text-${card.tone}">
+          <div class="relative z-[1]">
+            <div class="kpi-icon tone-soft-${card.tone} tone-text-${card.tone}">${flatIcon(card.icon, 'w-5 h-5')}</div>
+            <p class="eyebrow mb-1">${escapeHtml(card.label)}</p>
+            <div class="flex items-end gap-2">
+              <h4 class="text-3xl font-extrabold text-main leading-none">${escapeHtml(String(card.value))}</h4>
+              <span class="text-xs font-bold muted mb-0.5">${escapeHtml(card.suffix)}</span>
+            </div>
+          </div>
         </div>
       `).join('');
     }
@@ -314,34 +605,45 @@
     function renderInsights(items) {
       const el = document.getElementById('insightList');
       if (!items.length) {
-        el.innerHTML = `<div class="rounded-lg border border-emerald-900/60 bg-[#064e3b]/30 p-4 text-sm text-emerald-100/60">Belum ada insight yang bisa ditampilkan.</div>`;
+        el.innerHTML = `<div class="list-card text-sm muted md:col-span-2">Belum ada insight yang bisa ditampilkan.</div>`;
         return;
       }
-      el.innerHTML = items.map(item => `
-        <div class="rounded-lg border ${toneBorder(item.tone)} ${toneSoftBg(item.tone)} p-3">
-          <p class="text-sm font-bold ${toneText(item.tone)}">${escapeHtml(item.title || '-')}</p>
-          <p class="text-xs text-emerald-100/70 mt-1 leading-relaxed">${escapeHtml(item.text || '')}</p>
-        </div>
-      `).join('');
+      el.innerHTML = items.map(item => {
+        const tone = normalizeTone(item.tone || 'blue');
+        return `
+          <div class="list-card tone-border-${tone}">
+            <div class="flex gap-3">
+              <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(toneIcon(tone), 'w-5 h-5')}</div>
+              <div class="min-w-0">
+                <p class="text-sm font-extrabold text-main">${escapeHtml(item.title || '-')}</p>
+                <p class="text-xs muted mt-1 leading-relaxed">${escapeHtml(item.text || '')}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderLocations(rows) {
       const el = document.getElementById('locationList');
       if (!rows.length) {
-        el.innerHTML = `<div class="rounded-lg border border-emerald-900/60 bg-[#064e3b]/30 p-4 text-sm text-emerald-100/60">Belum ada data lokasi.</div>`;
+        el.innerHTML = `<div class="list-card text-sm muted sm:col-span-2">Belum ada data lokasi.</div>`;
         return;
       }
       el.innerHTML = rows.slice(0, 8).map(r => `
-        <div class="rounded-lg border border-emerald-900/60 bg-[#064e3b]/30 p-3">
-          <div class="flex items-center justify-between gap-3 mb-2">
-            <p class="text-sm font-bold text-white">${escapeHtml(r.lokasi || 'PUSAT')}</p>
-            <span class="text-[11px] text-emerald-100/70">${escapeHtml(String(r.totalItem || 0))} item</span>
+        <div class="list-card">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="kpi-icon tone-soft-cyan tone-text-cyan !mb-0 !w-9 !h-9">${flatIcon('store','w-4 h-4')}</span>
+              <p class="text-sm font-extrabold text-main truncate">${escapeHtml(r.lokasi || 'PUSAT')}</p>
+            </div>
+            <span class="text-[11px] muted font-bold">${escapeHtml(String(r.totalItem || 0))} item</span>
           </div>
           <div class="grid grid-cols-4 gap-2 text-center">
-            <div><p class="text-[10px] text-emerald-100/50">Aman</p><p class="text-sm font-bold text-emerald-400">${escapeHtml(String(r.aman || 0))}</p></div>
-            <div><p class="text-[10px] text-emerald-100/50">Waspada</p><p class="text-sm font-bold text-amber-400">${escapeHtml(String(r.waspada || 0))}</p></div>
-            <div><p class="text-[10px] text-emerald-100/50">Kritis</p><p class="text-sm font-bold text-rose-400">${escapeHtml(String(r.kritis || 0))}</p></div>
-            <div><p class="text-[10px] text-emerald-100/50">Kosong</p><p class="text-sm font-bold text-rose-300">${escapeHtml(String(r.kosong || 0))}</p></div>
+            <div class="mini-card !p-2"><p class="text-[10px] muted">Aman</p><p class="text-sm font-extrabold tone-text-emerald">${escapeHtml(String(r.aman || 0))}</p></div>
+            <div class="mini-card !p-2"><p class="text-[10px] muted">Waspada</p><p class="text-sm font-extrabold tone-text-amber">${escapeHtml(String(r.waspada || 0))}</p></div>
+            <div class="mini-card !p-2"><p class="text-[10px] muted">Kritis</p><p class="text-sm font-extrabold tone-text-rose">${escapeHtml(String(r.kritis || 0))}</p></div>
+            <div class="mini-card !p-2"><p class="text-[10px] muted">Kosong</p><p class="text-sm font-extrabold tone-text-rose">${escapeHtml(String(r.kosong || 0))}</p></div>
           </div>
         </div>
       `).join('');
@@ -350,56 +652,68 @@
     function renderMovements(items) {
       const el = document.getElementById('movementList');
       if (!items.length) {
-        el.innerHTML = `<div class="rounded-lg border border-emerald-900/60 bg-[#064e3b]/30 p-4 text-sm text-emerald-100/60">Belum ada pergerakan transaksi hari ini.</div>`;
+        el.innerHTML = `<div class="list-card text-sm muted">Belum ada pergerakan transaksi hari ini.</div>`;
         return;
       }
-      el.innerHTML = items.map(item => `
-        <div class="rounded-lg border border-emerald-900/60 bg-[#064e3b]/30 p-3">
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <span class="rounded-full px-2 py-0.5 text-[10px] font-bold ${activityBadge(item.jenis)}">${escapeHtml(item.jenis || '-')}</span>
-              <p class="mt-2 text-sm font-bold text-white truncate">${escapeHtml(item.nama || '-')}</p>
-              <p class="text-xs text-emerald-100/50 mt-1">${escapeHtml(item.lokasi || 'PUSAT')}</p>
+      el.innerHTML = items.map(item => {
+        const tone = activityTone(item.jenis);
+        return `
+          <div class="list-card">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 flex gap-3">
+                <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(activityIcon(item.jenis), 'w-5 h-5')}</div>
+                <div class="min-w-0">
+                  <span class="badge tone-text-${tone}">${escapeHtml(item.jenis || '-')}</span>
+                  <p class="mt-2 text-sm font-extrabold text-main truncate">${escapeHtml(item.nama || '-')}</p>
+                  <p class="text-xs muted mt-1">${escapeHtml(item.lokasi || 'PUSAT')}</p>
+                </div>
+              </div>
+              <p class="text-sm font-extrabold text-main text-right flex-shrink-0">${escapeHtml(String(item.qty || 0))}<br><span class="text-xs font-normal muted">${escapeHtml(item.satuan || '')}</span></p>
             </div>
-            <p class="text-sm font-bold text-emerald-50 text-right flex-shrink-0">${escapeHtml(String(item.qty || 0))}<br><span class="text-xs font-normal text-emerald-100/50">${escapeHtml(item.satuan || '')}</span></p>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function renderCategories(rows) {
       if (!rows.length) {
-        document.getElementById('categoryBody').innerHTML = `<tr><td colspan="5" class="py-8 text-center text-emerald-100/50">Belum ada data kategori yang bisa ditampilkan.</td></tr>`;
+        document.getElementById('categoryBody').innerHTML = `<tr><td colspan="5" class="py-8 px-4 text-center muted">Belum ada data kategori yang bisa ditampilkan.</td></tr>`;
         return;
       }
       document.getElementById('categoryBody').innerHTML = rows.map(r => `
         <tr class="text-sm">
-          <td class="py-3 pr-3 font-semibold text-white">${escapeHtml(r.kategori || '-')}</td>
-          <td class="py-3 px-3 text-center text-emerald-100/80">${escapeHtml(String(r.totalItem || 0))}</td>
-          <td class="py-3 px-3 text-center text-emerald-400 font-bold">${escapeHtml(String(r.aman || 0))}</td>
-          <td class="py-3 px-3 text-center text-amber-400 font-bold">${escapeHtml(String(r.waspada || 0))}</td>
-          <td class="py-3 pl-3 text-center text-rose-400 font-bold">${escapeHtml(String(r.kritis || 0))}</td>
+          <td class="py-3 px-4 font-extrabold text-main">${escapeHtml(r.kategori || '-')}</td>
+          <td class="py-3 px-4 text-center muted font-bold">${escapeHtml(String(r.totalItem || 0))}</td>
+          <td class="py-3 px-4 text-center tone-text-emerald font-extrabold">${escapeHtml(String(r.aman || 0))}</td>
+          <td class="py-3 px-4 text-center tone-text-amber font-extrabold">${escapeHtml(String(r.waspada || 0))}</td>
+          <td class="py-3 px-4 text-center tone-text-rose font-extrabold">${escapeHtml(String(r.kritis || 0))}</td>
         </tr>
       `).join('');
     }
 
     function renderCriticalItems(items) {
       if (!items.length) {
-        document.getElementById('criticalList').innerHTML = `<div class="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-300">Tidak ada stok kritis/waspada. Aman, tapi tetap jangan lengah—stok suka drama pas weekend.</div>`;
+        document.getElementById('criticalList').innerHTML = `<div class="list-card tone-border-emerald text-sm tone-text-emerald font-semibold">Tidak ada stok kritis/waspada. Aman, tapi tetap jangan lengah—stok suka drama pas weekend.</div>`;
         return;
       }
-      document.getElementById('criticalList').innerHTML = items.map(item => `
-        <div class="rounded-lg border ${item.level === 'kritis' ? 'border-rose-500/20 bg-rose-500/10' : 'border-amber-500/20 bg-amber-500/10'} p-3">
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <p class="text-sm font-bold text-white truncate">${escapeHtml(item.nama || '-')}</p>
-              <p class="text-xs text-emerald-100/50 mt-1">${escapeHtml(item.kategori || '-')} • ${escapeHtml(item.id || '-')}</p>
+      document.getElementById('criticalList').innerHTML = items.map(item => {
+        const tone = item.level === 'kritis' ? 'rose' : 'amber';
+        return `
+          <div class="list-card tone-border-${tone}">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 flex gap-3">
+                <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(tone === 'rose' ? 'alert' : 'warning', 'w-5 h-5')}</div>
+                <div class="min-w-0">
+                  <p class="text-sm font-extrabold text-main truncate">${escapeHtml(item.nama || '-')}</p>
+                  <p class="text-xs muted mt-1">${escapeHtml(item.kategori || '-')} • ${escapeHtml(item.id || '-')}</p>
+                </div>
+              </div>
+              <span class="badge tone-text-${tone}">${escapeHtml(item.status || '-')}</span>
             </div>
-            <span class="text-xs font-bold ${item.level === 'kritis' ? 'text-rose-300' : 'text-amber-300'}">${escapeHtml(item.status || '-')}</span>
+            <p class="mt-3 text-sm tone-text-${tone} font-extrabold">${escapeHtml(item.qty || '0')} ${escapeHtml(item.satuan || '')}</p>
           </div>
-          <p class="mt-2 text-sm ${item.level === 'kritis' ? 'text-rose-300' : 'text-amber-300'} font-semibold">${escapeHtml(item.qty || '0')} ${escapeHtml(item.satuan || '')}</p>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function renderQuickMenus(menus) {
@@ -407,16 +721,20 @@
         const disabled = !!menu.disabled;
         const tag = disabled ? 'div' : 'a';
         const href = disabled ? '' : ` href="${escapeHtml(menu.href)}"`;
-        const disabledClass = disabled ? ' opacity-60 cursor-not-allowed' : ' hover:bg-emerald-900/60/70';
-        const badge = disabled ? '<span class="ml-2 rounded-full border border-emerald-800 bg-[#022c22] px-2 py-0.5 text-[10px] text-emerald-100/50">Segera</span>' : '';
+        const disabledClass = disabled ? ' opacity-55 cursor-not-allowed' : ' hover:-translate-y-0.5';
+        const tone = normalizeTone(menu.tone || menuTone(menu));
+        const badge = disabled ? '<span class="badge muted ml-2">Segera</span>' : '';
         return `
-          <${tag}${href} class="block rounded-xl border border-emerald-900/60 bg-[#064e3b]/30 p-4 transition-colors${disabledClass}">
+          <${tag}${href} class="list-card block transition${disabledClass}">
             <div class="flex items-center justify-between gap-3">
-              <div>
-                <p class="text-sm font-bold text-white">${escapeHtml(menu.label)}${badge}</p>
-                <p class="text-xs text-emerald-100/50 mt-1">${escapeHtml(menu.desc || '')}</p>
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(menuIcon(menu), 'w-5 h-5')}</div>
+                <div class="min-w-0">
+                  <p class="text-sm font-extrabold text-main truncate">${escapeHtml(menu.label)}${badge}</p>
+                  <p class="text-xs muted mt-1 truncate">${escapeHtml(menu.desc || '')}</p>
+                </div>
               </div>
-              <span class="w-2.5 h-2.5 rounded-full ${toneDot(menu.tone)}"></span>
+              <span class="status-dot tone-soft-${tone}"></span>
             </div>
           </${tag}>
         `;
@@ -425,41 +743,57 @@
 
     function renderMiniActions(menus) {
       const visible = menus.filter(m => m.href !== 'dashboard.html' && !m.disabled).slice(0, 3);
-      document.getElementById('quickActionMini').innerHTML = visible.map(menu => `<a href="${escapeHtml(menu.href)}" class="rounded-lg border border-emerald-800 bg-[#022c22]/70 px-3 py-2 text-xs font-semibold text-emerald-50 hover:bg-emerald-900/60 transition">${escapeHtml(menu.label)}</a>`).join('');
+      document.getElementById('quickActionMini').innerHTML = visible.length
+        ? visible.map(menu => `<a href="${escapeHtml(menu.href)}" class="quick-pill">${flatIcon(menuIcon(menu), 'w-4 h-4')}${escapeHtml(menu.label)}</a>`).join('')
+        : `<span class="quick-pill muted">${flatIcon('menu','w-4 h-4')}Belum ada aksi cepat</span>`;
     }
 
     function renderActivities(items) {
       if (!items.length) {
-        document.getElementById('activityList').innerHTML = `<div class="rounded-lg border border-emerald-900/60 bg-[#064e3b]/30 p-4 text-sm text-emerald-100/60">Belum ada aktivitas yang tercatat.</div>`;
+        document.getElementById('activityList').innerHTML = `<div class="list-card text-sm muted xl:col-span-2">Belum ada aktivitas yang tercatat.</div>`;
         return;
       }
-      document.getElementById('activityList').innerHTML = items.map(item => `
-        <div class="rounded-lg border border-emerald-900/60 bg-[#064e3b]/30 p-4">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div class="min-w-0">
-              <div class="flex flex-wrap items-center gap-2 mb-1">
-                <span class="rounded-full px-2 py-0.5 text-[11px] font-bold ${activityBadge(item.jenis)}">${escapeHtml(item.jenis || '-')}</span>
-                <span class="text-xs text-emerald-100/50">${escapeHtml(item.tanggal || '-')}</span>
-                <span class="text-xs text-emerald-100/40">${escapeHtml(item.txId || '')}</span>
+      document.getElementById('activityList').innerHTML = items.map(item => {
+        const tone = activityTone(item.jenis);
+        return `
+          <div class="list-card">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 flex gap-3">
+                <div class="kpi-icon tone-soft-${tone} tone-text-${tone} !mb-0 !w-10 !h-10">${flatIcon(activityIcon(item.jenis), 'w-5 h-5')}</div>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <span class="badge tone-text-${tone}">${escapeHtml(item.jenis || '-')}</span>
+                    <span class="text-xs muted">${escapeHtml(item.tanggal || '-')}</span>
+                    <span class="text-xs muted-2">${escapeHtml(item.txId || '')}</span>
+                  </div>
+                  <p class="text-sm font-extrabold text-main truncate">${escapeHtml(item.nama || '-')}</p>
+                  <p class="text-xs muted mt-1">${escapeHtml(item.kategori || '-')} ${item.tujuan ? '• ' + escapeHtml(item.tujuan) : ''} • ${escapeHtml(item.petugas || '-')}</p>
+                </div>
               </div>
-              <p class="text-sm font-bold text-white truncate">${escapeHtml(item.nama || '-')}</p>
-              <p class="text-xs text-emerald-100/50 mt-1">${escapeHtml(item.kategori || '-')} ${item.tujuan ? '• ' + escapeHtml(item.tujuan) : ''} • ${escapeHtml(item.petugas || '-')}</p>
-            </div>
-            <div class="text-left sm:text-right flex-shrink-0">
-              <p class="text-sm font-bold text-emerald-50">${escapeHtml(item.qty || '-')} ${escapeHtml(item.satuan || '')}</p>
+              <div class="text-right flex-shrink-0">
+                <p class="text-sm font-extrabold text-main">${escapeHtml(item.qty || '-')}</p>
+                <p class="text-xs muted">${escapeHtml(item.satuan || '')}</p>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function showToast(message, type = 'success') {
       const toast = document.getElementById('customToast');
+      const title = document.getElementById('toastTitle');
+      const iconWrap = document.getElementById('toastIconWrap');
       document.getElementById('toastMessage').textContent = message;
-      toast.className = type === 'success'
-        ? 'toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md'
-        : 'toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md';
-      setTimeout(() => toast.classList.remove('show'), 4000);
+      const ok = type === 'success';
+      title.textContent = ok ? 'Berhasil' : 'Perhatian';
+      iconWrap.className = ok
+        ? 'kpi-icon tone-soft-emerald tone-text-emerald !mb-0 !w-9 !h-9'
+        : 'kpi-icon tone-soft-rose tone-text-rose !mb-0 !w-9 !h-9';
+      iconWrap.innerHTML = flatIcon(ok ? 'check' : 'alert', 'w-5 h-5');
+      toast.className = ok ? 'toast show toast-success' : 'toast show toast-error';
+      clearTimeout(window.__apjToastTimer);
+      window.__apjToastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
     const modal = document.getElementById('logoutModal');
@@ -510,35 +844,90 @@
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>'"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[ch]));
     }
-    function toneSoftBg(tone) {
-      return { blue:'bg-teal-500/10', emerald:'bg-emerald-500/10', rose:'bg-rose-500/10', amber:'bg-yellow-500/10', violet:'bg-cyan-500/10', slate:'bg-emerald-950/50' }[tone] || 'bg-emerald-950/50';
+    function normalizeTone(tone) {
+      const t = String(tone || '').toLowerCase();
+      if (['blue','emerald','rose','amber','violet','cyan','slate'].includes(t)) return t;
+      if (t === 'green') return 'emerald';
+      if (t === 'red') return 'rose';
+      if (t === 'yellow' || t === 'orange') return 'amber';
+      return 'blue';
     }
-    function toneBorder(tone) {
-      return { blue:'border-teal-400/20', emerald:'border-emerald-400/25', rose:'border-rose-400/20', amber:'border-yellow-400/25', violet:'border-cyan-400/20', slate:'border-emerald-900/60' }[tone] || 'border-emerald-900/60';
+    function toneIcon(tone) {
+      return { blue:'activity', emerald:'check', rose:'alert', amber:'warning', violet:'spark', cyan:'store', slate:'menu' }[tone] || 'activity';
     }
-    function toneText(tone) {
-      return { blue:'text-teal-300', emerald:'text-emerald-300', rose:'text-rose-300', amber:'text-yellow-300', violet:'text-cyan-300', slate:'text-emerald-50' }[tone] || 'text-emerald-50';
-    }
-    function toneBg(tone) {
-      return { blue:'bg-teal-400/20', emerald:'bg-emerald-400/20', rose:'bg-rose-400/20', amber:'bg-yellow-400/20', violet:'bg-cyan-400/20', slate:'bg-emerald-400/15' }[tone] || 'bg-emerald-400/15';
-    }
-    function toneDot(tone) {
-      return { blue:'bg-teal-300', emerald:'bg-emerald-300', rose:'bg-rose-300', amber:'bg-yellow-300', violet:'bg-cyan-300', slate:'bg-emerald-300' }[tone] || 'bg-emerald-300';
-    }
-    function activityBadge(jenis) {
+    function activityTone(jenis) {
       const j = String(jenis || '').toLowerCase();
-      if (j.includes('input')) return 'bg-emerald-500/10 text-emerald-300 border border-emerald-400/20';
-      if (j.includes('output')) return 'bg-rose-500/10 text-rose-300 border border-rose-400/20';
-      if (j.includes('produksi')) return 'bg-yellow-500/10 text-yellow-300 border border-yellow-400/20';
-      if (j.includes('opname')) return 'bg-cyan-500/10 text-cyan-300 border border-cyan-400/20';
-      if (j.includes('transfer')) return 'bg-teal-500/10 text-teal-300 border border-teal-400/20';
-      return 'bg-emerald-500/10 text-emerald-100/80 border border-emerald-400/20';
+      if (j.includes('input')) return 'emerald';
+      if (j.includes('output')) return 'rose';
+      if (j.includes('produksi')) return 'amber';
+      if (j.includes('opname')) return 'violet';
+      if (j.includes('transfer')) return 'blue';
+      if (j.includes('outlet')) return 'cyan';
+      return 'slate';
+    }
+    function activityIcon(jenis) {
+      const j = String(jenis || '').toLowerCase();
+      if (j.includes('input')) return 'input';
+      if (j.includes('output')) return 'output';
+      if (j.includes('produksi')) return 'chef';
+      if (j.includes('opname')) return 'opname';
+      if (j.includes('transfer')) return 'transfer';
+      if (j.includes('outlet')) return 'store';
+      return 'activity';
+    }
+    function menuIcon(menu) {
+      const text = `${menu.href || ''} ${menu.label || ''}`.toLowerCase();
+      if (text.includes('input')) return 'input';
+      if (text.includes('output')) return 'output';
+      if (text.includes('transfer')) return 'transfer';
+      if (text.includes('produk-outlet') || text.includes('outlet')) return 'store';
+      if (text.includes('opname')) return 'opname';
+      if (text.includes('lihat') || text.includes('stok')) return 'stock';
+      if (text.includes('riwayat')) return 'history';
+      if (text.includes('admin')) return 'admin';
+      return 'menu';
+    }
+    function menuTone(menu) {
+      const text = `${menu.href || ''} ${menu.label || ''}`.toLowerCase();
+      if (text.includes('input')) return 'blue';
+      if (text.includes('output')) return 'rose';
+      if (text.includes('transfer')) return 'violet';
+      if (text.includes('produk-outlet') || text.includes('outlet')) return 'cyan';
+      if (text.includes('opname')) return 'amber';
+      if (text.includes('lihat')) return 'emerald';
+      if (text.includes('riwayat')) return 'blue';
+      if (text.includes('admin')) return 'violet';
+      return 'slate';
+    }
+
+    function navIcon(name) { return flatIcon(name, 'nav-icon'); }
+
+    function flatIcon(name, cls = 'w-5 h-5') {
+      const icons = {
+        dashboard: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-4H4v4Z"/>',
+        input: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5"/>',
+        output: '<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0-5-5m5 5-5 5"/>',
+        transfer: '<path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"/>',
+        store: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16l-1.4-4.2A2 2 0 0016.7 4H7.3a2 2 0 00-1.9 1.8L4 10Zm2 0v9h12v-9M9 19v-5h6v5"/>',
+        opname: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5h6m-7 4h8m-8 4h5m-7 8h12a2 2 0 002-2V7l-4-4H6a2 2 0 00-2 2v14a2 2 0 002 2Z"/>',
+        stock: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 7c0 1.7 3.6 3 8 3s8-1.3 8-3-3.6-3-8-3-8 1.3-8 3Zm0 0v5c0 1.7 3.6 3 8 3s8-1.3 8-3V7M4 12v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5"/>',
+        history: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 101.9-5.2M4 5v5h5m3-2v5l3 2"/>',
+        admin: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4Zm0 7a2 2 0 100-4 2 2 0 000 4Zm-4 7a4 4 0 018 0"/>',
+        activity: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 13h4l2-6 4 10 2-4h4"/>',
+        chef: '<path stroke-linecap="round" stroke-linejoin="round" d="M7 11a4 4 0 114-6 4 4 0 114 6v8H7v-8Zm0 4h10"/>',
+        alert: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M5 20h14a2 2 0 001.7-3L13.7 5a2 2 0 00-3.4 0L3.3 17A2 2 0 005 20Z"/>',
+        warning: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v5m0 4h.01M10.3 4.8 2.9 17.5A2 2 0 004.6 20h14.8a2 2 0 001.7-2.5L13.7 4.8a2 2 0 00-3.4 0Z"/>',
+        check: '<path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/>',
+        menu: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/>',
+        moon: '<path stroke-linecap="round" stroke-linejoin="round" d="M20 15.5A8.5 8.5 0 018.5 4 7 7 0 1020 15.5Z"/>',
+        sun: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 4V2m0 20v-2m8-8h2M2 12h2m14.4-6.4 1.4-1.4M4.2 19.8l1.4-1.4m0-12.8L4.2 4.2m15.6 15.6-1.4-1.4M12 16a4 4 0 100-8 4 4 0 000 8Z"/>',
+        spark: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Zm6 11 .8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>'
+      };
+      return `<svg class="${cls}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">${icons[name] || icons.menu}</svg>`;
     }
   </script>
 
-
   <script>
-    // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
     (function(){
       function headersFor(table){
         return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
@@ -563,22 +952,6 @@
         var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
         obs.observe(document.body, { childList:true, subtree:true });
       });
-    })();
-  </script>
-
-
-
-  <script>
-    (function showAdminMenuForAuthorizedRoles() {
-      const adminMenuLink = document.getElementById('adminMenuLink');
-      if (!adminMenuLink) return;
-
-      const level = String(localStorage.getItem('APJ_USER_LEVEL') || '').trim().toLowerCase();
-      const allowedLevels = ['owner', 'superadmin', 'super admin', 'supervisor'];
-
-      if (allowedLevels.includes(level)) {
-        adminMenuLink.classList.remove('hidden');
-      }
     })();
   </script>
 </body>
