@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transfer Produk Outlet | APJ Inventori v14.9.1</title>
+  <title>Transfer Produk Outlet | APJ Inventori v14.9.2</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -30,6 +30,8 @@
       #printAreaTransfer { display: block !important; color: black !important; }
       body.print-transfer-a4 #printAreaTransfer { font-family: 'Times New Roman', serif; }
       body.print-transfer-58 #printAreaTransfer { width: 54mm; max-width: 54mm; font-family: Arial, sans-serif; font-size: 8.2px; line-height: 1.16; page-break-inside: avoid; break-inside: avoid; }
+      body.print-transfer-58 .sj-page { page-break-inside: avoid; break-inside: avoid; padding-bottom: 5px; margin-bottom: 5px; border-bottom: 1px dashed #000; }
+      body.print-transfer-58 .sj-page:last-child { border-bottom: none; margin-bottom: 0; }
       .sj-kop { text-align: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
       .sj-title { font-size: 20pt; font-weight: bold; letter-spacing: .5px; }
       .sj-subtitle { font-size: 12pt; font-weight: bold; margin-top: 2px; }
@@ -42,25 +44,27 @@
       .sj-table td { text-align: center; vertical-align: top; }
       .sj-table .sj-name-cell { text-align: left; font-weight: 600; }
       body.print-transfer-a4 #printAreaTransfer { width: 184mm; max-width: 184mm; margin: 0 auto; }
-      body.print-transfer-a4 .sj-table { table-layout: fixed; font-size: 7.7pt; width: 100%; }
-      body.print-transfer-a4 .sj-table th, body.print-transfer-a4 .sj-table td { padding: 2.6px 2px; line-height: 1.12; }
-      body.print-transfer-a4 .sj-table th { font-size: 7.2pt; }
+      body.print-transfer-a4 .sj-page { min-height: 276mm; display: flex; flex-direction: column; page-break-after: always; break-after: page; }
+      body.print-transfer-a4 .sj-page:last-child { page-break-after: auto; break-after: auto; }
+      body.print-transfer-a4 .sj-table { table-layout: fixed; font-size: 8pt; width: 100%; }
+      body.print-transfer-a4 .sj-table th, body.print-transfer-a4 .sj-table td { padding: 3px 2.4px; line-height: 1.18; }
+      body.print-transfer-a4 .sj-table th { font-size: 7.3pt; }
       body.print-transfer-a4 .sj-table .sj-name-cell { padding-left: 5px; }
       body.print-transfer-a4 .sj-table th:nth-child(1), body.print-transfer-a4 .sj-table td:nth-child(1) { width: 7mm; }
-      body.print-transfer-a4 .sj-table th:nth-child(2), body.print-transfer-a4 .sj-table td:nth-child(2) { width: 82mm; }
-      body.print-transfer-a4 .sj-table th:nth-child(3), body.print-transfer-a4 .sj-table td:nth-child(3) { width: 19mm; }
-      body.print-transfer-a4 .sj-table th:nth-child(4), body.print-transfer-a4 .sj-table td:nth-child(4) { width: 20mm; }
-      body.print-transfer-a4 .sj-table th:nth-child(5), body.print-transfer-a4 .sj-table td:nth-child(5) { width: 20mm; }
-      body.print-transfer-a4 .sj-table th:nth-child(6), body.print-transfer-a4 .sj-table td:nth-child(6) { width: 20mm; }
-      body.print-transfer-a4 .sj-table th:nth-child(7), body.print-transfer-a4 .sj-table td:nth-child(7) { width: 20mm; }
+      body.print-transfer-a4 .sj-table th:nth-child(2), body.print-transfer-a4 .sj-table td:nth-child(2) { width: 77mm; }
+      body.print-transfer-a4 .sj-table th:nth-child(3), body.print-transfer-a4 .sj-table td:nth-child(3) { width: 18mm; }
+      body.print-transfer-a4 .sj-table th:nth-child(4), body.print-transfer-a4 .sj-table td:nth-child(4) { width: 18mm; }
+      body.print-transfer-a4 .sj-table th:nth-child(5), body.print-transfer-a4 .sj-table td:nth-child(5) { width: 18mm; }
+      body.print-transfer-a4 .sj-table th:nth-child(6), body.print-transfer-a4 .sj-table td:nth-child(6) { width: 19mm; }
+      body.print-transfer-a4 .sj-table th:nth-child(7), body.print-transfer-a4 .sj-table td:nth-child(7) { width: 19mm; }
       body.print-transfer-a4 .sj-kop { padding-bottom: 4px; margin-bottom: 7px; }
       body.print-transfer-a4 .sj-title { font-size: 15pt; }
       body.print-transfer-a4 .sj-subtitle { font-size: 9.5pt; }
       body.print-transfer-a4 .sj-meta { font-size: 8.2pt; margin: 6px 0 8px; gap: 2px 18px; }
       body.print-transfer-a4 .sj-note { font-size: 7.8pt; margin-top: 5px; }
-      body.print-transfer-a4 .sj-sign { margin-top: 18px; gap: 14px; }
+      body.print-transfer-a4 .sj-sign { margin-top: auto; padding-top: 12mm; gap: 14px; }
       body.print-transfer-a4 .sj-sign-box { font-size: 8pt; }
-      body.print-transfer-a4 .sj-sign-name { margin-top: 60px; padding-top: 3px; }
+      body.print-transfer-a4 .sj-sign-name { margin-top: 18mm; padding-top: 3px; }
       .sj-note { font-size: 9pt; margin-top: 10px; }
       .sj-sign { display: flex; justify-content: space-between; gap: 18px; margin-top: 28px; page-break-inside: avoid; }
       .sj-sign-box { width: 33.333%; text-align: center; font-size: 10pt; }
@@ -140,37 +144,14 @@
           <h3 id="kpiOutletStock" class="text-2xl font-bold text-sky-300 mt-1">0</h3>
         </div>
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
-          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Status</p>
-          <h3 id="kpiStatus" class="text-lg font-bold text-amber-300 mt-2">Pilih Outlet</h3>
-        </div>
-      </div>
-
-      <div class="bg-slate-950 border border-violet-900/40 rounded-xl p-4 sm:p-5 shadow-xl mb-6">
-        <div class="mb-4">
-          <p class="text-xs font-bold uppercase tracking-wider text-violet-300 mb-1">Cetak Surat Jalan Tersimpan</p>
-          <h3 class="text-lg font-bold text-white">Print berdasarkan tanggal & outlet</h3>
-          <p class="text-xs text-slate-500 mt-1">Simpan transfer dulu, lalu cetak surat jalan dari data yang sudah masuk database. Kalau ada transfer pagi dan siang, pilih ID transfer yang mau dicetak.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-          <div class="md:col-span-3">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal SJ</label>
-            <input type="date" id="printTanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
-          </div>
-          <div class="md:col-span-3">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Outlet</label>
-            <select id="printOutletSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Memuat outlet...</option></select>
-          </div>
-          <div class="md:col-span-6">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Dokumen Transfer</label>
-            <select id="printTxSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Klik Muat Data Print dulu...</option></select>
-          </div>
-        </div>
-        <div class="mt-4 pt-4 border-t border-slate-800">
-          <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Aksi Print</p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <button type="button" onclick="loadTransferPrintDocs()" class="h-11 inline-flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold border border-slate-700 transition-colors">Muat Data</button>
-            <button type="button" onclick="printSavedSuratJalan('a4')" class="h-11 inline-flex items-center justify-center rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold shadow-lg shadow-violet-600/20 transition-colors">Print A4</button>
-            <button type="button" onclick="printSavedSuratJalan('58')" class="h-11 inline-flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold border border-slate-700 transition-colors">Print 58mm</button>
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Status</p>
+              <h3 id="kpiStatus" class="text-lg font-bold text-amber-300 mt-2">Pilih Outlet</h3>
+            </div>
+            <button type="button" onclick="openSuratJalanModal()" class="shrink-0 inline-flex items-center justify-center rounded-lg bg-violet-600 hover:bg-violet-700 px-3 py-2 text-xs font-bold text-white shadow-lg shadow-violet-600/20 transition-colors">
+              Surat Jalan
+            </button>
           </div>
         </div>
       </div>
@@ -237,6 +218,53 @@
   </main>
 
 
+  <div id="suratJalanModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onclick="closeSuratJalanModal()"></div>
+    <div class="relative w-full max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
+      <div class="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-800 bg-slate-900/95 px-5 py-4 backdrop-blur">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-violet-300">Surat Jalan</p>
+          <h3 class="text-xl font-extrabold text-white">Cetak transfer tersimpan</h3>
+          <p class="mt-1 text-xs text-slate-400">Pilih tanggal dan outlet. Dokumen otomatis dimuat tanpa tombol muat data.</p>
+        </div>
+        <button type="button" onclick="closeSuratJalanModal()" class="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-bold text-white hover:bg-slate-700">Tutup</button>
+      </div>
+
+      <div class="space-y-4 p-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal SJ</label>
+            <input type="date" id="printTanggalInput" onchange="handlePrintFilterChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Outlet</label>
+            <select id="printOutletSelect" onchange="handlePrintFilterChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Memuat outlet...</option></select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Dokumen Transfer</label>
+            <select id="printTxSelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Pilih outlet dulu...</option></select>
+          </div>
+        </div>
+
+        <div id="printLoadStatus" class="rounded-lg border border-slate-800 bg-slate-950 px-4 py-3 text-xs text-slate-400">Pilih tanggal dan outlet untuk memuat dokumen.</div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <button type="button" onclick="addSelectedPrintGroupToQueue()" class="h-11 inline-flex items-center justify-center rounded-lg bg-emerald-600 hover:bg-emerald-700 px-4 text-sm font-bold text-white transition-colors">+ Tambah Outlet</button>
+          <button type="button" onclick="printSavedSuratJalan('a4')" class="h-11 inline-flex items-center justify-center rounded-lg bg-violet-600 hover:bg-violet-700 px-4 text-sm font-bold text-white shadow-lg shadow-violet-600/20 transition-colors">Print A4</button>
+          <button type="button" onclick="printSavedSuratJalan('58')" class="h-11 inline-flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 px-4 text-sm font-bold text-white border border-slate-700 transition-colors">Print 58mm</button>
+          <button type="button" onclick="clearPrintQueue()" class="h-11 inline-flex items-center justify-center rounded-lg bg-slate-950 hover:bg-slate-800 px-4 text-sm font-bold text-slate-200 border border-slate-700 transition-colors">Kosongkan</button>
+        </div>
+
+        <div>
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Daftar surat jalan yang akan dicetak</p>
+          <div id="printQueueList" class="space-y-2 rounded-xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-400">
+            Belum ada outlet ditambahkan. Kalau langsung Print tanpa tambah outlet, sistem mencetak dokumen yang sedang dipilih.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="printAreaTransfer" style="display:none;">
     <div class="sj-kop">
       <div class="sj-title">AMPERA PAK JENGGOT</div>
@@ -286,6 +314,8 @@
     let globalPics = [];
     let printTransferGroups = [];
     let printTransferAllGroup = null;
+    let printQueue = [];
+    let printFilterTimer = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
@@ -542,35 +572,91 @@
       return response.json();
     }
 
-    async function loadTransferPrintDocs() {
+    function openSuratJalanModal() {
+      const modal = document.getElementById('suratJalanModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      const tanggalInput = document.getElementById('printTanggalInput');
+      const outletPrint = document.getElementById('printOutletSelect');
+      const outletMain = document.getElementById('outletSelect')?.value || '';
+      if (!tanggalInput.value) tanggalInput.value = document.getElementById('tanggalInput')?.value || new Date().toISOString().split('T')[0];
+      if (outletMain && outletPrint) outletPrint.value = outletMain;
+      handlePrintFilterChange(true);
+    }
+
+    function closeSuratJalanModal() {
+      const modal = document.getElementById('suratJalanModal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function setPrintLoadStatus(message, type = 'info') {
+      const box = document.getElementById('printLoadStatus');
+      if (!box) return;
+      const cls = type === 'success'
+        ? 'rounded-lg border border-emerald-800 bg-emerald-950/30 px-4 py-3 text-xs text-emerald-300'
+        : type === 'error'
+          ? 'rounded-lg border border-rose-800 bg-rose-950/30 px-4 py-3 text-xs text-rose-300'
+          : 'rounded-lg border border-slate-800 bg-slate-950 px-4 py-3 text-xs text-slate-400';
+      box.className = cls;
+      box.textContent = message;
+    }
+
+    function handlePrintFilterChange(immediate = false) {
+      clearTimeout(printFilterTimer);
+      if (immediate) {
+        loadTransferPrintDocs(true);
+        return;
+      }
+      setPrintLoadStatus('Memuat dokumen transfer...', 'info');
+      printFilterTimer = setTimeout(() => loadTransferPrintDocs(true), 250);
+    }
+
+    async function loadTransferPrintDocs(silent = false) {
+      const sel = document.getElementById('printTxSelect');
       try {
         const tanggal = document.getElementById('printTanggalInput').value;
         const outlet = document.getElementById('printOutletSelect').value;
-        if (!tanggal) throw new Error('Tanggal print wajib diisi.');
-        if (!outlet) throw new Error('Outlet print wajib dipilih.');
+        if (!tanggal || !outlet) {
+          printTransferGroups = [];
+          printTransferAllGroup = null;
+          if (sel) sel.innerHTML = '<option value="">Pilih tanggal dan outlet dulu...</option>';
+          setPrintLoadStatus('Pilih tanggal dan outlet untuk memuat dokumen.', 'info');
+          return;
+        }
 
+        if (sel) sel.innerHTML = '<option value="">Memuat dokumen...</option>';
         const result = await fetchApi({ action: 'getTransferPrintData', tanggal, outlet });
         if (!result.success) throw new Error(result.message || 'Gagal memuat data print.');
         printTransferGroups = result.groups || [];
         printTransferAllGroup = result.allGroup || null;
         renderPrintTxOptions();
-        showToast(printTransferGroups.length ? `Ditemukan ${printTransferGroups.length} dokumen transfer.` : 'Belum ada transfer tersimpan pada tanggal/outlet itu.', printTransferGroups.length ? 'success' : 'error');
+        const msg = printTransferGroups.length
+          ? `Ditemukan ${printTransferGroups.length} dokumen transfer untuk ${outlet}. Pilih dokumen, lalu tambah outlet atau langsung print.`
+          : `Belum ada transfer tersimpan untuk ${outlet} pada tanggal ini.`;
+        setPrintLoadStatus(msg, printTransferGroups.length ? 'success' : 'error');
+        if (!silent) showToast(msg, printTransferGroups.length ? 'success' : 'error');
       } catch (error) {
         printTransferGroups = [];
         printTransferAllGroup = null;
         renderPrintTxOptions();
-        showToast(error.message || 'Data print gagal dimuat.', 'error');
+        setPrintLoadStatus(error.message || 'Data print gagal dimuat.', 'error');
+        if (!silent) showToast(error.message || 'Data print gagal dimuat.', 'error');
       }
     }
 
     function renderPrintTxOptions() {
       const sel = document.getElementById('printTxSelect');
+      if (!sel) return;
       if (!printTransferGroups.length) {
         sel.innerHTML = '<option value="">Tidak ada data transfer tersimpan</option>';
         return;
       }
       const allOption = (printTransferGroups.length > 1 && printTransferAllGroup)
-        ? '<option value="ALL">Gabungan semua transfer tanggal/outlet ini</option>'
+        ? '<option value="ALL">Gabungan semua transfer outlet ini</option>'
         : '';
       sel.innerHTML = allOption + printTransferGroups.map(g => {
         const label = `${g.txId} • ${g.totalItem || (g.rows || []).length} item • ${formatNumber(g.totalQty || 0)} qty • PIC ${g.pic || '-'}`;
@@ -578,17 +664,68 @@
       }).join('');
     }
 
+    function clonePrintGroup(group) {
+      return JSON.parse(JSON.stringify(group || {}));
+    }
+
     function getSelectedPrintGroup() {
       const selected = document.getElementById('printTxSelect').value;
-      if (!printTransferGroups.length) throw new Error('Muat data print dulu.');
+      if (!printTransferGroups.length) throw new Error('Belum ada data print. Pilih tanggal dan outlet yang memiliki transfer tersimpan.');
       if (!selected) throw new Error('Pilih dokumen transfer yang mau dicetak.');
       if (selected === 'ALL') {
         if (printTransferAllGroup) return printTransferAllGroup;
-        throw new Error('Data gabungan belum tersedia. Klik Muat Data Print ulang.');
+        throw new Error('Data gabungan belum tersedia. Pilih outlet ulang.');
       }
       const found = printTransferGroups.find(g => g.txId === selected);
-      if (!found) throw new Error('Dokumen transfer tidak ditemukan. Klik Muat Data Print ulang.');
+      if (!found) throw new Error('Dokumen transfer tidak ditemukan. Pilih outlet ulang.');
       return found;
+    }
+
+    function addSelectedPrintGroupToQueue() {
+      try {
+        const group = clonePrintGroup(getSelectedPrintGroup());
+        const key = `${group.outlet || '-'}__${group.txId || 'ALL'}__${group.tanggal || ''}`;
+        group.queueKey = key;
+        const exists = printQueue.some(g => g.queueKey === key);
+        if (!exists) printQueue.push(group);
+        renderPrintQueue();
+        showToast(exists ? 'Surat jalan outlet ini sudah ada di daftar print.' : `Surat jalan ${group.outlet || '-'} ditambahkan.`, exists ? 'error' : 'success');
+      } catch (error) {
+        showToast(error.message || 'Gagal tambah surat jalan.', 'error');
+      }
+    }
+
+    function removePrintQueueItem(key) {
+      printQueue = printQueue.filter(g => g.queueKey !== key);
+      renderPrintQueue();
+    }
+
+    function clearPrintQueue() {
+      printQueue = [];
+      renderPrintQueue();
+    }
+
+    function renderPrintQueue() {
+      const box = document.getElementById('printQueueList');
+      if (!box) return;
+      if (!printQueue.length) {
+        box.innerHTML = 'Belum ada outlet ditambahkan. Kalau langsung Print tanpa tambah outlet, sistem mencetak dokumen yang sedang dipilih.';
+        return;
+      }
+      box.innerHTML = printQueue.map((g, i) => `
+        <div class="flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2">
+          <div class="min-w-0">
+            <div class="font-bold text-white">${i + 1}. ${escapeHtml(g.outlet || '-')}</div>
+            <div class="text-xs text-slate-400 truncate">${escapeHtml(g.txId || 'Gabungan')} • ${escapeHtml(dateToDisplay(g.tanggal))} • ${escapeHtml(formatNumber(g.totalQty || 0))} qty</div>
+          </div>
+          <button type="button" onclick="removePrintQueueItem('${escapeHtml(g.queueKey)}')" class="shrink-0 rounded-md border border-rose-900/60 bg-rose-950/40 px-2 py-1 text-xs font-bold text-rose-300 hover:bg-rose-900/50">Hapus</button>
+        </div>
+      `).join('');
+    }
+
+    function getGroupsForPrint() {
+      if (printQueue.length) return printQueue.map(clonePrintGroup);
+      return [clonePrintGroup(getSelectedPrintGroup())];
     }
 
     function setDynamicPrintPage(mode) {
@@ -604,61 +741,88 @@
         : '@media print { @page { size: A4 portrait; margin: 8mm; } }';
     }
 
+    function getA4Rows(group) {
+      const rows = group.rows || [];
+      return (group.a4Rows && group.a4Rows.length) ? group.a4Rows : rows.map(r => ({
+        namaProduk: r.namaProduk,
+        satuan: r.satuan,
+        stokAkhir: 0,
+        tambahProduk: r.qtyTransfer,
+        totalProduk: r.qtyTransfer,
+        produkTerjual: '',
+        produkAkhir: ''
+      }));
+    }
+
+    function buildSuratJalanHtml(group, mode) {
+      const is58 = mode === '58' || mode === '80';
+      const now = new Date();
+      const rows = group.rows || [];
+      const a4Rows = getA4Rows(group);
+      const bodyRows = (is58 ? rows : a4Rows).map((r, i) => is58 ? `
+        <tr>
+          <td>${i + 1}</td>
+          <td style="text-align:left;">
+            <div class="sj-item-name">${escapeHtml(r.namaProduk || '-')}</div>
+            <div class="sj-item-detail">Qty: <b>${escapeHtml(formatNumber(r.qtyTransfer))}</b> ${escapeHtml(r.satuan || '')}</div>
+          </td>
+        </tr>
+      ` : `
+        <tr>
+          <td>${i + 1}</td>
+          <td class="sj-name-cell">${escapeHtml(r.namaProduk || '-')}</td>
+          <td>${escapeHtml(formatNumber(r.stokAkhir || 0))}</td>
+          <td>${escapeHtml(formatNumber(r.tambahProduk || 0))}</td>
+          <td>${escapeHtml(formatNumber(r.totalProduk || 0))}</td>
+          <td></td>
+          <td></td>
+        </tr>
+      `).join('');
+
+      const head = is58
+        ? '<tr><th style="width:18px;">No</th><th>Detail Produk</th></tr>'
+        : '<tr><th>No</th><th>Nama Produk</th><th>Stok<br>Akhir</th><th>Tambah<br>Produk</th><th>Total<br>Produk</th><th>Produk<br>Terjual</th><th>Produk<br>Akhir</th></tr>';
+
+      return `
+        <section class="sj-page">
+          <div class="sj-kop">
+            <div class="sj-title">AMPERA PAK JENGGOT</div>
+            <div class="sj-subtitle">SURAT JALAN TRANSFER PRODUK OUTLET</div>
+          </div>
+          <div class="sj-meta">
+            <div>No. Surat Jalan <b>${escapeHtml(buildSuratJalanNumber(group, mode))}</b></div>
+            <div>Tanggal <b>${escapeHtml(dateToDisplay(group.tanggal))}</b></div>
+            <div>Outlet Tujuan <b>${escapeHtml(group.outlet || '-')}</b></div>
+            <div>PIC Penerima <b>${escapeHtml(group.pic || '-')}</b></div>
+            <div>Petugas Kirim <b>${escapeHtml(group.petugas || '-')}</b></div>
+            <div>Dicetak <b>${escapeHtml(now.toLocaleString('id-ID'))}</b></div>
+          </div>
+          <table class="sj-table">
+            <thead>${head}</thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+          <div class="sj-note">Catatan: ${escapeHtml(group.catatan || '-')}</div>
+          <div class="sj-sign">
+            <div class="sj-sign-box"><div>Mengetahui</div><div class="sj-sign-name">Supervisor</div></div>
+            <div class="sj-sign-box"><div>Pengirim</div><div class="sj-sign-name">${escapeHtml(group.petugas || 'Petugas')}</div></div>
+            <div class="sj-sign-box"><div>Penerima</div><div class="sj-sign-name">${escapeHtml(group.pic || 'PIC')}</div></div>
+          </div>
+        </section>
+      `;
+    }
+
     function printSavedSuratJalan(mode) {
       try {
-        const group = getSelectedPrintGroup();
-        const rows = group.rows || [];
-        if (!rows.length) throw new Error('Dokumen ini tidak memiliki baris produk.');
-        const now = new Date();
+        const groups = getGroupsForPrint();
+        if (!groups.length) throw new Error('Belum ada surat jalan yang dipilih.');
+        groups.forEach(g => {
+          if (!(g.rows || []).length) throw new Error(`Dokumen ${g.outlet || '-'} tidak memiliki baris produk.`);
+        });
         const is58 = mode === '58' || mode === '80';
         setDynamicPrintPage(is58 ? '58' : 'a4');
         document.body.classList.remove('print-transfer-a4', 'print-transfer-58');
         document.body.classList.add(is58 ? 'print-transfer-58' : 'print-transfer-a4');
-
-        document.getElementById('printSjNo').textContent = buildSuratJalanNumber(group, mode);
-        document.getElementById('printSjTanggal').textContent = dateToDisplay(group.tanggal);
-        document.getElementById('printSjOutlet').textContent = group.outlet || '-';
-        document.getElementById('printSjPic').textContent = group.pic || '-';
-        document.getElementById('printSjPetugas').textContent = group.petugas || '-';
-        document.getElementById('printSjWaktu').textContent = now.toLocaleString('id-ID');
-        document.getElementById('printSjPengirim').textContent = group.petugas || 'Petugas';
-        document.getElementById('printSjPenerima').textContent = group.pic || 'PIC';
-        document.getElementById('printSjCatatan').textContent = `Catatan: ${group.catatan || '-'}`;
-
-        document.getElementById('printSjHead').innerHTML = is58
-          ? '<th style="width:18px;">No</th><th>Detail Produk</th>'
-          : '<th>No</th><th>Nama Produk</th><th>Stok<br>Akhir</th><th>Tambah<br>Produk</th><th>Total<br>Produk</th><th>Produk<br>Terjual</th><th>Produk<br>Akhir</th>';
-
-        const a4Rows = (group.a4Rows && group.a4Rows.length) ? group.a4Rows : rows.map(r => ({
-          namaProduk: r.namaProduk,
-          satuan: r.satuan,
-          stokAkhir: 0,
-          tambahProduk: r.qtyTransfer,
-          totalProduk: r.qtyTransfer,
-          produkTerjual: '',
-          produkAkhir: ''
-        }));
-
-        document.getElementById('printSjBody').innerHTML = (is58 ? rows : a4Rows).map((r, i) => is58 ? `
-          <tr>
-            <td>${i + 1}</td>
-            <td style="text-align:left;">
-              <div class="sj-item-name">${escapeHtml(r.namaProduk || '-')}</div>
-              <div class="sj-item-detail">Qty: <b>${escapeHtml(formatNumber(r.qtyTransfer))}</b> ${escapeHtml(r.satuan || '')}</div>
-            </td>
-          </tr>
-        ` : `
-          <tr>
-            <td>${i + 1}</td>
-            <td class="sj-name-cell">${escapeHtml(r.namaProduk || '-')}</td>
-            <td>${escapeHtml(formatNumber(r.stokAkhir || 0))}</td>
-            <td>${escapeHtml(formatNumber(r.tambahProduk || 0))}</td>
-            <td>${escapeHtml(formatNumber(r.totalProduk || 0))}</td>
-            <td></td>
-            <td></td>
-          </tr>
-        `).join('');
-
+        document.getElementById('printAreaTransfer').innerHTML = groups.map(g => buildSuratJalanHtml(g, mode)).join('');
         window.print();
         setTimeout(() => document.body.classList.remove('print-transfer-a4', 'print-transfer-58'), 500);
       } catch (error) {
