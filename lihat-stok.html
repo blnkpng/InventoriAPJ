@@ -1,736 +1,777 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lihat Stok | APJ Inventori</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Stok | APJ Inventori</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
-    .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all 0.4s ease; z-index: 9999; }
-    .toast.show { top: 24px; }
-    .modal-overlay { transition: opacity 0.25s ease-out; }
-    .modal-content { transition: transform 0.25s ease-out, opacity 0.25s ease-out; }
-
+    body { font-family: 'Inter', sans-serif; background-color: #0f172a; margin: 0; padding: 0; }
+    
+    /* ======== LAYOUT KHUSUS PRINT PDF ======== */
     @media print {
-      .web-ui, #modalPrint, #customToast { display: none !important; }
+      /* Sembunyikan UI Web secara Total */
+      .web-ui, #modalPrint { display: none !important; }
+      
+      /* Hapus Header & Footer Bawaan Browser */
       @page { size: A4 portrait; margin: 0; }
+      
       body { background: white !important; color: black !important; }
-      #printArea {
-        display: block !important;
-        padding: 1cm 1.35cm;
+      
+      /* Pembungkus Halaman Cetak (Normal Flow) */
+      #printArea { 
+        display: block !important; 
+        padding: 1cm 1.5cm; 
         box-sizing: border-box;
         font-family: 'Times New Roman', serif;
-        color: black !important;
       }
-      .kop-surat { text-align: center; border-bottom: 3px solid black; padding-bottom: 8px; margin-bottom: 14px; }
+      
+      /* Kop Surat */
+      .kop-surat { text-align: center; border-bottom: 3px solid black; padding-bottom: 8px; margin-bottom: 15px; }
       .kop-title { font-weight: bold; font-size: 20pt; color: black !important; margin-bottom: 2px; }
       .kop-sub { font-style: italic; font-size: 12pt; color: black !important; margin-bottom: 2px; }
-      .kop-nomor { font-size: 10pt; color: black !important; }
-      .print-meta { display: flex; justify-content: space-between; font-size: 10pt; margin: 8px 0 12px; color: black !important; }
-      #printTableContainer { margin-bottom: 28px; }
-      #printTable { width: 100%; border-collapse: collapse; font-size: 9.5pt; color: black !important; }
-      #printTable th, #printTable td { border: 1px solid black !important; padding: 4px 5px !important; color: black !important; }
-      #printTable th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      #printTable td { text-align: center !important; }
-      #printTable td:nth-child(3) { text-align: left !important; }
+      .kop-nomor { font-size: 10pt; font-weight: normal; color: black !important; }
+      
+      /* WADAH TABEL */
+      #printTableContainer { margin-bottom: 30px; } /* Jarak ideal antara tabel dan area TTD */
+      
+      /* TABEL */
+      table { width: 100%; border-collapse: collapse; font-size: 10pt; color: black !important; }
+      th, td { border: 1px solid black !important; padding: 4px !important; color: black !important; }
+      th { background-color: #f0f0f0 !important; text-align: center !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      
+      /* Aturan Isi Tabel */
+      #printTbody td { font-weight: normal !important; text-align: center !important; background: transparent !important; }
+      #printTbody td:nth-child(2) { text-align: left !important; }
+      
+      /* FOOTER / AREA TTD */
       #printFooter { page-break-inside: avoid; }
       .print-loc { text-align: center; margin-bottom: 15px; font-size: 10pt; color: black !important; }
-      .ttd-container { display: flex; justify-content: space-around; width: 100%; gap: 12px; }
+      .ttd-container { display: flex; justify-content: space-around; width: 100%; }
       .ttd-box { text-align: center; width: 33%; color: black !important; }
       .role-label { font-weight: bold; color: black !important; font-size: 10pt; text-transform: uppercase; }
-      .name-label { font-weight: bold; text-decoration: underline; margin-top: 58px; color: black !important; font-size: 10pt; }
+      .name-label { font-weight: bold; text-decoration: underline; margin-top: 60px; color: black !important; font-size: 10pt;}
     }
-
-
-    /* Responsif mobile/tablet */
-    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-    .table-scroll::-webkit-scrollbar { height: 8px; }
-    .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
-    @media (max-width: 1023px) {
-      .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
-      input, select, textarea { font-size: 16px; } /* cegah auto-zoom iOS */
-      main { width: 100%; }
-    }
-
   
 
-    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
-    @media screen and (max-width: 768px) {
-      .table-scroll { overflow-x: visible !important; }
-      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
-      .table-scroll thead { display: none !important; }
-      .table-scroll tbody { display: block !important; width: 100% !important; }
-      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
-      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
-      .table-scroll td:last-child { border-bottom: 0 !important; }
-      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
-      .table-scroll td > * { max-width: 58%; }
-      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
-      .table-scroll .text-center { text-align: right !important; }
-      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
+    /* ================= APJ INVENTORI v15 UI PRO ================= */
+    :root {
+      --apj-blue: #3b82f6;
+      --apj-sky: #38bdf8;
+      --apj-emerald: #34d399;
+      --apj-amber: #f59e0b;
+      --apj-rose: #fb7185;
+      --apj-violet: #a78bfa;
+      --apj-bg: #0f172a;
+      --apj-card: rgba(15, 23, 42, .86);
     }
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(59,130,246,.18), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(167,139,250,.14), transparent 24%),
+        radial-gradient(circle at 80% 100%, rgba(52,211,153,.10), transparent 30%),
+        #0f172a !important;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, rgba(0,0,0,.72), transparent 72%);
+    }
+    aside, main, #customToast, .apj-help-fab, .apj-mobile-menu, .apj-sidebar-backdrop, .apj-guide-modal { position: relative; z-index: 1; }
+    aside {
+      background: linear-gradient(180deg, rgba(2,6,23,.98), rgba(15,23,42,.96)) !important;
+      border-right-color: rgba(51,65,85,.85) !important;
+      box-shadow: 18px 0 50px rgba(0,0,0,.18);
+    }
+    aside nav a {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid transparent;
+    }
+    aside nav a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,.08), transparent 45%);
+      opacity: 0;
+      transform: translateX(-30%);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    aside nav a:hover::after { opacity: 1; transform: translateX(0); }
+    .apj-nav-ico {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      background: rgba(15,23,42,.85);
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .apj-active-link {
+      background: linear-gradient(135deg, rgba(59,130,246,.18), rgba(14,165,233,.08)) !important;
+      border-color: rgba(59,130,246,.35) !important;
+      color: #fff !important;
+      box-shadow: 0 14px 35px rgba(37,99,235,.12);
+    }
+    .apj-card-glow, .bg-slate-950, .bg-slate-900\/80 {
+      box-shadow: 0 22px 70px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .apj-lift, .bg-slate-950.border, .bg-slate-900.border {
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .apj-lift:hover, .bg-slate-950.border:hover {
+      transform: translateY(-2px);
+      border-color: rgba(96,165,250,.35) !important;
+      box-shadow: 0 24px 70px rgba(15,23,42,.38), 0 0 0 1px rgba(96,165,250,.06) inset;
+    }
+    .apj-soft-animate { animation: apjSoftEnter .45s ease-out both; }
+    @keyframes apjSoftEnter { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes apjPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.35); } 50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
+    .apj-help-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 60;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,.35);
+      background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(14,165,233,.9));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 22px 60px rgba(37,99,235,.32);
+      transition: transform .2s ease, filter .2s ease;
+      animation: apjPulse 2.2s ease-in-out infinite;
+    }
+    .apj-help-fab:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.08); }
+    .apj-guide-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .apj-guide-modal.show { display: flex; }
+    .apj-guide-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(2,6,23,.82);
+      backdrop-filter: blur(10px);
+    }
+    .apj-guide-card {
+      position: relative;
+      width: min(760px, 100%);
+      max-height: 90dvh;
+      overflow: auto;
+      border-radius: 24px;
+      border: 1px solid rgba(148,163,184,.22);
+      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
+      box-shadow: 0 30px 120px rgba(0,0,0,.55);
+      padding: 22px;
+      transform: translateY(10px) scale(.98);
+      opacity: 0;
+      transition: transform .24s ease, opacity .24s ease;
+    }
+    .apj-guide-modal.show .apj-guide-card { transform: translateY(0) scale(1); opacity: 1; }
+    .apj-guide-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .apj-guide-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      background: linear-gradient(135deg, rgba(59,130,246,.2), rgba(14,165,233,.10));
+      border: 1px solid rgba(96,165,250,.28);
+    }
+    .apj-guide-steps { display: grid; gap: 10px; margin: 16px 0; }
+    .apj-guide-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(15,23,42,.78);
+      border: 1px solid rgba(71,85,105,.55);
+    }
+    .apj-step-no {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+    }
+    .apj-guide-note {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(245,158,11,.28);
+      background: rgba(120,53,15,.20);
+      color: #fde68a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .apj-guide-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+    .apj-btn-soft {
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(15,23,42,.9);
+      color: #e2e8f0;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .apj-btn-primary {
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      color: white;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 14px 40px rgba(37,99,235,.22);
+    }
+    .apj-mobile-menu {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 70;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.28);
+      background: rgba(2,6,23,.88);
+      color: white;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 18px 45px rgba(0,0,0,.28);
+    }
+    .apj-sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 65;
+      display: none;
+      background: rgba(2,6,23,.68);
+      backdrop-filter: blur(7px);
+    }
+    .apj-sidebar-backdrop.show { display: block; }
+    @media (max-width: 1023px) {
+      body { min-height: 100dvh; }
+      .apj-mobile-menu { display: inline-flex; }
+      aside {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: min(290px, 86vw) !important;
+        z-index: 80 !important;
+        transform: translateX(-105%);
+        transition: transform .28s ease !important;
+      }
+      aside.apj-open { transform: translateX(0) !important; }
+      main header { padding-left: 68px !important; }
+      input, select, textarea { font-size: 16px !important; }
+      .apj-help-fab { right: 14px; bottom: 14px; padding: 11px 13px; }
+      .apj-help-fab span:last-child { display: none; }
+    }
+    @media print {
+      .apj-help-fab, .apj-guide-modal, .apj-mobile-menu, .apj-sidebar-backdrop { display: none !important; }
+      body::before { display: none !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    }
+    /* ================= /APJ INVENTORI v15 UI PRO ================= */
 
   </style>
 </head>
-<body>
-  <!-- Tombol menu mobile: tampil di layar kecil untuk membuka sidebar -->
-  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-  </button>
-  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/70 backdrop-blur-sm lg:hidden"></div>
+<body data-apj-page="lihat-stok.html">
 
-  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert">
-    <div class="ml-3 text-sm font-medium" id="toastMessage"></div>
-  </div>
+  <div class="web-ui flex h-screen overflow-hidden antialiased">
+    
+    <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0">
+      <div class="h-16 flex items-center px-6 border-b border-slate-800 text-white font-bold tracking-wider">APJ INVENTORI</div>
+      <nav class="flex-1 py-4 px-3 space-y-1">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Dashboard</a>
+        <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Input Stok</a>
+        <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Output Stok</a>
+        <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:bg-slate-900 rounded-lg text-sm">Stok Opname</a>
+        <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-600/10 text-emerald-500 rounded-lg text-sm border border-emerald-500/20">Lihat Stok</a>
+      </nav>
+    </aside>
 
-  <div class="web-ui flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
-<aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
-      <div class="h-16 flex items-center px-6 border-b border-slate-800">
-        <div class="flex items-center gap-3 text-emerald-500">
-          <span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span>
-        </div>
-      </div>
-      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
-      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
-      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-emerald-600/10 text-emerald-500 rounded-lg font-medium text-sm transition-colors border border-emerald-500/20">Lihat Stok</a>
-      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
-    </nav>
-  
-    <div class="p-4 border-t border-slate-800">
-      <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-        Logout Sistem
-      </button>
-    </div>
-  </aside>
-
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
-      <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
-        <h2 class="text-base sm:text-lg font-semibold text-emerald-400">Laporan Stok Terkini</h2>
-        <div class="hidden sm:block text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-emerald-400">Memuat...</span></div>
+    <main class="flex-1 flex flex-col bg-slate-900 overflow-y-auto">
+      <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50">
+        <h2 class="text-lg font-semibold text-emerald-400">Laporan Stok Terkini</h2>
       </header>
-
-      <div class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto w-full">
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="lg:col-span-1">
-              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Stok</label>
-              <select id="kategoriSelect" onchange="loadStokData()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none">
-                <option value="" disabled selected>-- Pilih Kategori --</option>
-              </select>
-            </div>
-            <div class="lg:col-span-2">
-              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cari Barang</label>
-              <input id="searchInput" type="text" oninput="renderTable()" placeholder="Cari ID atau nama barang..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-emerald-500 focus:outline-none">
-            </div>
-            <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
-              <button id="btnRefresh" onclick="loadStokData()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed">Refresh</button>
-              <button id="btnSimpanPDF" onclick="bukaModalPrint()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed">PDF</button>
-            </div>
+      <div class="p-8 max-w-[1000px] mx-auto w-full">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
+          <div class="flex flex-col md:flex-row gap-4 mb-8">
+             <select id="kategoriSelect" onchange="loadStokData()" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+              <option value="" disabled selected>-- Pilih Kategori --</option>
+             </select>
+             <button id="btnSimpanPDF" onclick="bukaModalPrint()" class="bg-emerald-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">Simpan Sebagai PDF</button>
           </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-              <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Kategori Aktif</p>
-              <p id="cardKategori" class="text-sm font-semibold text-emerald-400">Belum dipilih</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-              <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Item</p>
-              <p id="cardItem" class="text-2xl font-bold text-white">0</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-              <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Qty</p>
-              <p id="cardQty" class="text-2xl font-bold text-white">0</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-              <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Last Sync</p>
-              <p id="cardSync" class="text-sm text-slate-300">-</p>
-            </div>
-          </div>
-
-          <div id="infoBox" class="mb-4 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg p-3">
-            Pilih kategori untuk memuat stok. Kategori <b>Produksi</b> akan tampil unik per lauk/jadi, bukan duplikat per bahan baku.
-          </div>
-
-          <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll">
-            <table class="w-full text-left border-collapse min-w-[920px]">
-              <thead>
-                <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
-                  <th class="p-4 w-[70px] text-center">No</th>
-                  <th class="p-4 min-w-[140px] text-center">ID Barang</th>
-                  <th class="p-4 min-w-[300px]">Nama Barang</th>
-                  <th class="p-4 min-w-[130px] text-center">Qty Stok</th>
-                  <th class="p-4 min-w-[120px] text-center">Satuan</th>
-                  <th class="p-4 min-w-[130px] text-center">Status</th>
-                  <th class="p-4 min-w-[150px] text-center">Last Update</th>
-                </tr>
-              </thead>
-              <tbody id="tbodyStok">
-                <tr><td colspan="7" class="p-8 text-center text-slate-500">Pilih kategori di atas untuk memuat data stok.</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <p id="tableHint" class="text-xs text-slate-500">Data stok mengikuti perhitungan sheet STOK_AKHIR.</p>
-            <p id="rowsInfo" class="text-xs text-slate-500">0 data tampil</p>
+          <div class="border border-slate-800 rounded-lg overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                  <thead class="bg-slate-900 text-xs text-slate-400 border-b border-slate-800 uppercase">
+                      <tr><th class="p-4 text-center">ID Barang</th><th class="p-4">Nama Barang</th><th class="p-4 text-center">Qty Stok</th><th class="p-4 text-center">Satuan</th></tr>
+                  </thead>
+                  <tbody id="tbodyStok">
+                      <tr><td colspan="4" class="p-6 text-center text-slate-500">Pilih kategori di atas untuk memuat data.</td></tr>
+                  </tbody>
+              </table>
           </div>
         </div>
       </div>
     </main>
   </div>
 
-  <div id="modalPrint" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
-    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeModalPrint()"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-6 w-full max-w-md transform scale-95 opacity-0 modal-content pointer-events-auto">
-      <div class="mb-5">
-        <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-1">Cetak Dokumen</p>
-        <h3 class="text-lg font-bold text-white">Pilih Penandatangan</h3>
-        <p class="text-sm text-slate-400 mt-1">Nama ini akan masuk ke area tanda tangan PDF.</p>
+  <div id="modalPrint" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl w-full max-w-md shadow-2xl">
+      <h3 class="text-white font-bold mb-4">Pilih Penandatangan</h3>
+      
+      <div class="mb-4">
+        <label class="text-xs text-slate-400">Nama Supervisor</label>
+        <select id="modalSup" class="w-full bg-slate-800 p-2.5 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500">
+          <option value="">-- Pilih Supervisor --</option>
+        </select>
       </div>
-
-      <div class="space-y-4 mb-6">
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">Nama Supervisor</label>
-          <select id="modalSup" class="w-full bg-slate-800 p-2.5 rounded-lg text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"><option value="">-- Pilih Supervisor --</option></select>
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">Nama PIC 1</label>
-          <select id="modalPic1" class="w-full bg-slate-800 p-2.5 rounded-lg text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"><option value="">-- Pilih PIC 1 --</option></select>
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">Nama PIC 2 <span class="text-slate-500">(Opsional)</span></label>
-          <select id="modalPic2" class="w-full bg-slate-800 p-2.5 rounded-lg text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500"><option value="">-- Tanpa PIC 2 --</option></select>
-        </div>
+      
+      <div class="mb-4">
+        <label class="text-xs text-slate-400">Nama PIC 1</label>
+        <select id="modalPic1" class="w-full bg-slate-800 p-2.5 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500">
+          <option value="">-- Pilih PIC 1 --</option>
+        </select>
       </div>
-
+      
+      <div class="mb-6">
+        <label class="text-xs text-slate-400">Nama PIC 2 (Opsional)</label>
+        <select id="modalPic2" class="w-full bg-slate-800 p-2.5 rounded text-white text-sm border border-slate-600 focus:outline-none focus:border-emerald-500">
+          <option value="">-- Tanpa PIC 2 --</option>
+        </select>
+      </div>
+      
       <div class="flex gap-3">
-        <button onclick="closeModalPrint()" class="flex-1 bg-slate-800 hover:bg-slate-700 py-2.5 rounded-lg text-sm text-white transition-colors border border-slate-700">Batal</button>
-        <button onclick="processPrint()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-2.5 rounded-lg text-sm text-white font-bold transition-colors shadow-lg shadow-emerald-600/20">Cetak PDF</button>
+        <button onclick="document.getElementById('modalPrint').classList.add('hidden')" class="flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded text-sm text-white transition-colors">Batal</button>
+        <button onclick="processPrint()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-2 rounded text-sm text-white font-bold transition-colors">Sudah Sesuai</button>
       </div>
     </div>
   </div>
 
   <div id="printArea" style="display:none;">
+    
     <div class="kop-surat">
-      <div class="kop-title">AMPERA PAK JENGGOT</div>
-      <div class="kop-sub" id="printSub"></div>
-      <div class="kop-nomor" id="printNomorSurat"></div>
+        <div class="kop-title">AMPERA PAK JENGGOT</div>
+        <div class="kop-sub" id="printSub"></div>
+        <div class="kop-nomor" id="printNomorSurat"></div>
     </div>
-
-    <div class="print-meta">
-      <div>Kategori: <b id="printKategori"></b></div>
-      <div>Total Item: <b id="printTotalItem"></b></div>
-    </div>
-
+    
     <div id="printTableContainer">
-      <table id="printTable">
-        <thead>
-          <tr><th>No</th><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th><th>Status</th><th>Last Update</th></tr>
-        </thead>
-        <tbody id="printTbody"></tbody>
-      </table>
+        <table id="printTable">
+          <thead><tr><th>ID Barang</th><th>Nama Barang</th><th>Qty Stok</th><th>Satuan</th></tr></thead>
+          <tbody id="printTbody"></tbody>
+        </table>
     </div>
 
     <div id="printFooter">
-      <div class="print-loc">Batu, <span id="printLocDate"></span></div>
-      <div class="ttd-container" id="printTTD"></div>
+        <div class="print-loc">Batu, <span id="printLocDate"></span></div>
+        <div class="ttd-container" id="printTTD"></div>
     </div>
-  </div>
 
-
-  <!-- Modal konfirmasi logout, dibuat konsisten dengan dashboard -->
-  <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
-    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
-      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 mb-4 mx-auto border border-rose-500/20">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-      </div>
-      <h3 class="text-lg font-bold text-white text-center mb-2">Konfirmasi Keluar</h3>
-      <p class="text-sm text-slate-400 text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
-      <div class="flex gap-3">
-        <button type="button" onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors border border-slate-600">Batal</button>
-        <button type="button" onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-rose-600/20">Ya, Keluar</button>
-      </div>
-    </div>
   </div>
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
-
-    const KATEGORI_GENERAL = [
-      { key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' },
-      { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' },
-      { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' },
-      { key: 'minuman', label: 'Minuman & Barang Dagang', sheet: 'MASTER_MINUMAN' },
-      { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }
-    ];
-
     let listUserGlobal = [];
-    let currentRows = [];
-    let filteredRows = [];
-    let currentKategoriLabel = '';
-    let currentMode = 'general';
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') {
-        window.location.href = 'index.html';
-        return;
-      }
-
-      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
-      buildKategoriOptions();
-      setupAccessPrint();
-      await ambilDataUser();
-    });
-
-    
-    function normPermValue(value) {
-      return String(value ?? '').trim().toLowerCase();
-    }
-
-    function isOwnerLevel() {
-      const level = normPermValue(localStorage.getItem('APJ_USER_LEVEL'));
-      return level === 'owner' || level === 'superadmin' || level === 'super admin';
-    }
-
-    function hasPerm(permissions, key) {
-      return isOwnerLevel() || normPermValue(permissions && permissions[key]) === 'y';
-    }
-function buildKategoriOptions() {
-      const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
-      const select = document.getElementById('kategoriSelect');
-      let count = 0;
-
-      // REVISI v7:
-      // Lihat Stok adalah izin baca global. Jadi LEVEL_1 yang semua kategori N tetapi Lihat Stok = Y
-      // tetap bisa membuka laporan stok. Kolom kategori dipakai untuk input/output/opname, bukan untuk memblokir laporan baca.
-      if (!hasPerm(perms, 'lihatStok')) {
-        setEmpty('Role ini belum memiliki akses Lihat Stok.', 'error');
-        return;
-      }
-
-      KATEGORI_GENERAL.forEach(k => {
-        const option = document.createElement('option');
-        option.value = k.sheet;
-        option.dataset.mode = 'general';
-        option.textContent = k.label;
-        select.appendChild(option);
-        count++;
-      });
-
-      const option = document.createElement('option');
-      option.value = 'PRODUKSI';
-      option.dataset.mode = 'produksi';
-      option.textContent = 'Produksi';
-      select.appendChild(option);
-      count++;
-
-      if (!count) setEmpty('Belum ada kategori stok yang tersedia.', 'error');
-    }
-
-    function setupAccessPrint() {
-      const userLevel = (localStorage.getItem('APJ_USER_LEVEL') || '').toLowerCase();
-      if (userLevel === 'admin') {
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Proteksi Hak Akses Role Admin
+      const userLevel = localStorage.getItem('APJ_USER_LEVEL') || '';
+      if(userLevel.toLowerCase() === 'admin') {
         const btn = document.getElementById('btnSimpanPDF');
         btn.disabled = true;
-        btn.className = 'flex-1 bg-slate-800 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold cursor-not-allowed border border-slate-700/50';
-        btn.innerText = 'PDF Ditolak';
-        btn.title = 'Role Admin tidak diizinkan mencetak dokumen stok.';
+        btn.className = "bg-slate-800 text-slate-600 px-6 py-2.5 rounded-lg text-sm font-semibold cursor-not-allowed border border-slate-700/50";
+        btn.innerText = "Simpan PDF (Akses Ditolak)";
+        btn.title = "Role Admin tidak diizinkan mendownload/mencetak dokumen stok.";
       }
-    }
 
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('customToast');
-      document.getElementById('toastMessage').textContent = message;
-      toast.className = type === 'success'
-        ? 'toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md'
-        : 'toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md';
-      setTimeout(() => toast.classList.remove('show'), 4000);
-    }
+      // 2. Load Kategori
+      const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
+      const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
+      kats.forEach(k => { if(perms[k.key] === 'Y') document.getElementById('kategoriSelect').innerHTML += `<option value="${k.sheet}">${k.label}</option>`; });
 
-    function escapeHtml(value) {
-      return String(value ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
-    }
-
-    function parseNumber(value) {
-      const n = parseFloat(String(value ?? '').replace(/\./g, '').replace(',', '.'));
-      return Number.isFinite(n) ? n : 0;
-    }
-
-    function formatNumber(value) {
-      const n = parseNumber(value);
-      return n.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-    }
-
-    function todayText() {
-      return new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-    }
-
-    async function fetchApi(payload) {
-      const response = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        redirect: 'follow',
-        body: JSON.stringify(payload)
-      });
-      return response.json();
-    }
+      // 3. Tarik Daftar Nama User
+      ambilDataUser();
+    });
 
     async function ambilDataUser() {
       try {
-        const result = await fetchApi({ action: 'getUsers' });
-        if (result.success) listUserGlobal = result.data || [];
-      } catch (e) {
-        console.warn('Gagal memuat daftar user.');
-      }
-    }
-
-    async function loadStokData() {
-      const select = document.getElementById('kategoriSelect');
-      if (!select.value) return;
-
-      const option = select.options[select.selectedIndex];
-      currentMode = option.dataset.mode || 'general';
-      currentKategoriLabel = option.textContent;
-      currentRows = [];
-      filteredRows = [];
-      document.getElementById('searchInput').value = '';
-      document.getElementById('cardKategori').textContent = currentKategoriLabel;
-      document.getElementById('tbodyStok').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500 animate-pulse">Menarik data dari database...</td></tr>';
-      document.getElementById('btnRefresh').disabled = true;
-
-      try {
-        let result;
-        if (currentMode === 'produksi') {
-          result = await fetchApi({ action: 'getStokProduksiReport' });
-          if (!result.success) {
-            // Fallback untuk backend lama: tetap tampilkan master produksi unik, tetapi qty belum akurat.
-            const fallback = await fetchApi({ action: 'getBarangProduksi' });
-            if (fallback.success) {
-              result = {
-                success: true,
-                data: (fallback.data || []).map(p => ({
-                  id: p.idProduksi || '',
-                  nama: p.produksi || '',
-                  stokTersedia: 0,
-                  satuanStok: p.satuanProduksi || '-',
-                  status: '',
-                  lastUpdate: '',
-                  sumber: 'MASTER_BARANG_PRODUKSI'
-                }))
-              };
-              showToast('Produksi tampil via fallback. Update Code.gs v3 agar stok produksi terbaca lebih akurat.', 'error');
-            }
-          }
-          document.getElementById('infoBox').innerHTML = 'Mode <b>Produksi</b>: laporan dibuat 1 baris per lauk/jadi. Jika sumber masih <b>TRANSAKSI_OUTPUT_PRODUKSI</b>, sebaiknya STOK_AKHIR produksi juga dibuat agar stok akhir benar-benar final.';
-        } else {
-          result = await fetchApi({ action: 'getBarang', sheetName: select.value, context: 'operasional' });
-          document.getElementById('infoBox').innerHTML = 'Mode <b>General</b>: stok dibaca dari master kategori dan dicocokkan ke <b>STOK_AKHIR</b> berdasarkan ID/Nama barang.';
+        const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify({ action: 'getUsers' }) });
+        const result = await response.json();
+        if(result.success) {
+          listUserGlobal = result.data;
         }
-
-        if (!result || !result.success) {
-          setEmpty((result && result.message) || 'Gagal memuat data stok.', 'error');
-          return;
-        }
-
-        currentRows = normalizeRows(result.data || []);
-        renderTable();
-        showToast('Data stok berhasil dimuat.', 'success');
-      } catch (error) {
-        setEmpty('Gagal terhubung ke database. Cek URL Apps Script atau koneksi.', 'error');
-      } finally {
-        document.getElementById('btnRefresh').disabled = false;
-      }
-    }
-
-    function normalizeRows(rows) {
-      return rows.map(r => ({
-        id: r.id || r.idProduksi || '',
-        nama: r.nama || r.produksi || '',
-        stokTersedia: r.stokTersedia ?? 0,
-        satuanStok: r.satuanStok || r.satuanProduksi || '-',
-        status: r.status || '',
-        lastUpdate: r.lastUpdate || '',
-        sumber: r.sumber || r.kategoriStok || ''
-      })).filter(r => r.id || r.nama);
-    }
-
-    function renderTable() {
-      const query = document.getElementById('searchInput').value.trim().toLowerCase();
-      filteredRows = currentRows.filter(r => {
-        if (!query) return true;
-        return String(r.id).toLowerCase().includes(query) || String(r.nama).toLowerCase().includes(query);
-      });
-
-      updateCards(filteredRows);
-
-      const tbody = document.getElementById('tbodyStok');
-      if (!filteredRows.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500">Tidak ada data yang cocok.</td></tr>';
-        document.getElementById('rowsInfo').textContent = '0 data tampil';
-        return;
-      }
-
-      tbody.innerHTML = filteredRows.map((r, idx) => {
-        const status = buildStatus(r);
-        return `
-          <tr class="border-b border-slate-800/60 bg-slate-950 hover:bg-slate-900 transition-colors">
-            <td class="p-4 text-center text-sm text-slate-500">${idx + 1}</td>
-            <td class="p-4 text-center text-sm font-medium text-slate-300">${escapeHtml(r.id || '-')}</td>
-            <td class="p-4 text-sm font-semibold text-white">${escapeHtml(r.nama || '-')}</td>
-            <td class="p-4 text-center text-sm font-bold ${parseNumber(r.stokTersedia) <= 0 ? 'text-rose-400' : 'text-emerald-400'}">${formatNumber(r.stokTersedia)}</td>
-            <td class="p-4 text-center text-sm text-slate-400">${escapeHtml(r.satuanStok || '-')}</td>
-            <td class="p-4 text-center">${status.html}</td>
-            <td class="p-4 text-center text-xs text-slate-500">${escapeHtml(formatDateDisplay(r.lastUpdate) || '-')}</td>
-          </tr>`;
-      }).join('');
-
-      document.getElementById('rowsInfo').textContent = `${filteredRows.length} data tampil dari ${currentRows.length} item`;
-    }
-
-    function updateCards(rows) {
-      const totalQty = rows.reduce((sum, r) => sum + parseNumber(r.stokTersedia), 0);
-      document.getElementById('cardItem').textContent = rows.length.toLocaleString('id-ID');
-      document.getElementById('cardQty').textContent = totalQty.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-      document.getElementById('cardSync').textContent = todayText();
-    }
-
-    function buildStatus(row) {
-      const raw = String(row.status || '').trim();
-      const qty = parseNumber(row.stokTersedia);
-      let label = raw || (qty <= 0 ? 'Habis' : 'Tersedia');
-      let cls = 'bg-slate-800 text-slate-300 border-slate-700';
-
-      const key = label.toLowerCase();
-      if (key.includes('aman') || key.includes('tersedia') || key.includes('ok')) cls = 'bg-emerald-950/70 text-emerald-400 border-emerald-800';
-      if (key.includes('minimum') || key.includes('menipis') || key.includes('warning')) cls = 'bg-amber-950/70 text-amber-400 border-amber-800';
-      if (key.includes('habis') || key.includes('kurang') || qty <= 0) cls = 'bg-rose-950/70 text-rose-400 border-rose-800';
-
-      if (currentMode === 'produksi' && row.sumber && row.sumber !== 'STOK_AKHIR') {
-        label = row.sumber;
-        cls = 'bg-blue-950/70 text-blue-400 border-blue-800';
-      }
-
-      return { label, html: `<span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full border text-[11px] font-semibold ${cls}">${escapeHtml(label)}</span>` };
-    }
-
-    function formatDateDisplay(value) {
-      if (!value) return '';
-      const text = String(value);
-      if (/^\d{4}-\d{2}-\d{2}/.test(text)) {
-        const [y, m, d] = text.substring(0, 10).split('-');
-        return `${d}/${m}/${y}`;
-      }
-      return text;
-    }
-
-    function setEmpty(message, type = 'default') {
-      document.getElementById('tbodyStok').innerHTML = `<tr><td colspan="7" class="p-8 text-center ${type === 'error' ? 'text-rose-500' : 'text-slate-500'}">${escapeHtml(message)}</td></tr>`;
-      currentRows = [];
-      filteredRows = [];
-      updateCards([]);
-      document.getElementById('rowsInfo').textContent = '0 data tampil';
-      if (type === 'error') showToast(message, 'error');
-    }
-
-    function populateSignerSelects() {
-      const supSelect = document.getElementById('modalSup');
-      const pic1Select = document.getElementById('modalPic1');
-      const pic2Select = document.getElementById('modalPic2');
-      const currentSup = supSelect.value;
-      const currentPic1 = pic1Select.value;
-      const currentPic2 = pic2Select.value;
-      const activeUser = localStorage.getItem('APJ_USER_NAME') || '';
-
-      const optionsHtml = '<option value="">-- Pilih Nama --</option>' + listUserGlobal.map(nama => `<option value="${escapeHtml(nama)}">${escapeHtml(nama)}</option>`).join('');
-      supSelect.innerHTML = optionsHtml;
-      pic1Select.innerHTML = optionsHtml;
-      pic2Select.innerHTML = '<option value="">-- Tanpa PIC 2 --</option>' + listUserGlobal.map(nama => `<option value="${escapeHtml(nama)}">${escapeHtml(nama)}</option>`).join('');
-
-      supSelect.value = currentSup || activeUser;
-      pic1Select.value = currentPic1 || activeUser;
-      pic2Select.value = currentPic2;
+      } catch (e) { console.log("Gagal memuat daftar user."); }
     }
 
     function bukaModalPrint() {
-      if (!currentRows.length) {
-        showToast('Muat data stok terlebih dahulu sebelum cetak PDF.', 'error');
-        return;
-      }
-      populateSignerSelects();
-      const modal = document.getElementById('modalPrint');
-      const overlay = modal.querySelector('.modal-overlay');
-      const content = modal.querySelector('.modal-content');
-      modal.classList.remove('hidden');
-      void modal.offsetWidth;
-      overlay.classList.remove('opacity-0');
-      overlay.classList.add('opacity-100');
-      content.classList.remove('scale-95', 'opacity-0');
-      content.classList.add('scale-100', 'opacity-100');
+      const selKategori = document.getElementById('kategoriSelect').value;
+      if(!selKategori) { alert("Pilih kategori stok terlebih dahulu!"); return; }
+
+      const supSelect = document.getElementById('modalSup');
+      const pic1Select = document.getElementById('modalPic1');
+      const pic2Select = document.getElementById('modalPic2');
+      
+      const currentSup = supSelect.value;
+      const currentPic1 = pic1Select.value;
+      const currentPic2 = pic2Select.value;
+
+      let optionsHtml = `<option value="">-- Pilih Nama --</option>`;
+      listUserGlobal.forEach(nama => { optionsHtml += `<option value="${nama}">${nama}</option>`; });
+      
+      supSelect.innerHTML = optionsHtml;
+      pic1Select.innerHTML = optionsHtml;
+      pic2Select.innerHTML = `<option value="">-- Tanpa PIC 2 --</option>` + listUserGlobal.map(nama => `<option value="${nama}">${nama}</option>`).join('');
+
+      const activeUser = localStorage.getItem('APJ_USER_NAME') || '';
+      supSelect.value = currentSup || activeUser;
+      pic1Select.value = currentPic1 || activeUser;
+      pic2Select.value = currentPic2;
+
+      document.getElementById('modalPrint').classList.remove('hidden');
     }
 
-    function closeModalPrint() {
-      const modal = document.getElementById('modalPrint');
-      const overlay = modal.querySelector('.modal-overlay');
-      const content = modal.querySelector('.modal-content');
-      overlay.classList.remove('opacity-100');
-      overlay.classList.add('opacity-0');
-      content.classList.remove('scale-100', 'opacity-100');
-      content.classList.add('scale-95', 'opacity-0');
-      setTimeout(() => modal.classList.add('hidden'), 250);
+    async function loadStokData() {
+      const sh = document.getElementById('kategoriSelect').value;
+      const tbody = document.getElementById('tbodyStok');
+      if(!sh) return;
+      
+      tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-500 animate-pulse">Menarik data dari database...</td></tr>';
+      
+      try {
+        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
+        if(res.success) {
+          if (res.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-rose-500">Belum ada data barang.</td></tr>';
+          } else {
+            tbody.innerHTML = res.data.map(b => `<tr class="border-b border-slate-800 bg-slate-950 hover:bg-slate-900">
+                <td class="p-4 text-sm text-slate-400 text-center">${b.id}</td>
+                <td class="p-4 text-sm text-white text-left">${b.nama}</td>
+                <td class="p-4 text-center font-bold text-emerald-400">${b.stokTersedia}</td>
+                <td class="p-4 text-center text-sm text-slate-400 text-center">${b.satuanStok}</td>
+            </tr>`).join('');
+          }
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-rose-500">Gagal terhubung ke database.</td></tr>';
+      }
     }
 
     function processPrint() {
       const sup = document.getElementById('modalSup').value;
       const pic1 = document.getElementById('modalPic1').value;
       const pic2 = document.getElementById('modalPic2').value;
-      if (!sup || !pic1) {
-        showToast('Supervisor dan PIC 1 wajib dipilih.', 'error');
-        return;
-      }
-
-      const rows = filteredRows.length ? filteredRows : currentRows;
+      
+      if(!sup || !pic1) { alert("Supervisor dan PIC 1 wajib dipilih!"); return; }
+      
+      const selKategori = document.getElementById('kategoriSelect');
+      const katText = selKategori.options[selKategori.selectedIndex].text;
+      const prefix = selKategori.value.replace("MASTER_", "").substring(0, 2); 
+      
+      // Nomor Surat
+      const romanMonths = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
       const now = new Date();
-      const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
       const bRomawi = romanMonths[now.getMonth()];
       const tahun = now.getFullYear();
       const timeCode = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0');
-      const prefix = currentMode === 'produksi' ? 'PR' : (document.getElementById('kategoriSelect').value.replace('MASTER_', '').substring(0, 2) || 'ST');
-
+      
       document.getElementById('printNomorSurat').innerText = `No: APJ-INV/REKAP/${prefix}/${bRomawi}/${tahun}/${timeCode}`;
-      document.getElementById('printSub').innerText = `Rekap Stok ${currentKategoriLabel} Akhir`;
-      document.getElementById('printKategori').innerText = currentKategoriLabel;
-      document.getElementById('printTotalItem').innerText = rows.length.toLocaleString('id-ID');
-      document.getElementById('printLocDate').innerText = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-      document.getElementById('printTbody').innerHTML = rows.map((r, idx) => {
-        const status = buildStatus(r).label;
-        return `<tr>
-          <td>${idx + 1}</td>
-          <td>${escapeHtml(r.id || '-')}</td>
-          <td>${escapeHtml(r.nama || '-')}</td>
-          <td>${formatNumber(r.stokTersedia)}</td>
-          <td>${escapeHtml(r.satuanStok || '-')}</td>
-          <td>${escapeHtml(status)}</td>
-          <td>${escapeHtml(formatDateDisplay(r.lastUpdate) || '-')}</td>
-        </tr>`;
-      }).join('');
-
-      const signers = [{ r: 'Supervisor', n: sup }, { r: 'PIC 1', n: pic1 }, { r: 'PIC 2', n: pic2 }].filter(s => s.n.trim() !== '');
-      document.getElementById('printTTD').innerHTML = signers.map(s => `<div class="ttd-box"><p class="role-label">${escapeHtml(s.r)}</p><p class="name-label">(${escapeHtml(s.n)})</p></div>`).join('');
-
-      closeModalPrint();
-      setTimeout(() => window.print(), 300);
-    }
-
-
-    // Logout modal, disamakan dengan dashboard agar semua halaman punya alur keluar yang sama.
-    const apjLogoutModal = document.getElementById('logoutModal');
-    const apjLogoutOverlay = apjLogoutModal ? apjLogoutModal.querySelector('.modal-overlay') : null;
-    const apjLogoutContent = apjLogoutModal ? apjLogoutModal.querySelector('.modal-content') : null;
-
-    function showLogoutModal() {
-      if (!apjLogoutModal || !apjLogoutOverlay || !apjLogoutContent) return;
-      apjLogoutModal.classList.remove('hidden');
-      void apjLogoutModal.offsetWidth;
-      apjLogoutOverlay.classList.add('opacity-100');
-      apjLogoutOverlay.classList.remove('opacity-0');
-      apjLogoutContent.classList.add('scale-100', 'opacity-100');
-      apjLogoutContent.classList.remove('scale-95', 'opacity-0');
-    }
-
-    function closeLogoutModal() {
-      if (!apjLogoutModal || !apjLogoutOverlay || !apjLogoutContent) return;
-      apjLogoutOverlay.classList.remove('opacity-100');
-      apjLogoutOverlay.classList.add('opacity-0');
-      apjLogoutContent.classList.remove('scale-100', 'opacity-100');
-      apjLogoutContent.classList.add('scale-95', 'opacity-0');
-      setTimeout(() => apjLogoutModal.classList.add('hidden'), 300);
-    }
-
-    function executeLogout() {
-      localStorage.removeItem('APJ_SESSION_ACTIVE');
-      localStorage.removeItem('APJ_USER_NAME');
-      localStorage.removeItem('APJ_USER_LEVEL');
-      localStorage.removeItem('APJ_USER_OUTLET');
-      localStorage.removeItem('APJ_USER_PERMISSIONS');
-      window.location.href = 'index.html';
-    }
-  
-
-    // Kontrol sidebar mobile, tidak mengganggu tampilan desktop.
-    function openMobileSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const backdrop = document.getElementById('sidebarBackdrop');
-      if (!sidebar || !backdrop) return;
-      sidebar.classList.remove('-translate-x-full');
-      backdrop.classList.remove('hidden');
-      document.body.classList.add('overflow-hidden');
-    }
-
-    function closeMobileSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const backdrop = document.getElementById('sidebarBackdrop');
-      if (!sidebar || !backdrop) return;
-      sidebar.classList.add('-translate-x-full');
-      backdrop.classList.add('hidden');
-      document.body.classList.remove('overflow-hidden');
-    }
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeMobileSidebar();
-    });
-
-    window.addEventListener('resize', () => {
-      if (window.innerWidth >= 1024) closeMobileSidebar();
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('#sidebar a').forEach(link => {
-        link.addEventListener('click', closeMobileSidebar);
+      document.getElementById('printSub').innerText = "Rekap Bulanan Stok " + katText + " Akhir";
+      document.getElementById('printLocDate').innerText = now.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+      
+      // Format Ulang Tabel untuk Cetak
+      let rowsHtml = document.getElementById('tbodyStok').innerHTML;
+      rowsHtml = rowsHtml.replace(/text-emerald-400/g, 'text-black')
+                         .replace(/text-slate-400/g, 'text-black')
+                         .replace(/text-white/g, 'text-black')
+                         .replace(/bg-slate-950/g, 'bg-white')
+                         .replace(/font-bold/g, 'font-normal'); 
+      document.getElementById('printTbody').innerHTML = rowsHtml;
+      
+      // TTD
+      const signers = [{r: "Supervisor", n: sup}, {r: "PIC 1", n: pic1}, {r: "PIC 2", n: pic2}].filter(s => s.n.trim() !== "");
+      let ttdHtml = '';
+      signers.forEach(s => { 
+          ttdHtml += `<div class="ttd-box"><p class="role-label">${s.r}</p><p class="name-label">(${s.n})</p></div>`; 
       });
-    });
-
-</script>
-
-
-  <script>
-    // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
-    (function(){
-      function headersFor(table){
-        return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
-      }
-      function labelTable(table){
-        var headers = headersFor(table);
-        if (!headers.length) return;
-        Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
-          Array.from(row.children).forEach(function(cell, idx){
-            if (!cell || cell.tagName !== 'TD') return;
-            if (!cell.getAttribute('data-label')) cell.setAttribute('data-label', headers[idx] || 'Data');
-          });
-        });
-      }
-      function applyResponsiveTableLabels(root){
-        root = root || document;
-        root.querySelectorAll('.table-scroll table').forEach(labelTable);
-      }
-      window.applyResponsiveTableLabels = applyResponsiveTableLabels;
-      document.addEventListener('DOMContentLoaded', function(){
-        applyResponsiveTableLabels(document);
-        var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
-        obs.observe(document.body, { childList:true, subtree:true });
-      });
-    })();
+      document.getElementById('printTTD').innerHTML = ttdHtml;
+      
+      // Print
+      document.getElementById('modalPrint').classList.add('hidden');
+      setTimeout(() => { window.print(); }, 150);
+    }
   </script>
+
+<script>
+(function APJ_UI_PRO_BOOT(){
+  const page = (document.body.getAttribute('data-apj-page') || (location.pathname.split('/').pop() || '')).toLowerCase();
+  const icons = {
+    'dashboard.html':'🏠',
+    'input-stok.html':'📥',
+    'output-stok.html':'📤',
+    'transfer-produksi.html':'🚚',
+    'produk-outlet.html':'🏪',
+    'stok-opname.html':'🧮',
+    'lihat-stok.html':'📊',
+    'riwayat-transaksi.html':'🧾'
+  };
+  const tones = {
+    'dashboard.html':'apj-active-link',
+    'input-stok.html':'apj-active-link',
+    'output-stok.html':'apj-active-link',
+    'transfer-produksi.html':'apj-active-link',
+    'produk-outlet.html':'apj-active-link',
+    'stok-opname.html':'apj-active-link',
+    'lihat-stok.html':'apj-active-link',
+    'riwayat-transaksi.html':'apj-active-link'
+  };
+  const guide = {
+    'input-stok.html': {
+      icon:'📥', title:'Panduan Input Stok', subtitle:'Dipakai untuk mencatat barang masuk dari pembelian atau penambahan stok awal.',
+      steps:[
+        'Pilih Tanggal Transaksi sesuai tanggal barang datang.',
+        'Pilih Kategori Transaksi, misalnya Bahan Mentah, Bahan Baku, Kemasan, Minuman, atau Kebersihan.',
+        'Pilih Nama Barang. Kalau baris kurang, tekan tombol + Tambah Baris Barang.',
+        'Isi Qty Masuk (Beli) sesuai nota/belanja, lalu isi Qty Stok (Riil) sesuai jumlah yang benar-benar masuk ke stok.',
+        'Cek satuan beli dan satuan stok. Pastikan tidak tertukar antara Kg, Pcs, Porsi, Botol, atau satuan lain.',
+        'Tekan Simpan Transaksi Input. Jika sukses, sistem membuat ID transaksi otomatis.'
+      ],
+      note:'Khusus barang parent seperti Ayam Potong, isi hasil riil sesuai stok yang siap dipakai. Jangan asal “kira-kira”; stok itu ibarat kompas dapur, kalau meleset semua ikut muter.'
+    },
+    'output-stok.html': {
+      icon:'📤', title:'Panduan Output Stok', subtitle:'Dipakai untuk mencatat barang keluar, pemakaian dapur, atau proses produksi.',
+      steps:[
+        'Pilih Tanggal Keluar sesuai tanggal barang dipakai atau dikeluarkan.',
+        'Pilih Kategori Transaksi. Untuk produksi, pilih mode/kategori produksi jika tersedia.',
+        'Pilih barang atau produk yang dikeluarkan. Perhatikan stok tersedia sebelum mengisi qty.',
+        'Isi Qty Keluar dengan angka yang benar. Gunakan koma/titik seperlunya, sistem akan membaca sebagai angka.',
+        'Isi Keterangan/Tujuan supaya audit jelas, misalnya Masak Pagi, Produksi Lauk, atau Outlet tertentu.',
+        'Tekan Simpan Output Stok dan tunggu notifikasi berhasil.'
+      ],
+      note:'Kalau stok tersedia terlihat kecil atau nol, jangan dipaksa. Cek fisik dulu atau lakukan input/opname. Sistem ini membantu, tapi mata gudang tetap panglima.'
+    },
+    'stok-opname.html': {
+      icon:'🧮', title:'Panduan Stok Opname', subtitle:'Dipakai untuk menyamakan stok sistem dengan stok fisik di lapangan.',
+      steps:[
+        'Pilih Tanggal Opname sesuai hari pengecekan fisik.',
+        'Pilih Kategori Transaksi yang akan dicek.',
+        'Pilih Nama Barang. Stok Sistem akan menjadi pembanding.',
+        'Isi Stok Fisik sesuai hasil hitung nyata di gudang/dapur/outlet.',
+        'Periksa Selisih. Plus berarti fisik lebih banyak, minus berarti fisik lebih sedikit.',
+        'Isi Alasan Koreksi secara singkat, misalnya salah input, susut, rusak, atau stok ditemukan.',
+        'Tekan Simpan Stok Opname.'
+      ],
+      note:'Opname bukan tempat menebak-nebak. Hitung fisik dulu, baru input. Tradisi lama: barang dihitung pakai mata; sistem baru: hasilnya dikunci rapi.'
+    },
+    'lihat-stok.html': {
+      icon:'📊', title:'Panduan Lihat Stok', subtitle:'Dipakai untuk memantau stok terkini dan menyiapkan laporan PDF.',
+      steps:[
+        'Pilih Kategori Stok yang ingin dilihat.',
+        'Gunakan kolom Cari Barang untuk mencari ID atau nama barang.',
+        'Tekan Refresh jika data terasa belum terbaru.',
+        'Perhatikan Qty Stok, Satuan, Lokasi, Last Update, dan Status.',
+        'Tekan PDF jika ingin mencetak laporan. Pilih penandatangan jika diminta.',
+        'Gunakan status kritis/waspada sebagai prioritas belanja atau produksi.'
+      ],
+      note:'Lihat stok itu bukan sekadar melihat angka. Ini radar operasional: mana yang aman, mana yang mulai teriak minta dibeli.'
+    },
+    'produk-outlet.html': {
+      icon:'🏪', title:'Panduan Produk Outlet', subtitle:'Dipakai untuk mencatat produk outlet, stok outlet, produk terjual, dan opname outlet.',
+      steps:[
+        'Pilih Tanggal dan Outlet yang sedang dikerjakan.',
+        'Gunakan Cari Produk untuk mempercepat pencarian item.',
+        'Tekan Input Terjual untuk mencatat produk yang laku hari itu.',
+        'Isi Qty Terjual sesuai catatan penjualan outlet, lalu simpan.',
+        'Jika stok fisik outlet berbeda dengan sistem, tekan Stok Opname lalu isi stok fisik dan alasan.',
+        'Gunakan Print 58mm atau Print A4 untuk laporan outlet sesuai kebutuhan.'
+      ],
+      note:'Outlet wajib disiplin. Yang terjual dicatat, yang sisa dicek. Kalau tidak, stok jadi drama berseri—episode habisnya banyak.'
+    },
+    'transfer-produksi.html': {
+      icon:'🚚', title:'Panduan Transfer Produk Outlet', subtitle:'Dipakai untuk mengirim produk siap jual dari PUSAT ke outlet dan mencetak Surat Jalan.',
+      steps:[
+        'Pilih Tanggal Transfer.',
+        'Pilih Outlet Tujuan. Produk aktif outlet akan muncul otomatis dari MASTER_PRODUK_OUTLET.',
+        'Pilih PIC Penerima agar tanggung jawab jelas.',
+        'Cari produk jika daftar panjang, lalu isi Qty Transfer hanya pada produk yang dikirim.',
+        'Isi Catatan bila ada informasi tambahan, misalnya tambahan order atau barang pengganti.',
+        'Tekan Simpan Transfer. Baris kosong atau qty 0 tidak akan ikut disimpan.',
+        'Untuk cetak Surat Jalan, tekan Cetak Surat Jalan, pilih transaksi, lalu pilih A4 atau 58mm.'
+      ],
+      note:'Surat Jalan itu bukti jalan barang. Pastikan outlet, PIC, dan qty benar sebelum cetak. Sekali salah, kertas ikut menatap kecewa.'
+    },
+    'riwayat-transaksi.html': {
+      icon:'🧾', title:'Panduan Riwayat Transaksi', subtitle:'Dipakai untuk audit gabungan input, output, produksi, transfer, produk outlet, dan opname.',
+      steps:[
+        'Pilih Tanggal Dari dan Tanggal Sampai.',
+        'Pilih Jenis transaksi, atau pilih Semua untuk audit lengkap.',
+        'Gunakan kolom Cari untuk mencari ID transaksi, nama barang, petugas, outlet, atau kata kunci lain.',
+        'Tekan Muat untuk mengambil data.',
+        'Baca ringkasan dan detail tabel. Cek tanggal, jenis, barang, qty, petugas, dan keterangan.',
+        'Tekan PDF jika laporan perlu disimpan atau dibagikan.'
+      ],
+      note:'Kalau ada angka stok yang aneh, mulai investigasi dari sini. Riwayat transaksi adalah CCTV-nya data.'
+    }
+  };
+
+  function ready(fn){ if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+  function fileNameFromHref(href){ try { return (href || '').split('/').pop().split('?')[0].split('#')[0].toLowerCase(); } catch(e){ return ''; } }
+  function currentFile(){ return page || fileNameFromHref(location.href); }
+  function safe(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function renderSidebar(){
+    const nav = document.querySelector('aside nav');
+    if (!nav) return;
+    const active = currentFile();
+    const menu = [
+      ['dashboard.html','Dashboard'], ['input-stok.html','Input Stok'], ['output-stok.html','Output Stok'],
+      ['transfer-produksi.html','Transfer Produk Outlet'], ['produk-outlet.html','Produk Outlet'],
+      ['stok-opname.html','Stok Opname'], ['lihat-stok.html','Lihat Stok'], ['riwayat-transaksi.html','Riwayat Transaksi']
+    ];
+    nav.innerHTML = '<p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>' + menu.map(([href,label]) => {
+      const isActive = active === href;
+      const cls = isActive ? 'apj-active-link flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors' : 'flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors';
+      return `<a href="${href}" class="${cls}"><span class="apj-nav-ico">${icons[href] || '•'}</span><span>${label}</span></a>`;
+    }).join('');
+  }
+
+  function ensureLogout(){
+    const aside = document.querySelector('aside');
+    if (!aside) return;
+    if (aside.textContent.toLowerCase().includes('logout sistem')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'p-4 border-t border-slate-800';
+    wrap.innerHTML = '<button type="button" onclick="APJUI_logout()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50"><span class="apj-nav-ico">🚪</span><span>Logout Sistem</span></button>';
+    aside.appendChild(wrap);
+  }
+
+  window.APJUI_logout = function(){
+    ['APJ_SESSION_ACTIVE','APJ_USER_NAME','APJ_USER_LEVEL','APJ_USER_PERMISSIONS'].forEach(k => localStorage.removeItem(k));
+    window.location.href = 'index.html';
+  };
+
+  function setupMobileSidebar(){
+    const aside = document.querySelector('aside');
+    if (!aside || document.querySelector('.apj-mobile-menu') || document.getElementById('mobileMenuBtn')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'apj-mobile-menu';
+    btn.setAttribute('aria-label','Buka menu');
+    btn.innerHTML = '☰';
+    const backdrop = document.createElement('div');
+    backdrop.className = 'apj-sidebar-backdrop';
+    document.body.appendChild(btn);
+    document.body.appendChild(backdrop);
+    function close(){ aside.classList.remove('apj-open'); backdrop.classList.remove('show'); }
+    function open(){ aside.classList.add('apj-open'); backdrop.classList.add('show'); }
+    btn.addEventListener('click', open);
+    backdrop.addEventListener('click', close);
+    aside.addEventListener('click', (e) => { if (e.target.closest('a') && window.innerWidth < 1024) close(); });
+  }
+
+  function guideData(){ return guide[currentFile()] || null; }
+  function buildGuideModal(){
+    const data = guideData();
+    if (!data || document.getElementById('apjGuideModal')) return;
+    const modal = document.createElement('div');
+    modal.id = 'apjGuideModal';
+    modal.className = 'apj-guide-modal';
+    modal.innerHTML = `
+      <div class="apj-guide-backdrop" onclick="APJUI_closeGuide()"></div>
+      <div class="apj-guide-card" role="dialog" aria-modal="true" aria-labelledby="apjGuideTitle">
+        <div class="apj-guide-title">
+          <div class="apj-guide-icon">${data.icon}</div>
+          <div class="min-w-0">
+            <p class="text-[11px] font-black uppercase tracking-[.18em] text-blue-300 mb-1">Bantuan Cepat APJ</p>
+            <h3 id="apjGuideTitle" class="text-xl sm:text-2xl font-extrabold text-white">${safe(data.title)}</h3>
+            <p class="text-sm text-slate-400 mt-1 leading-relaxed">${safe(data.subtitle)}</p>
+          </div>
+        </div>
+        <div class="apj-guide-steps">
+          ${data.steps.map((step, idx) => `<div class="apj-guide-step"><span class="apj-step-no">${idx+1}</span><p class="text-sm text-slate-200 leading-relaxed">${safe(step)}</p></div>`).join('')}
+        </div>
+        <div class="apj-guide-note"><b>Catatan:</b> ${safe(data.note)}</div>
+        <div class="apj-guide-actions">
+          <button type="button" class="apj-btn-soft" onclick="APJUI_resetGuideAuto()">Tampilkan otomatis lagi</button>
+          <button type="button" class="apj-btn-primary" onclick="APJUI_closeGuide()">Paham, lanjut kerja</button>
+        </div>
+      </div>`;
+    const fab = document.createElement('button');
+    fab.type = 'button';
+    fab.className = 'apj-help-fab';
+    fab.innerHTML = `<span>${data.icon}</span><span>Panduan</span>`;
+    fab.addEventListener('click', () => window.APJUI_openGuide(false));
+    document.body.appendChild(modal);
+    document.body.appendChild(fab);
+  }
+
+  window.APJUI_openGuide = function(auto){
+    const modal = document.getElementById('apjGuideModal');
+    if (!modal) return;
+    modal.classList.add('show');
+    if (auto) localStorage.setItem('APJ_HELP_SEEN_' + currentFile(), 'Y');
+  };
+  window.APJUI_closeGuide = function(){
+    const modal = document.getElementById('apjGuideModal');
+    if (modal) modal.classList.remove('show');
+  };
+  window.APJUI_resetGuideAuto = function(){
+    localStorage.removeItem('APJ_HELP_SEEN_' + currentFile());
+    window.APJUI_closeGuide();
+    setTimeout(() => window.APJUI_openGuide(true), 150);
+  };
+
+  function enhanceCards(){
+    document.querySelectorAll('.bg-slate-950.border, .bg-slate-900.border').forEach(el => el.classList.add('apj-lift'));
+    document.querySelectorAll('main > div, main > section').forEach(el => el.classList.add('apj-soft-animate'));
+  }
+
+  ready(function(){
+    renderSidebar();
+    ensureLogout();
+    setupMobileSidebar();
+    buildGuideModal();
+    enhanceCards();
+    const data = guideData();
+    if (data && !localStorage.getItem('APJ_HELP_SEEN_' + currentFile())) {
+      setTimeout(() => window.APJUI_openGuide(true), 650);
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
