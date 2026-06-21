@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transfer Produk Outlet | APJ Inventori v14.1</title>
+  <title>Transfer Produk Outlet | APJ Inventori v14.3</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -25,10 +25,11 @@
 
     #printAreaTransfer { display: none; }
     @media print {
-      @page { size: A4 portrait; margin: 10mm; }
       body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
       body > *:not(#printAreaTransfer) { display: none !important; }
-      #printAreaTransfer { display: block !important; font-family: 'Times New Roman', serif; color: black !important; }
+      #printAreaTransfer { display: block !important; color: black !important; }
+      body.print-transfer-a4 #printAreaTransfer { font-family: 'Times New Roman', serif; }
+      body.print-transfer-80 #printAreaTransfer { width: 74mm; max-width: 74mm; font-family: Arial, sans-serif; font-size: 10px; line-height: 1.22; }
       .sj-kop { text-align: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
       .sj-title { font-size: 20pt; font-weight: bold; letter-spacing: .5px; }
       .sj-subtitle { font-size: 12pt; font-weight: bold; margin-top: 2px; }
@@ -44,6 +45,18 @@
       .sj-sign { display: flex; justify-content: space-between; gap: 18px; margin-top: 28px; page-break-inside: avoid; }
       .sj-sign-box { width: 33.333%; text-align: center; font-size: 10pt; }
       .sj-sign-name { margin-top: 58px; border-top: 1px solid #000; padding-top: 4px; font-weight: bold; }
+      body.print-transfer-80 .sj-kop { border-bottom: 1px dashed #000; padding-bottom: 5px; margin-bottom: 6px; }
+      body.print-transfer-80 .sj-title { font-size: 14px; }
+      body.print-transfer-80 .sj-subtitle { font-size: 10px; }
+      body.print-transfer-80 .sj-meta { display: block; font-size: 9px; margin: 6px 0; }
+      body.print-transfer-80 .sj-meta div { border-bottom: none; padding: 1px 0; gap: 8px; }
+      body.print-transfer-80 .sj-table { font-size: 9px; }
+      body.print-transfer-80 .sj-table th, body.print-transfer-80 .sj-table td { padding: 2px; }
+      body.print-transfer-80 .sj-note { font-size: 9px; border-top: 1px dashed #000; margin-top: 6px; padding-top: 5px; }
+      body.print-transfer-80 .sj-sign { display: block; margin-top: 12px; }
+      body.print-transfer-80 .sj-sign-box { width: 100%; margin-top: 12px; }
+      body.print-transfer-80 .sj-sign-box:first-child { display:none; }
+      body.print-transfer-80 .sj-sign-name { margin-top: 28px; }
     }
   </style>
 </head>
@@ -107,6 +120,35 @@
         </div>
       </div>
 
+      <div class="bg-slate-950 border border-violet-900/40 rounded-xl p-4 sm:p-6 shadow-xl mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-4">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-violet-300 mb-1">Cetak Surat Jalan Tersimpan</p>
+            <h3 class="text-lg font-bold text-white">Print berdasarkan tanggal & outlet</h3>
+            <p class="text-xs text-slate-500 mt-1">Simpan transfer dulu, lalu cetak surat jalan dari data yang sudah masuk database. Kalau ada transfer pagi dan siang, pilih ID transfer yang mau dicetak.</p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <button type="button" onclick="loadTransferPrintDocs()" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-700">Muat Data Print</button>
+            <button type="button" onclick="printSavedSuratJalan('a4')" class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-violet-600/20">Print A4</button>
+            <button type="button" onclick="printSavedSuratJalan('80')" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-700">Print 80mm</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal SJ</label>
+            <input type="date" id="printTanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Outlet</label>
+            <select id="printOutletSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Memuat outlet...</option></select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Dokumen Transfer</label>
+            <select id="printTxSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-violet-500 focus:outline-none"><option value="">Klik Muat Data Print dulu...</option></select>
+          </div>
+        </div>
+      </div>
+
       <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4 sm:gap-6 mb-6">
           <div>
@@ -161,7 +203,6 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
           <p id="ringkasanTransfer" class="text-xs text-slate-500">Belum ada qty transfer.</p>
           <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <button type="button" id="btnPrintSJ" onclick="printSuratJalan()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition-colors border border-slate-700 w-full sm:w-auto">Print Surat Jalan A4</button>
             <button type="button" id="btnSimpan" onclick="simpanTransfer()" class="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-violet-600/20 w-full sm:w-auto">Simpan Transfer Produk Outlet</button>
           </div>
         </div>
@@ -185,7 +226,7 @@
     </div>
     <table class="sj-table">
       <thead>
-        <tr><th style="width:32px;">No</th><th style="width:95px;">ID</th><th>Nama Produk</th><th style="width:70px;">Qty</th><th style="width:70px;">Satuan</th><th>Catatan</th></tr>
+        <tr id="printSjHead"><th style="width:32px;">No</th><th style="width:95px;">ID</th><th>Nama Produk</th><th style="width:70px;">Qty</th><th style="width:70px;">Satuan</th><th>Catatan</th></tr>
       </thead>
       <tbody id="printSjBody"></tbody>
     </table>
@@ -217,11 +258,13 @@
     let globalProduk = [];
     let globalOutlets = [];
     let globalPics = [];
+    let printTransferGroups = [];
 
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
       document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
+      document.getElementById('printTanggalInput').value = new Date().toISOString().split('T')[0];
       document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMobileSidebar));
 
       const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
@@ -267,6 +310,8 @@
       outletSelect.innerHTML = '<option value="" disabled selected>-- Pilih Outlet --</option>' + globalOutlets.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
       const picSelect = document.getElementById('picSelect');
       picSelect.innerHTML = '<option value="" disabled selected>-- Pilih PIC Penerima --</option>' + globalPics.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+      const printOutletSelect = document.getElementById('printOutletSelect');
+      printOutletSelect.innerHTML = '<option value="" disabled selected>-- Pilih Outlet --</option>' + globalOutlets.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
     }
 
     function renderKpi() {
@@ -452,38 +497,132 @@
       return String(value).padStart(2, '0');
     }
 
-    function buildSuratJalanNumber() {
-      const d = new Date();
-      return `SJ-${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}-${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
+    function buildSuratJalanNumber(group, mode) {
+      if (!group) return '-';
+      if (group.txId && group.txId !== 'ALL') return group.txId;
+      const d = (group.tanggal || '').replace(/-/g, '');
+      const o = (group.outlet || '').replace(/\s+/g, '');
+      return `SJ-GAB-${d}-${o}`;
     }
 
-    function printSuratJalan() {
+    async function fetchApi(payload) {
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        redirect: 'follow',
+        body: JSON.stringify(payload)
+      });
+      return response.json();
+    }
+
+    async function loadTransferPrintDocs() {
       try {
-        const tanggal = document.getElementById('tanggalInput').value;
-        const outlet = document.getElementById('outletSelect').value;
-        const pic = document.getElementById('picSelect').value;
-        const petugas = localStorage.getItem('APJ_USER_NAME') || '-';
-        const catatanUmum = document.getElementById('catatanUmum').value.trim();
+        const tanggal = document.getElementById('printTanggalInput').value;
+        const outlet = document.getElementById('printOutletSelect').value;
+        if (!tanggal) throw new Error('Tanggal print wajib diisi.');
+        if (!outlet) throw new Error('Outlet print wajib dipilih.');
 
-        if (!tanggal) throw new Error('Tanggal transfer wajib diisi sebelum print surat jalan.');
-        if (!outlet) throw new Error('Outlet tujuan wajib dipilih sebelum print surat jalan.');
-        if (!pic) throw new Error('PIC penerima wajib dipilih sebelum print surat jalan.');
+        const result = await fetchApi({ action: 'getTransferPrintData', tanggal, outlet });
+        if (!result.success) throw new Error(result.message || 'Gagal memuat data print.');
+        printTransferGroups = result.groups || [];
+        renderPrintTxOptions();
+        showToast(printTransferGroups.length ? `Ditemukan ${printTransferGroups.length} dokumen transfer.` : 'Belum ada transfer tersimpan pada tanggal/outlet itu.', printTransferGroups.length ? 'success' : 'error');
+      } catch (error) {
+        printTransferGroups = [];
+        renderPrintTxOptions();
+        showToast(error.message || 'Data print gagal dimuat.', 'error');
+      }
+    }
 
-        const rows = collectRows(true);
-        if (!rows.length) throw new Error('Isi minimal 1 Qty Transfer sebelum print surat jalan.');
-        validateStock(rows);
+    function renderPrintTxOptions() {
+      const sel = document.getElementById('printTxSelect');
+      if (!printTransferGroups.length) {
+        sel.innerHTML = '<option value="">Tidak ada data transfer tersimpan</option>';
+        return;
+      }
+      const allOption = printTransferGroups.length > 1
+        ? '<option value="ALL">Gabungan semua transfer tanggal/outlet ini</option>'
+        : '';
+      sel.innerHTML = allOption + printTransferGroups.map(g => {
+        const label = `${g.txId} • ${g.totalItem || (g.rows || []).length} item • ${formatNumber(g.totalQty || 0)} qty • PIC ${g.pic || '-'}`;
+        return `<option value="${escapeHtml(g.txId)}">${escapeHtml(label)}</option>`;
+      }).join('');
+    }
 
+    function getSelectedPrintGroup() {
+      const selected = document.getElementById('printTxSelect').value;
+      if (!printTransferGroups.length) throw new Error('Muat data print dulu.');
+      if (!selected) throw new Error('Pilih dokumen transfer yang mau dicetak.');
+      if (selected === 'ALL') {
+        const first = printTransferGroups[0];
+        const rows = [];
+        let totalQty = 0;
+        let catatan = '';
+        printTransferGroups.forEach(g => {
+          (g.rows || []).forEach(r => rows.push(Object.assign({ txId: g.txId }, r)));
+          totalQty += parseNumber(g.totalQty || 0);
+          if (g.catatan && catatan.indexOf(g.catatan) === -1) catatan += (catatan ? '; ' : '') + g.catatan;
+        });
+        return {
+          txId: 'ALL',
+          tanggal: first.tanggal,
+          outlet: first.outlet,
+          pic: 'Gabungan',
+          petugas: 'Gabungan',
+          totalQty,
+          catatan,
+          rows
+        };
+      }
+      const found = printTransferGroups.find(g => g.txId === selected);
+      if (!found) throw new Error('Dokumen transfer tidak ditemukan. Klik Muat Data Print ulang.');
+      return found;
+    }
+
+    function setDynamicPrintPage(mode) {
+      let style = document.getElementById('dynamicPrintPageStyle');
+      if (!style) {
+        style = document.createElement('style');
+        style.id = 'dynamicPrintPageStyle';
+        document.head.appendChild(style);
+      }
+      style.textContent = mode === '80'
+        ? '@media print { @page { size: 80mm auto; margin: 3mm; } }'
+        : '@media print { @page { size: A4 portrait; margin: 10mm; } }';
+    }
+
+    function printSavedSuratJalan(mode) {
+      try {
+        const group = getSelectedPrintGroup();
+        const rows = group.rows || [];
+        if (!rows.length) throw new Error('Dokumen ini tidak memiliki baris produk.');
         const now = new Date();
-        document.getElementById('printSjNo').textContent = buildSuratJalanNumber();
-        document.getElementById('printSjTanggal').textContent = dateToDisplay(tanggal);
-        document.getElementById('printSjOutlet').textContent = outlet;
-        document.getElementById('printSjPic').textContent = pic;
-        document.getElementById('printSjPetugas').textContent = petugas;
+        const is80 = mode === '80';
+        setDynamicPrintPage(is80 ? '80' : 'a4');
+        document.body.classList.remove('print-transfer-a4', 'print-transfer-80');
+        document.body.classList.add(is80 ? 'print-transfer-80' : 'print-transfer-a4');
+
+        document.getElementById('printSjNo').textContent = buildSuratJalanNumber(group, mode);
+        document.getElementById('printSjTanggal').textContent = dateToDisplay(group.tanggal);
+        document.getElementById('printSjOutlet').textContent = group.outlet || '-';
+        document.getElementById('printSjPic').textContent = group.pic || '-';
+        document.getElementById('printSjPetugas').textContent = group.petugas || '-';
         document.getElementById('printSjWaktu').textContent = now.toLocaleString('id-ID');
-        document.getElementById('printSjPengirim').textContent = petugas;
-        document.getElementById('printSjPenerima').textContent = pic;
-        document.getElementById('printSjCatatan').textContent = `Catatan: ${catatanUmum || '-'}`;
-        document.getElementById('printSjBody').innerHTML = rows.map((r, i) => `
+        document.getElementById('printSjPengirim').textContent = group.petugas || 'Petugas';
+        document.getElementById('printSjPenerima').textContent = group.pic || 'PIC';
+        document.getElementById('printSjCatatan').textContent = `Catatan: ${group.catatan || '-'}`;
+
+        document.getElementById('printSjHead').innerHTML = is80
+          ? '<th style="width:20px;">No</th><th>Produk</th><th style="width:36px;">Qty</th><th style="width:34px;">Sat</th>'
+          : '<th style="width:32px;">No</th><th style="width:95px;">ID</th><th>Nama Produk</th><th style="width:70px;">Qty</th><th style="width:70px;">Satuan</th><th>Catatan</th>';
+        document.getElementById('printSjBody').innerHTML = rows.map((r, i) => is80 ? `
+          <tr>
+            <td>${i + 1}</td>
+            <td style="text-align:left;">${escapeHtml(r.namaProduk || '-')}</td>
+            <td>${escapeHtml(formatNumber(r.qtyTransfer))}</td>
+            <td>${escapeHtml(r.satuan || '-')}</td>
+          </tr>
+        ` : `
           <tr>
             <td>${i + 1}</td>
             <td>${escapeHtml(r.idProduk || '-')}</td>
@@ -493,10 +632,16 @@
             <td>${escapeHtml(r.catatan || '-')}</td>
           </tr>
         `).join('');
+
         window.print();
+        setTimeout(() => document.body.classList.remove('print-transfer-a4', 'print-transfer-80'), 500);
       } catch (error) {
         showToast(error.message || 'Data surat jalan belum valid.', 'error');
       }
+    }
+
+    function printSuratJalan() {
+      printSavedSuratJalan('a4');
     }
 
     function getPusatStock(item) {
