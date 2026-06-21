@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transfer Produk Outlet | APJ Inventori v14.4</title>
+  <title>Transfer Produk Outlet | APJ Inventori v14.5</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -28,40 +28,40 @@
       body { display: block !important; background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
       body > *:not(#printAreaTransfer) { display: none !important; }
       #printAreaTransfer { display: block !important; color: black !important; }
-      body.print-transfer-a4 #printAreaTransfer {
-        width: 190mm; max-width: 190mm; font-family: 'Times New Roman', serif;
-        font-size: 8.4pt; line-height: 1.12; zoom: var(--transfer-print-zoom, .92);
-        page-break-after: avoid; page-break-inside: avoid;
-      }
-      body.print-transfer-80 #printAreaTransfer { width: 72mm; max-width: 72mm; font-family: Arial, sans-serif; font-size: 8px; line-height: 1.12; }
-      .sj-kop { text-align: center; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 6px; }
-      .sj-title { font-size: 17pt; font-weight: bold; letter-spacing: .3px; }
-      .sj-subtitle { font-size: 10pt; font-weight: bold; margin-top: 1px; }
-      .sj-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: 8.2pt; margin: 6px 0; }
-      .sj-meta div { display: flex; justify-content: space-between; border-bottom: 1px dotted #aaa; padding: 1px 0; }
-      .sj-meta b { margin-left: 8px; text-align: right; }
-      .sj-table { width: 100%; border-collapse: collapse; font-size: 7.9pt; }
-      .sj-table th, .sj-table td { border: 1px solid #000; padding: 2.2px 2.5px; color: #000 !important; }
+      body.print-transfer-a4 #printAreaTransfer { font-family: 'Times New Roman', serif; }
+      body.print-transfer-58 #printAreaTransfer { width: 54mm; max-width: 54mm; font-family: Arial, sans-serif; font-size: 8.2px; line-height: 1.16; page-break-inside: avoid; break-inside: avoid; }
+      .sj-kop { text-align: center; border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
+      .sj-title { font-size: 20pt; font-weight: bold; letter-spacing: .5px; }
+      .sj-subtitle { font-size: 12pt; font-weight: bold; margin-top: 2px; }
+      .sj-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 22px; font-size: 10pt; margin: 12px 0; }
+      .sj-meta div { display: flex; justify-content: space-between; border-bottom: 1px dotted #999; padding: 2px 0; }
+      .sj-meta b { margin-left: 10px; text-align: right; }
+      .sj-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+      .sj-table th, .sj-table td { border: 1px solid #000; padding: 5px; color: #000 !important; }
       .sj-table th { background: #f2f2f2 !important; text-align: center; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .sj-table td:nth-child(3), .sj-table td:nth-child(6) { text-align: left; }
       .sj-table td { text-align: center; vertical-align: top; }
-      .sj-note { font-size: 7.8pt; margin-top: 5px; }
-      .sj-sign { display: flex; justify-content: space-between; gap: 14px; margin-top: 10px; page-break-inside: avoid; }
-      .sj-sign-box { width: 33.333%; text-align: center; font-size: 8.4pt; }
-      .sj-sign-name { margin-top: 26px; border-top: 1px solid #000; padding-top: 2px; font-weight: bold; }
-      body.print-transfer-80 .sj-kop { border-bottom: 1px dashed #000; padding-bottom: 3px; margin-bottom: 4px; }
-      body.print-transfer-80 .sj-title { font-size: 11px; letter-spacing: 0; }
-      body.print-transfer-80 .sj-subtitle { font-size: 8px; }
-      body.print-transfer-80 .sj-meta { display: block; font-size: 7px; margin: 4px 0; }
-      body.print-transfer-80 .sj-meta div { border-bottom: none; padding: 0; gap: 4px; }
-      body.print-transfer-80 .sj-meta b { margin-left: 4px; }
-      body.print-transfer-80 .sj-table { font-size: 7px; }
-      body.print-transfer-80 .sj-table th, body.print-transfer-80 .sj-table td { padding: 1px; }
-      body.print-transfer-80 .sj-note { font-size: 7px; border-top: 1px dashed #000; margin-top: 4px; padding-top: 3px; }
-      body.print-transfer-80 .sj-sign { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
-      body.print-transfer-80 .sj-sign-box { width: auto; margin-top: 0; font-size: 7px; }
-      body.print-transfer-80 .sj-sign-box:first-child { display:none; }
-      body.print-transfer-80 .sj-sign-name { margin-top: 12px; padding-top: 1px; }
+      .sj-note { font-size: 9pt; margin-top: 10px; }
+      .sj-sign { display: flex; justify-content: space-between; gap: 18px; margin-top: 28px; page-break-inside: avoid; }
+      .sj-sign-box { width: 33.333%; text-align: center; font-size: 10pt; }
+      .sj-sign-name { margin-top: 58px; border-top: 1px solid #000; padding-top: 4px; font-weight: bold; }
+      body.print-transfer-58 .sj-kop { border-bottom: 1px dashed #000; padding-bottom: 3px; margin-bottom: 4px; }
+      body.print-transfer-58 .sj-title { font-size: 11px; letter-spacing: .1px; }
+      body.print-transfer-58 .sj-subtitle { font-size: 8px; }
+      body.print-transfer-58 .sj-meta { display: block; font-size: 7.2px; margin: 4px 0; }
+      body.print-transfer-58 .sj-meta div { border-bottom: none; padding: .5px 0; gap: 4px; }
+      body.print-transfer-58 .sj-meta b { margin-left: 4px; }
+      body.print-transfer-58 .sj-table { font-size: 7.4px; border-collapse: collapse; }
+      body.print-transfer-58 .sj-table th, body.print-transfer-58 .sj-table td { padding: 1.5px 1px; page-break-inside: avoid; break-inside: avoid; }
+      body.print-transfer-58 .sj-table th { background: transparent !important; }
+      body.print-transfer-58 .sj-item-name { font-weight: 800; font-size: 7.6px; }
+      body.print-transfer-58 .sj-item-detail { margin-top: 1px; font-size: 7.2px; }
+      body.print-transfer-58 .sj-note { font-size: 7.2px; border-top: 1px dashed #000; margin-top: 4px; padding-top: 3px; }
+      body.print-transfer-58 .sj-sign { display: block; margin-top: 6px; font-size: 7.2px; page-break-inside: avoid; }
+      body.print-transfer-58 .sj-sign-box { width: 100%; margin-top: 4px; text-align: left; }
+      body.print-transfer-58 .sj-sign-box:first-child { display:none; }
+      body.print-transfer-58 .sj-sign-box > div:first-child { display:inline-block; min-width: 38px; }
+      body.print-transfer-58 .sj-sign-name { display:inline-block; margin-top: 0; border-top: 1px dotted #000; padding-top: 1px; min-width: 34mm; text-align:center; font-weight: 700; }
     }
   </style>
 </head>
@@ -135,7 +135,7 @@
           <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             <button type="button" onclick="loadTransferPrintDocs()" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-700">Muat Data Print</button>
             <button type="button" onclick="printSavedSuratJalan('a4')" class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-violet-600/20">Print A4</button>
-            <button type="button" onclick="printSavedSuratJalan('80')" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-700">Print 80mm</button>
+            <button type="button" onclick="printSavedSuratJalan('58')" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold border border-slate-700">Print 58mm</button>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -591,17 +591,10 @@
         style.id = 'dynamicPrintPageStyle';
         document.head.appendChild(style);
       }
-      style.textContent = mode === '80'
-        ? '@media print { @page { size: 80mm auto; margin: 3mm; } }'
+      const isThermal = mode === '58' || mode === '80';
+      style.textContent = isThermal
+        ? '@media print { @page { size: 58mm auto; margin: 2mm; } }'
         : '@media print { @page { size: A4 portrait; margin: 6mm; } }';
-    }
-
-    function getTransferA4Zoom(rowCount) {
-      if (rowCount <= 18) return '.94';
-      if (rowCount <= 26) return '.88';
-      if (rowCount <= 34) return '.80';
-      if (rowCount <= 44) return '.72';
-      return '.64';
     }
 
     function printSavedSuratJalan(mode) {
@@ -610,11 +603,10 @@
         const rows = group.rows || [];
         if (!rows.length) throw new Error('Dokumen ini tidak memiliki baris produk.');
         const now = new Date();
-        const is80 = mode === '80';
-        setDynamicPrintPage(is80 ? '80' : 'a4');
-        document.documentElement.style.setProperty('--transfer-print-zoom', is80 ? '1' : getTransferA4Zoom(rows.length));
-        document.body.classList.remove('print-transfer-a4', 'print-transfer-80');
-        document.body.classList.add(is80 ? 'print-transfer-80' : 'print-transfer-a4');
+        const is58 = mode === '58' || mode === '80';
+        setDynamicPrintPage(is58 ? '58' : 'a4');
+        document.body.classList.remove('print-transfer-a4', 'print-transfer-58');
+        document.body.classList.add(is58 ? 'print-transfer-58' : 'print-transfer-a4');
 
         document.getElementById('printSjNo').textContent = buildSuratJalanNumber(group, mode);
         document.getElementById('printSjTanggal').textContent = dateToDisplay(group.tanggal);
@@ -626,15 +618,16 @@
         document.getElementById('printSjPenerima').textContent = group.pic || 'PIC';
         document.getElementById('printSjCatatan').textContent = `Catatan: ${group.catatan || '-'}`;
 
-        document.getElementById('printSjHead').innerHTML = is80
-          ? '<th style="width:20px;">No</th><th>Produk</th><th style="width:36px;">Qty</th><th style="width:34px;">Sat</th>'
+        document.getElementById('printSjHead').innerHTML = is58
+          ? '<th style="width:18px;">No</th><th>Detail Produk</th>'
           : '<th style="width:32px;">No</th><th style="width:95px;">ID</th><th>Nama Produk</th><th style="width:70px;">Qty</th><th style="width:70px;">Satuan</th><th>Catatan</th>';
-        document.getElementById('printSjBody').innerHTML = rows.map((r, i) => is80 ? `
+        document.getElementById('printSjBody').innerHTML = rows.map((r, i) => is58 ? `
           <tr>
             <td>${i + 1}</td>
-            <td style="text-align:left;">${escapeHtml(r.namaProduk || '-')}</td>
-            <td>${escapeHtml(formatNumber(r.qtyTransfer))}</td>
-            <td>${escapeHtml(r.satuan || '-')}</td>
+            <td style="text-align:left;">
+              <div class="sj-item-name">${escapeHtml(r.namaProduk || '-')}</div>
+              <div class="sj-item-detail">Qty: <b>${escapeHtml(formatNumber(r.qtyTransfer))}</b> ${escapeHtml(r.satuan || '')}</div>
+            </td>
           </tr>
         ` : `
           <tr>
@@ -648,10 +641,7 @@
         `).join('');
 
         window.print();
-        setTimeout(() => {
-          document.body.classList.remove('print-transfer-a4', 'print-transfer-80');
-          document.documentElement.style.removeProperty('--transfer-print-zoom');
-        }, 500);
+        setTimeout(() => document.body.classList.remove('print-transfer-a4', 'print-transfer-58'), 500);
       } catch (error) {
         showToast(error.message || 'Data surat jalan belum valid.', 'error');
       }
