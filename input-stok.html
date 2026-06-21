@@ -3,47 +3,281 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Input Stok | APJ Inventori</title>
+  <title>Input Stok | Sistem Inventori APJ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
     .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all 0.4s ease; z-index: 9999; }
     .toast.show { top: 24px; }
-    input[type=number]::-webkit-inner-spin-button,
+    
+    /* Menghilangkan panah atas-bawah pada input number */
+    input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
+  
 
-    /* Logout modal, disamakan dengan dashboard */
-    .modal-overlay { transition: opacity 0.3s ease-out; }
-    .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
-
-
-    /* Responsif mobile/tablet */
-    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-    .table-scroll::-webkit-scrollbar { height: 8px; }
-    .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
-    @media (max-width: 1023px) {
-      .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
-      input, select, textarea { font-size: 16px; } /* cegah auto-zoom iOS */
-      main { width: 100%; }
+    /* ================= APJ INVENTORI v15 UI PRO ================= */
+    :root {
+      --apj-blue: #3b82f6;
+      --apj-sky: #38bdf8;
+      --apj-emerald: #34d399;
+      --apj-amber: #f59e0b;
+      --apj-rose: #fb7185;
+      --apj-violet: #a78bfa;
+      --apj-bg: #0f172a;
+      --apj-card: rgba(15, 23, 42, .86);
     }
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(59,130,246,.18), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(167,139,250,.14), transparent 24%),
+        radial-gradient(circle at 80% 100%, rgba(52,211,153,.10), transparent 30%),
+        #0f172a !important;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, rgba(0,0,0,.72), transparent 72%);
+    }
+    aside, main, #customToast, .apj-help-fab, .apj-mobile-menu, .apj-sidebar-backdrop, .apj-guide-modal { position: relative; z-index: 1; }
+    aside {
+      background: linear-gradient(180deg, rgba(2,6,23,.98), rgba(15,23,42,.96)) !important;
+      border-right-color: rgba(51,65,85,.85) !important;
+      box-shadow: 18px 0 50px rgba(0,0,0,.18);
+    }
+    aside nav a {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid transparent;
+    }
+    aside nav a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,.08), transparent 45%);
+      opacity: 0;
+      transform: translateX(-30%);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    aside nav a:hover::after { opacity: 1; transform: translateX(0); }
+    .apj-nav-ico {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      background: rgba(15,23,42,.85);
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .apj-active-link {
+      background: linear-gradient(135deg, rgba(59,130,246,.18), rgba(14,165,233,.08)) !important;
+      border-color: rgba(59,130,246,.35) !important;
+      color: #fff !important;
+      box-shadow: 0 14px 35px rgba(37,99,235,.12);
+    }
+    .apj-card-glow, .bg-slate-950, .bg-slate-900\/80 {
+      box-shadow: 0 22px 70px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .apj-lift, .bg-slate-950.border, .bg-slate-900.border {
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .apj-lift:hover, .bg-slate-950.border:hover {
+      transform: translateY(-2px);
+      border-color: rgba(96,165,250,.35) !important;
+      box-shadow: 0 24px 70px rgba(15,23,42,.38), 0 0 0 1px rgba(96,165,250,.06) inset;
+    }
+    .apj-soft-animate { animation: apjSoftEnter .45s ease-out both; }
+    @keyframes apjSoftEnter { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes apjPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.35); } 50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
+    .apj-help-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 60;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,.35);
+      background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(14,165,233,.9));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 22px 60px rgba(37,99,235,.32);
+      transition: transform .2s ease, filter .2s ease;
+      animation: apjPulse 2.2s ease-in-out infinite;
+    }
+    .apj-help-fab:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.08); }
+    .apj-guide-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .apj-guide-modal.show { display: flex; }
+    .apj-guide-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(2,6,23,.82);
+      backdrop-filter: blur(10px);
+    }
+    .apj-guide-card {
+      position: relative;
+      width: min(760px, 100%);
+      max-height: 90dvh;
+      overflow: auto;
+      border-radius: 24px;
+      border: 1px solid rgba(148,163,184,.22);
+      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
+      box-shadow: 0 30px 120px rgba(0,0,0,.55);
+      padding: 22px;
+      transform: translateY(10px) scale(.98);
+      opacity: 0;
+      transition: transform .24s ease, opacity .24s ease;
+    }
+    .apj-guide-modal.show .apj-guide-card { transform: translateY(0) scale(1); opacity: 1; }
+    .apj-guide-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .apj-guide-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      background: linear-gradient(135deg, rgba(59,130,246,.2), rgba(14,165,233,.10));
+      border: 1px solid rgba(96,165,250,.28);
+    }
+    .apj-guide-steps { display: grid; gap: 10px; margin: 16px 0; }
+    .apj-guide-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(15,23,42,.78);
+      border: 1px solid rgba(71,85,105,.55);
+    }
+    .apj-step-no {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+    }
+    .apj-guide-note {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(245,158,11,.28);
+      background: rgba(120,53,15,.20);
+      color: #fde68a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .apj-guide-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+    .apj-btn-soft {
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(15,23,42,.9);
+      color: #e2e8f0;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .apj-btn-primary {
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      color: white;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 14px 40px rgba(37,99,235,.22);
+    }
+    .apj-mobile-menu {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 70;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.28);
+      background: rgba(2,6,23,.88);
+      color: white;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 18px 45px rgba(0,0,0,.28);
+    }
+    .apj-sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 65;
+      display: none;
+      background: rgba(2,6,23,.68);
+      backdrop-filter: blur(7px);
+    }
+    .apj-sidebar-backdrop.show { display: block; }
+    @media (max-width: 1023px) {
+      body { min-height: 100dvh; }
+      .apj-mobile-menu { display: inline-flex; }
+      aside {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: min(290px, 86vw) !important;
+        z-index: 80 !important;
+        transform: translateX(-105%);
+        transition: transform .28s ease !important;
+      }
+      aside.apj-open { transform: translateX(0) !important; }
+      main header { padding-left: 68px !important; }
+      input, select, textarea { font-size: 16px !important; }
+      .apj-help-fab { right: 14px; bottom: 14px; padding: 11px 13px; }
+      .apj-help-fab span:last-child { display: none; }
+    }
+    @media print {
+      .apj-help-fab, .apj-guide-modal, .apj-mobile-menu, .apj-sidebar-backdrop { display: none !important; }
+      body::before { display: none !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    }
+    /* ================= /APJ INVENTORI v15 UI PRO ================= */
 
   </style>
 </head>
-<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
-  <!-- Tombol menu mobile: tampil di layar kecil untuk membuka sidebar -->
-  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-  </button>
-  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/70 backdrop-blur-sm lg:hidden"></div>
-
+<body data-apj-page="input-stok.html" class="flex h-screen overflow-hidden antialiased">
 
   <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert">
-    <div class="ml-3 text-sm font-medium" id="toastMessage"></div>
-</div>
+    <div class="ml-3 text-sm font-medium" id="toastMessage">Pesan Notifikasi</div>
+  </div>
 
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
+  <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0">
     <div class="h-16 flex items-center px-6 border-b border-slate-800">
       <div class="flex items-center gap-3 text-blue-500">
         <span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span>
@@ -54,30 +288,21 @@
       <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
       <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 bg-blue-600/10 text-blue-500 rounded-lg font-medium text-sm transition-colors border border-blue-500/20">Input Stok</a>
       <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
-      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
-      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
       <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
       <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
-      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
     </nav>
-
-    <div class="p-4 border-t border-slate-800">
-      <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-        Logout Sistem
-      </button>
-    </div>
   </aside>
 
   <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
-    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
-      <h2 class="text-base sm:text-lg font-semibold text-blue-400">Form Input Stok</h2>
-      <div class="hidden sm:block text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-blue-400">Memuat...</span></div>
+    <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <h2 class="text-lg font-semibold text-white">Form Input Stok (Multi Item & Konversi)</h2>
+      <div class="text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-blue-400">Memuat...</span></div>
     </header>
 
-    <div class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto w-full">
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="p-8 max-w-[1400px] mx-auto w-full">
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Transaksi</label>
             <input type="date" id="tanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-blue-500 focus:outline-none">
@@ -90,138 +315,63 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Mode</p>
-            <p class="text-sm font-semibold text-blue-400">Barang Masuk / Pembelian</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Logika</p>
-            <p class="text-sm text-slate-300">Beli → Stok riil</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status</p>
-            <p id="statusInfo" class="text-sm text-slate-300">Pilih kategori untuk mulai input.</p>
-          </div>
-        </div>
-
-        <div class="mb-4 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg p-3">
-          Input stok dipakai untuk barang masuk dari pembelian atau penambahan awal. Khusus item parent seperti <b>Ayam Potong 8/11</b>, sistem membuka hasil preparasi otomatis seperti Ayam Kremes/Premix.
-        </div>
-
-        <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll mb-6">
-          <table class="w-full text-left border-collapse min-w-[920px]">
+        <div class="border border-slate-800 rounded-lg overflow-x-auto mb-6">
+          <table class="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
-                <th class="p-4 min-w-[260px]">Nama Barang</th>
-                <th class="p-4 min-w-[120px] text-center">Stok Saat Ini</th>
-                <th class="p-4 min-w-[150px] text-center">Qty Masuk (Beli)</th>
-                <th class="p-4 min-w-[110px] text-center">Satuan Beli</th>
-                <th class="p-4 min-w-[150px] text-center">Qty Stok (Riil)</th>
-                <th class="p-4 min-w-[110px] text-center">Satuan Stok</th>
-                <th class="p-4 min-w-[90px] text-center">Aksi</th>
+                <th class="p-4 w-4/12">Nama Barang</th>
+                <th class="p-4 w-2/12 text-center">Qty Masuk (Beli)</th>
+                <th class="p-4 w-1/12 text-center">Satuan</th>
+                <th class="p-4 w-2/12 text-center">Qty Stok (Riil)</th>
+                <th class="p-4 w-1/12 text-center">Satuan</th>
+                <th class="p-4 w-2/12 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody id="itemTableBody">
-              <tr><td colspan="7" class="p-8 text-center text-slate-500">Pilih kategori untuk mulai input stok.</td></tr>
+              <tr class="border-b border-slate-800/50 bg-slate-950 item-row">
+                <td class="p-3">
+                  <select onchange="updateSatuan(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled>
+                    <option value="">Pilih kategori terlebih dahulu...</option>
+                  </select>
+                </td>
+                <td class="p-3">
+                  <input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-masuk text-center" placeholder="0" disabled>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="text-sm font-semibold text-slate-500 label-satuan-beli">-</span>
+                </td>
+                <td class="p-3">
+                  <input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-stok text-center" placeholder="0" disabled>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="text-sm font-bold text-blue-400 label-satuan-stok">-</span>
+                </td>
+                <td class="p-3 text-center">
+                  <button type="button" class="text-slate-600 text-sm font-medium" disabled>Hapus</button>
+                </td>
+              </tr>
             </tbody>
           </table>
           <div class="bg-slate-900 p-3 text-center border-t border-slate-800">
-            <button type="button" id="btnTambahBaris" onclick="tambahBarisBaru()" class="text-blue-500 hover:text-blue-400 text-sm font-medium flex items-center justify-center gap-2 w-full disabled:opacity-40 disabled:cursor-not-allowed" disabled>+ Tambah Baris Barang</button>
+            <button type="button" id="btnTambahBaris" onclick="tambahBarisBaru()" class="text-blue-500 hover:text-blue-400 text-sm font-medium flex items-center justify-center gap-2 w-full" disabled>
+              + Tambah Baris Barang
+            </button>
           </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-          <p id="saveHint" class="text-xs text-slate-500">Pastikan satuan beli dan satuan stok sudah sesuai sebelum disimpan.</p>
-          <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <button type="button" onclick="openInputPrintModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-emerald-600/20 w-full sm:w-auto">Print Data 58mm</button>
-            <button type="button" id="btnSimpan" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-blue-600/20 disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto">Simpan Transaksi Input</button>
-          </div>
+        <div class="flex justify-end">
+          <button type="button" id="btnSimpan" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-blue-600/20">
+            Simpan Transaksi Input
+          </button>
         </div>
+
       </div>
     </div>
   </main>
 
-
-  <!-- Modal konfirmasi logout, dibuat konsisten dengan dashboard -->
-  <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
-    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
-      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 mb-4 mx-auto border border-rose-500/20">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-      </div>
-      <h3 class="text-lg font-bold text-white text-center mb-2">Konfirmasi Keluar</h3>
-      <p class="text-sm text-slate-400 text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
-      <div class="flex gap-3">
-        <button type="button" onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors border border-slate-600">Batal</button>
-        <button type="button" onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-rose-600/20">Ya, Keluar</button>
-      </div>
-    </div>
-  </div>
-
-
-
-  <!-- Modal Print Input Stok 58mm Multi Barang -->
-  <div id="inputPrintModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
-    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeInputPrintModal()"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-2xl max-h-[92dvh] overflow-y-auto transform scale-95 opacity-0 modal-content pointer-events-auto">
-      <div class="mb-5">
-        <p class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Print Data Input 58mm</p>
-        <h3 class="text-xl font-bold text-white">Cetak label stok masuk</h3>
-        <p class="text-sm text-slate-400 mt-1">Pilih tanggal, lalu tambahkan satu atau banyak barang. Sekali print bisa langsung keluar berurutan ke bawah dan tinggal dipotong manual.</p>
-      </div>
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Masuk</label>
-          <input type="date" id="printInputTanggal" onchange="handleInputPrintTanggalChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Nama Barang</label>
-          <select id="printInputBarang" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none disabled:opacity-50">
-            <option value="" disabled selected>Pilih tanggal dulu</option>
-          </select>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-            <button type="button" id="btnTambahPrintBarang" onclick="addInputPrintBarang()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-lg transition-colors border border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed">+ Tambah Barang</button>
-            <button type="button" id="btnTambahSemuaPrintBarang" onclick="addAllInputPrintBarang()" class="px-4 py-2.5 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-300 text-sm font-semibold rounded-lg transition-colors border border-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed">+ Tambah Semua Tanggal Ini</button>
-          </div>
-          <p id="printInputInfo" class="text-xs text-slate-500 mt-2">Daftar barang mengikuti tanggal yang dipilih.</p>
-        </div>
-
-        <div class="rounded-xl border border-slate-700 bg-slate-950/70 p-4">
-          <div class="flex items-center justify-between gap-3 mb-3">
-            <div>
-              <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Daftar yang akan dicetak</p>
-              <p class="text-xs text-slate-500">Urutan print mengikuti daftar ini.</p>
-            </div>
-            <button type="button" onclick="clearInputPrintBarang()" class="text-xs text-rose-400 hover:text-rose-300 font-semibold">Kosongkan</button>
-          </div>
-          <div id="printInputSelectedList" class="space-y-2">
-            <p class="text-sm text-slate-500 italic">Belum ada barang ditambahkan.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-3 mt-6">
-        <button type="button" onclick="closeInputPrintModal()" class="flex-1 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors border border-slate-600">Batal</button>
-        <button type="button" id="btnPrintInput58" onclick="printInputStok58mm()" class="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-lg shadow-emerald-600/20">Print 58mm</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
-
     let globalListBarang = [];
-    let globalBarangById = {};
-
-    const KATEGORI_GENERAL = [
-      { key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' },
-      { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' },
-      { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' },
-      { key: 'minuman', label: 'Minuman & Barang Dagang', sheet: 'MASTER_MINUMAN' },
-      { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }
-    ];
 
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') {
@@ -229,666 +379,443 @@
         return;
       }
 
-      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
+      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME');
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
-      buildKategoriOptions();
-    });
 
-    
-    function normPermValue(value) {
-      return String(value ?? '').trim().toLowerCase();
-    }
-
-    function isOwnerLevel() {
-      const level = normPermValue(localStorage.getItem('APJ_USER_LEVEL'));
-      return level === 'owner' || level === 'superadmin' || level === 'super admin';
-    }
-
-    function hasPerm(permissions, key) {
-      return isOwnerLevel() || normPermValue(permissions && permissions[key]) === 'y';
-    }
-function buildKategoriOptions() {
       const permissions = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
       const kategoriSelect = document.getElementById('kategoriSelect');
-      let count = 0;
+      
+      const kategoriMap = [
+        { key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' },
+        { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' },
+        { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' },
+        { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' },
+        { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }
+      ];
 
-      KATEGORI_GENERAL.forEach(kat => {
-        // Input stok tetap memakai izin kategori masing-masing.
-        // Owner/SuperAdmin otomatis full access via hasPerm().
-        if (hasPerm(permissions, kat.key)) {
+      kategoriMap.forEach(kat => {
+        if (permissions[kat.key] === 'Y') {
           const option = document.createElement('option');
           option.value = kat.sheet;
           option.textContent = kat.label;
           kategoriSelect.appendChild(option);
-          count++;
         }
       });
-
-      if (!count) {
-        document.getElementById('statusInfo').textContent = 'Tidak ada kategori input stok yang dibuka untuk role ini.';
-        showToast('Role ini belum punya akses input kategori stok.', 'error');
-      }
-    }
+    });
 
     function showToast(message, type = 'success') {
       const toast = document.getElementById('customToast');
       document.getElementById('toastMessage').textContent = message;
-      toast.className = type === 'success'
+      toast.className = type === 'success' 
         ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md"
         : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
       setTimeout(() => toast.classList.remove('show'), 4000);
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
-    }
-
-    function parseNumber(value) {
-      const n = parseFloat(String(value ?? '').replace(',', '.'));
-      return Number.isFinite(n) ? n : 0;
-    }
-
-    function setLoadingRow(text) {
-      document.getElementById('itemTableBody').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-500 italic">${escapeHtml(text)}</td></tr>`;
-      document.getElementById('btnTambahBaris').disabled = true;
     }
 
     async function handleKategoriChange() {
       const selectedSheet = document.getElementById('kategoriSelect').value;
       if (!selectedSheet) return;
 
-      setLoadingRow('Memuat data master barang...');
-      document.getElementById('statusInfo').textContent = 'Mengambil data barang...';
+      const tbody = document.getElementById('itemTableBody');
+      tbody.innerHTML = `
+        <tr class="border-b border-slate-800/50 bg-slate-950 item-row">
+          <td class="p-3">
+            <select onchange="updateSatuan(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled>
+              <option value="">Memuat data...</option>
+            </select>
+          </td>
+          <td class="p-3"><input type="number" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-masuk text-center" disabled></td>
+          <td class="p-3 text-center"><span class="text-sm font-semibold text-slate-500 label-satuan-beli">-</span></td>
+          <td class="p-3"><input type="number" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-stok text-center" disabled></td>
+          <td class="p-3 text-center"><span class="text-sm font-bold text-blue-400 label-satuan-stok">-</span></td>
+          <td class="p-3 text-center"><button type="button" class="text-slate-600 text-sm font-medium" disabled>Hapus</button></td>
+        </tr>
+      `;
+      document.getElementById('btnTambahBaris').disabled = true;
 
       try {
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
-          body: JSON.stringify({ action: 'getBarang', sheetName: selectedSheet, context: 'input' })
+          body: JSON.stringify({ action: 'getBarang', sheetName: selectedSheet })
         });
 
         const result = await response.json();
 
-        if (!result.success) {
-          document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-rose-500">Gagal memuat data barang.</td></tr>';
-          document.getElementById('statusInfo').textContent = 'Gagal memuat data.';
-          return showToast(result.message || 'Gagal memuat data barang.', 'error');
-        }
+        if (result.success) {
+          globalListBarang = result.data;
+          
+          if (globalListBarang.length === 0) {
+            showToast("Tabel master kosong.", "error");
+            return;
+          }
 
-        globalListBarang = result.data || [];
-        globalBarangById = {};
-        globalListBarang.forEach(b => { globalBarangById[String(b.id)] = b; });
-        if (!globalListBarang.length) {
-          document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-rose-500">Master barang kategori ini masih kosong.</td></tr>';
-          document.getElementById('statusInfo').textContent = 'Master kosong.';
-          return showToast('Tabel master kosong.', 'error');
+          const firstSelect = tbody.querySelector('.select-barang');
+          const inputs = tbody.querySelectorAll('input[type="number"]');
+          populateSelectElement(firstSelect);
+          
+          firstSelect.disabled = false;
+          inputs.forEach(input => input.disabled = false);
+          document.getElementById('btnTambahBaris').disabled = false;
+          showToast(`Berhasil memuat ${globalListBarang.length} barang.`, "success");
+        } else {
+          showToast(result.message, "error");
         }
-
-        document.getElementById('itemTableBody').innerHTML = '';
-        document.getElementById('btnTambahBaris').disabled = false;
-        document.getElementById('statusInfo').textContent = `${globalListBarang.length} barang utama siap dipilih. Item preparasi muncul otomatis.`;
-        tambahBarisBaru();
-        showToast(`Berhasil memuat ${globalListBarang.length} barang.`, 'success');
       } catch (error) {
-        document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-rose-500">Koneksi ke server gagal.</td></tr>';
-        document.getElementById('statusInfo').textContent = 'Koneksi gagal.';
-        showToast('Gagal terhubung ke server database.', 'error');
+        showToast("Koneksi gagal.", "error");
       }
     }
 
-    function buildBarangOptions() {
-      return globalListBarang.map(b => `
-        <option value="${escapeHtml(b.id)}"
-          data-nama="${escapeHtml(b.nama)}"
-          data-satuan-beli="${escapeHtml(b.satuanBeli || '-')}"
-          data-satuan-stok="${escapeHtml(b.satuanStok || '-')}"
-          data-stok="${escapeHtml(b.stokTersedia ?? 0)}"
-          data-has-children="${(b.children || []).length ? 'Y' : 'N'}">
-          [${escapeHtml(b.id)}] ${escapeHtml(b.nama)}
-        </option>
-      `).join('');
+    function populateSelectElement(selectElement) {
+      selectElement.innerHTML = '<option value="" disabled selected>-- Pilih Barang --</option>';
+      globalListBarang.forEach(barang => {
+        const option = document.createElement('option');
+        option.value = barang.id;
+        option.textContent = `[${barang.id}] ${barang.nama}`;
+        // Menyimpan DUA satuan ke dalam dataset
+        option.setAttribute('data-satuan-beli', barang.satuanBeli || '-'); 
+        option.setAttribute('data-satuan-stok', barang.satuanStok || '-'); 
+        selectElement.appendChild(option);
+      });
     }
 
     function tambahBarisBaru() {
-      if (!globalListBarang.length) return showToast('Pilih kategori dulu.', 'error');
-
       const tbody = document.getElementById('itemTableBody');
       const tr = document.createElement('tr');
-      tr.className = 'border-b border-slate-800/50 bg-slate-950 item-row hover:bg-slate-900/50 transition-colors';
-      tr.dataset.rowUid = 'row-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+      tr.className = "border-b border-slate-800/50 bg-slate-950 item-row";
+      
       tr.innerHTML = `
         <td class="p-3">
-          <select onchange="updateSatuan(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang focus:border-blue-500 focus:outline-none">
-            <option value="" disabled selected>-- Pilih Barang --</option>
-            ${buildBarangOptions()}
+          <select onchange="updateSatuan(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang">
           </select>
         </td>
-        <td class="p-3 text-center text-sm font-bold text-emerald-400 label-stok">0</td>
-        <td class="p-3"><input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-masuk text-center focus:border-blue-500 focus:outline-none" placeholder="0"></td>
-        <td class="p-3 text-center text-sm font-semibold text-slate-500 label-satuan-beli">-</td>
-        <td class="p-3"><input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-stok text-center focus:border-blue-500 focus:outline-none" placeholder="0" oninput="refreshPreparasiTarget(this)"></td>
-        <td class="p-3 text-center text-sm font-bold text-blue-400 label-satuan-stok">-</td>
-        <td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-rose-500 text-sm font-medium" onclick="hapusBaris(this)">Hapus</button></td>
-      `;
-      tbody.appendChild(tr);
-    }
-
-    function hapusBaris(btn) {
-      const row = btn.closest('tr');
-      removePreparasiRow(row);
-      row.remove();
-      const rows = document.querySelectorAll('.item-row');
-      if (!rows.length) tambahBarisBaru();
-    }
-
-    function updateSatuan(selectElement) {
-      const selectedOption = selectElement.options[selectElement.selectedIndex];
-      const row = selectElement.closest('tr');
-      const item = globalBarangById[selectElement.value];
-      row.querySelector('.label-stok').textContent = selectedOption.getAttribute('data-stok') || '0';
-      row.querySelector('.label-satuan-beli').textContent = selectedOption.getAttribute('data-satuan-beli') || '-';
-      row.querySelector('.label-satuan-stok').textContent = selectedOption.getAttribute('data-satuan-stok') || '-';
-      renderPreparasiRow(row, item);
-    }
-
-    function removePreparasiRow(row) {
-      const uid = row?.dataset?.rowUid;
-      if (!uid) return;
-      document.querySelectorAll(`tr.prep-row[data-parent-uid="${uid}"]`).forEach(el => el.remove());
-    }
-
-    function renderPreparasiRow(row, item) {
-      removePreparasiRow(row);
-      if (!item || !item.children || !item.children.length) return;
-
-      const tr = document.createElement('tr');
-      tr.className = 'prep-row bg-slate-900/70 border-b border-slate-800/70';
-      tr.dataset.parentUid = row.dataset.rowUid;
-      tr.innerHTML = `
-        <td colspan="7" class="p-4">
-          <div class="rounded-xl border border-blue-500/20 bg-blue-950/20 p-4">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
-              <div>
-                <p class="text-sm font-bold text-blue-300">Hasil Preparasi ${escapeHtml(item.nama)}</p>
-                <p class="text-xs text-slate-400">Total hasil preparasi wajib sama dengan Qty Stok parent. Jadi Ayam Potong 8/11 tidak nyangkut sebagai stok tersembunyi.</p>
-              </div>
-              <div class="text-xs text-slate-400">Total: <span class="prep-total font-bold text-blue-300">0</span> / <span class="prep-target">0</span> <span>${escapeHtml(item.satuanStok || '-')}</span></div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              ${item.children.map(child => `
-                <label class="block bg-slate-950/70 border border-slate-800 rounded-lg p-3">
-                  <span class="block text-xs text-slate-400 mb-1">${escapeHtml(child.nama)}</span>
-                  <div class="flex items-center gap-2">
-                    <input type="number" min="0" step="any" class="prep-child-qty w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center focus:border-blue-500 focus:outline-none" placeholder="0"
-                      data-id="${escapeHtml(child.id)}"
-                      data-nama="${escapeHtml(child.nama)}"
-                      data-satuan-stok="${escapeHtml(child.satuanStok || '-')}"
-                      oninput="updatePreparasiTotal(this)">
-                    <span class="text-xs font-bold text-blue-300 min-w-[42px]">${escapeHtml(child.satuanStok || '-')}</span>
-                  </div>
-                </label>
-              `).join('')}
-            </div>
-          </div>
+        <td class="p-3">
+          <input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-masuk text-center" placeholder="0">
+        </td>
+        <td class="p-3 text-center">
+          <span class="text-sm font-semibold text-slate-500 label-satuan-beli">-</span>
+        </td>
+        <td class="p-3">
+          <input type="number" min="0.001" step="any" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-qty-stok text-center" placeholder="0">
+        </td>
+        <td class="p-3 text-center">
+          <span class="text-sm font-bold text-blue-400 label-satuan-stok">-</span>
+        </td>
+        <td class="p-3 text-center">
+          <button type="button" class="text-rose-500 hover:text-rose-400 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button>
         </td>
       `;
-      row.insertAdjacentElement('afterend', tr);
-      updatePreparasiTotal(tr.querySelector('.prep-child-qty'));
+      
+      tbody.appendChild(tr);
+      const newSelect = tr.querySelector('.select-barang');
+      populateSelectElement(newSelect);
     }
 
-    function refreshPreparasiTarget(input) {
-      const row = input.closest('tr');
-      const prep = row?.nextElementSibling?.classList.contains('prep-row') ? row.nextElementSibling : null;
-      if (prep) updatePreparasiTotal(prep.querySelector('.prep-child-qty'));
+    // Fungsi otomatis memperbarui DUA satuan saat dropdown dipilih
+    function updateSatuan(selectElement) {
+      const selectedOption = selectElement.options[selectElement.selectedIndex];
+      const satuanBeli = selectedOption.getAttribute('data-satuan-beli') || '-';
+      const satuanStok = selectedOption.getAttribute('data-satuan-stok') || '-';
+      
+      const row = selectElement.closest('tr');
+      row.querySelector('.label-satuan-beli').textContent = satuanBeli;
+      row.querySelector('.label-satuan-stok').textContent = satuanStok;
     }
-
-    function updatePreparasiTotal(el) {
-      const prepRow = el?.closest('.prep-row');
-      if (!prepRow) return;
-      const parentRow = document.querySelector(`tr.item-row[data-row-uid="${prepRow.dataset.parentUid}"]`);
-      const target = parseNumber(parentRow?.querySelector('.input-qty-stok')?.value || 0);
-      const total = Array.from(prepRow.querySelectorAll('.prep-child-qty')).reduce((sum, input) => sum + parseNumber(input.value), 0);
-      prepRow.querySelector('.prep-total').textContent = formatNumber(total);
-      prepRow.querySelector('.prep-target').textContent = formatNumber(target);
-      prepRow.querySelector('.prep-total').className = `prep-total font-bold ${Math.abs(total - target) < 0.0001 ? 'text-emerald-300' : 'text-amber-300'}`;
-    }
-
-    function formatNumber(value) {
-      const n = Number(value || 0);
-      return Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
-    }
-
+    // FUNGSI SIMPAN DATA KE DATABASE (INPUT STOK)
     document.getElementById('btnSimpan').addEventListener('click', async () => {
       const tanggal = document.getElementById('tanggalInput').value;
       const kategoriSelect = document.getElementById('kategoriSelect');
-      const petugas = localStorage.getItem('APJ_USER_NAME') || '';
-
-      if (!tanggal || !kategoriSelect.value) return showToast('Tanggal dan kategori wajib diisi.', 'error');
-
       const kategori = kategoriSelect.options[kategoriSelect.selectedIndex].text;
-      const selectedIds = new Set();
-      const inputRows = [];
-      const outputRows = [];
+      const petugas = localStorage.getItem('APJ_USER_NAME');
+
+      if (!tanggal || !kategoriSelect.value) {
+        showToast("Tanggal dan Kategori wajib diisi!", "error"); return;
+      }
+
+      const rows = document.querySelectorAll('.item-row');
+      let dataToSave = [];
       let hasError = false;
-      let errorMessage = '';
 
-      document.querySelectorAll('.item-row').forEach(row => {
+      rows.forEach(row => {
         const select = row.querySelector('.select-barang');
-        const qtyBeliRaw = row.querySelector('.input-qty-masuk').value;
-        const qtyStokRaw = row.querySelector('.input-qty-stok').value;
+        const qtyBeli = row.querySelector('.input-qty-masuk').value;
+        const qtyStok = row.querySelector('.input-qty-stok').value;
 
-        if (!select.value && !qtyBeliRaw && !qtyStokRaw) return;
-
-        if (!select.value || parseNumber(qtyBeliRaw) <= 0 || parseNumber(qtyStokRaw) <= 0) {
+        if (select.value && qtyBeli > 0 && qtyStok > 0) {
+          const idBarang = select.value;
+          const namaBarang = select.options[select.selectedIndex].text.split('] ')[1];
+          const satuanBeli = row.querySelector('.label-satuan-beli').innerText;
+          const satuanStok = row.querySelector('.label-satuan-stok').innerText;
+          // Format urutan array: Tanggal, Petugas, Kategori, ID, Nama, Qty Beli, Sat Beli, Qty Stok, Sat Stok
+          dataToSave.push([tanggal, petugas, kategori, idBarang, namaBarang, qtyBeli, satuanBeli, qtyStok, satuanStok]);
+        } else if (select.value) {
           hasError = true;
-          errorMessage = 'Isi barang, Qty Masuk, dan Qty Stok dengan benar.';
-          return;
-        }
-
-        if (selectedIds.has(select.value)) {
-          hasError = true;
-          errorMessage = 'Barang utama tidak boleh dobel dalam satu transaksi.';
-          return;
-        }
-        selectedIds.add(select.value);
-
-        const opt = select.options[select.selectedIndex];
-        const item = globalBarangById[select.value] || {};
-        const namaBarang = opt.getAttribute('data-nama') || opt.textContent.split('] ')[1] || '';
-        const satuanBeli = row.querySelector('.label-satuan-beli').innerText;
-        const satuanStok = row.querySelector('.label-satuan-stok').innerText;
-
-        inputRows.push([tanggal, petugas, kategori, select.value, namaBarang, qtyBeliRaw, satuanBeli, qtyStokRaw, satuanStok]);
-
-        if (item.children && item.children.length) {
-          const prepRow = document.querySelector(`tr.prep-row[data-parent-uid="${row.dataset.rowUid}"]`);
-          const childInputs = Array.from(prepRow?.querySelectorAll('.prep-child-qty') || []);
-          const totalChild = childInputs.reduce((sum, input) => sum + parseNumber(input.value), 0);
-          const qtyStok = parseNumber(qtyStokRaw);
-
-          if (!childInputs.length) {
-            hasError = true;
-            errorMessage = `Hasil preparasi untuk ${namaBarang} belum muncul.`;
-            return;
-          }
-
-          if (Math.abs(totalChild - qtyStok) > 0.0001) {
-            hasError = true;
-            errorMessage = `Total hasil preparasi ${namaBarang} harus sama dengan Qty Stok (${formatNumber(qtyStok)} ${satuanStok}).`;
-            return;
-          }
-
-          outputRows.push([tanggal, petugas, kategori, select.value, namaBarang, qtyStokRaw, satuanStok, 'Preparasi', '', '']);
-
-          childInputs.forEach(input => {
-            const qtyChild = parseNumber(input.value);
-            if (qtyChild <= 0) return;
-            inputRows.push([
-              tanggal,
-              petugas,
-              kategori,
-              input.getAttribute('data-id'),
-              input.getAttribute('data-nama'),
-              input.value,
-              input.getAttribute('data-satuan-stok') || satuanStok,
-              input.value,
-              input.getAttribute('data-satuan-stok') || satuanStok
-            ]);
-          });
         }
       });
 
-      if (hasError) return showToast(errorMessage, 'error');
-      if (!inputRows.length) return showToast('Belum ada data valid untuk disimpan.', 'error');
+      if (dataToSave.length === 0 || hasError) {
+        showToast("Harap isi Qty Masuk & Qty Stok untuk barang yang dipilih!", "error"); return;
+      }
 
       const btnSimpan = document.getElementById('btnSimpan');
-      btnSimpan.disabled = true;
-      btnSimpan.innerText = 'Menyimpan ke Database...';
-      document.getElementById('saveHint').textContent = 'Mohon tunggu, transaksi sedang dikirim.';
+      btnSimpan.disabled = true; btnSimpan.innerText = "Menyimpan ke Database...";
 
       try {
         const response = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          redirect: 'follow',
-          body: JSON.stringify({ action: 'simpanInputStokPreparasi', inputRows, outputRows })
+          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow',
+          body: JSON.stringify({ action: 'simpanTransaksi', sheetName: 'TRANSAKSI_INPUT_STOK', data: dataToSave })
         });
         const result = await response.json();
         if (result.success) {
-          showToast(result.message || 'Berhasil disimpan.', 'success');
-          setTimeout(() => location.reload(), 1800);
-        } else {
-          showToast(result.message || 'Gagal menyimpan data.', 'error');
-          btnSimpan.disabled = false;
-          btnSimpan.innerText = 'Simpan Transaksi Input';
-          document.getElementById('saveHint').textContent = 'Periksa data lalu coba simpan lagi.';
-        }
+          showToast(result.message, "success");
+          setTimeout(() => location.reload(), 2000); // Otomatis refresh form setelah sukses
+        } else showToast(result.message, "error");
       } catch (err) {
-        showToast('Gagal terhubung ke server.', 'error');
-        btnSimpan.disabled = false;
-        btnSimpan.innerText = 'Simpan Transaksi Input';
-        document.getElementById('saveHint').textContent = 'Koneksi gagal. Coba ulangi.';
+        showToast("Gagal terhubung ke server.", "error");
       }
+      btnSimpan.disabled = false; btnSimpan.innerText = "Simpan Transaksi Input";
     });
+    
+  </script>
 
-
-    let inputPrintAvailableItems = [];
-    let inputPrintSelectedItems = [];
-
-    async function openInputPrintModal() {
-      const modal = document.getElementById('inputPrintModal');
-      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
-      const content = modal ? modal.querySelector('.modal-content') : null;
-      if (!modal || !overlay || !content) return;
-
-      const tanggal = document.getElementById('printInputTanggal');
-      if (tanggal && !tanggal.value) tanggal.value = document.getElementById('tanggalInput')?.value || new Date().toISOString().split('T')[0];
-
-      modal.classList.remove('hidden');
-      void modal.offsetWidth;
-      overlay.classList.add('opacity-100');
-      overlay.classList.remove('opacity-0');
-      content.classList.add('scale-100', 'opacity-100');
-      content.classList.remove('scale-95', 'opacity-0');
-
-      await loadInputPrintOptionsForDate();
+<script>
+(function APJ_UI_PRO_BOOT(){
+  const page = (document.body.getAttribute('data-apj-page') || (location.pathname.split('/').pop() || '')).toLowerCase();
+  const icons = {
+    'dashboard.html':'🏠',
+    'input-stok.html':'📥',
+    'output-stok.html':'📤',
+    'transfer-produksi.html':'🚚',
+    'produk-outlet.html':'🏪',
+    'stok-opname.html':'🧮',
+    'lihat-stok.html':'📊',
+    'riwayat-transaksi.html':'🧾'
+  };
+  const tones = {
+    'dashboard.html':'apj-active-link',
+    'input-stok.html':'apj-active-link',
+    'output-stok.html':'apj-active-link',
+    'transfer-produksi.html':'apj-active-link',
+    'produk-outlet.html':'apj-active-link',
+    'stok-opname.html':'apj-active-link',
+    'lihat-stok.html':'apj-active-link',
+    'riwayat-transaksi.html':'apj-active-link'
+  };
+  const guide = {
+    'input-stok.html': {
+      icon:'📥', title:'Panduan Input Stok', subtitle:'Dipakai untuk mencatat barang masuk dari pembelian atau penambahan stok awal.',
+      steps:[
+        'Pilih Tanggal Transaksi sesuai tanggal barang datang.',
+        'Pilih Kategori Transaksi, misalnya Bahan Mentah, Bahan Baku, Kemasan, Minuman, atau Kebersihan.',
+        'Pilih Nama Barang. Kalau baris kurang, tekan tombol + Tambah Baris Barang.',
+        'Isi Qty Masuk (Beli) sesuai nota/belanja, lalu isi Qty Stok (Riil) sesuai jumlah yang benar-benar masuk ke stok.',
+        'Cek satuan beli dan satuan stok. Pastikan tidak tertukar antara Kg, Pcs, Porsi, Botol, atau satuan lain.',
+        'Tekan Simpan Transaksi Input. Jika sukses, sistem membuat ID transaksi otomatis.'
+      ],
+      note:'Khusus barang parent seperti Ayam Potong, isi hasil riil sesuai stok yang siap dipakai. Jangan asal “kira-kira”; stok itu ibarat kompas dapur, kalau meleset semua ikut muter.'
+    },
+    'output-stok.html': {
+      icon:'📤', title:'Panduan Output Stok', subtitle:'Dipakai untuk mencatat barang keluar, pemakaian dapur, atau proses produksi.',
+      steps:[
+        'Pilih Tanggal Keluar sesuai tanggal barang dipakai atau dikeluarkan.',
+        'Pilih Kategori Transaksi. Untuk produksi, pilih mode/kategori produksi jika tersedia.',
+        'Pilih barang atau produk yang dikeluarkan. Perhatikan stok tersedia sebelum mengisi qty.',
+        'Isi Qty Keluar dengan angka yang benar. Gunakan koma/titik seperlunya, sistem akan membaca sebagai angka.',
+        'Isi Keterangan/Tujuan supaya audit jelas, misalnya Masak Pagi, Produksi Lauk, atau Outlet tertentu.',
+        'Tekan Simpan Output Stok dan tunggu notifikasi berhasil.'
+      ],
+      note:'Kalau stok tersedia terlihat kecil atau nol, jangan dipaksa. Cek fisik dulu atau lakukan input/opname. Sistem ini membantu, tapi mata gudang tetap panglima.'
+    },
+    'stok-opname.html': {
+      icon:'🧮', title:'Panduan Stok Opname', subtitle:'Dipakai untuk menyamakan stok sistem dengan stok fisik di lapangan.',
+      steps:[
+        'Pilih Tanggal Opname sesuai hari pengecekan fisik.',
+        'Pilih Kategori Transaksi yang akan dicek.',
+        'Pilih Nama Barang. Stok Sistem akan menjadi pembanding.',
+        'Isi Stok Fisik sesuai hasil hitung nyata di gudang/dapur/outlet.',
+        'Periksa Selisih. Plus berarti fisik lebih banyak, minus berarti fisik lebih sedikit.',
+        'Isi Alasan Koreksi secara singkat, misalnya salah input, susut, rusak, atau stok ditemukan.',
+        'Tekan Simpan Stok Opname.'
+      ],
+      note:'Opname bukan tempat menebak-nebak. Hitung fisik dulu, baru input. Tradisi lama: barang dihitung pakai mata; sistem baru: hasilnya dikunci rapi.'
+    },
+    'lihat-stok.html': {
+      icon:'📊', title:'Panduan Lihat Stok', subtitle:'Dipakai untuk memantau stok terkini dan menyiapkan laporan PDF.',
+      steps:[
+        'Pilih Kategori Stok yang ingin dilihat.',
+        'Gunakan kolom Cari Barang untuk mencari ID atau nama barang.',
+        'Tekan Refresh jika data terasa belum terbaru.',
+        'Perhatikan Qty Stok, Satuan, Lokasi, Last Update, dan Status.',
+        'Tekan PDF jika ingin mencetak laporan. Pilih penandatangan jika diminta.',
+        'Gunakan status kritis/waspada sebagai prioritas belanja atau produksi.'
+      ],
+      note:'Lihat stok itu bukan sekadar melihat angka. Ini radar operasional: mana yang aman, mana yang mulai teriak minta dibeli.'
+    },
+    'produk-outlet.html': {
+      icon:'🏪', title:'Panduan Produk Outlet', subtitle:'Dipakai untuk mencatat produk outlet, stok outlet, produk terjual, dan opname outlet.',
+      steps:[
+        'Pilih Tanggal dan Outlet yang sedang dikerjakan.',
+        'Gunakan Cari Produk untuk mempercepat pencarian item.',
+        'Tekan Input Terjual untuk mencatat produk yang laku hari itu.',
+        'Isi Qty Terjual sesuai catatan penjualan outlet, lalu simpan.',
+        'Jika stok fisik outlet berbeda dengan sistem, tekan Stok Opname lalu isi stok fisik dan alasan.',
+        'Gunakan Print 58mm atau Print A4 untuk laporan outlet sesuai kebutuhan.'
+      ],
+      note:'Outlet wajib disiplin. Yang terjual dicatat, yang sisa dicek. Kalau tidak, stok jadi drama berseri—episode habisnya banyak.'
+    },
+    'transfer-produksi.html': {
+      icon:'🚚', title:'Panduan Transfer Produk Outlet', subtitle:'Dipakai untuk mengirim produk siap jual dari PUSAT ke outlet dan mencetak Surat Jalan.',
+      steps:[
+        'Pilih Tanggal Transfer.',
+        'Pilih Outlet Tujuan. Produk aktif outlet akan muncul otomatis dari MASTER_PRODUK_OUTLET.',
+        'Pilih PIC Penerima agar tanggung jawab jelas.',
+        'Cari produk jika daftar panjang, lalu isi Qty Transfer hanya pada produk yang dikirim.',
+        'Isi Catatan bila ada informasi tambahan, misalnya tambahan order atau barang pengganti.',
+        'Tekan Simpan Transfer. Baris kosong atau qty 0 tidak akan ikut disimpan.',
+        'Untuk cetak Surat Jalan, tekan Cetak Surat Jalan, pilih transaksi, lalu pilih A4 atau 58mm.'
+      ],
+      note:'Surat Jalan itu bukti jalan barang. Pastikan outlet, PIC, dan qty benar sebelum cetak. Sekali salah, kertas ikut menatap kecewa.'
+    },
+    'riwayat-transaksi.html': {
+      icon:'🧾', title:'Panduan Riwayat Transaksi', subtitle:'Dipakai untuk audit gabungan input, output, produksi, transfer, produk outlet, dan opname.',
+      steps:[
+        'Pilih Tanggal Dari dan Tanggal Sampai.',
+        'Pilih Jenis transaksi, atau pilih Semua untuk audit lengkap.',
+        'Gunakan kolom Cari untuk mencari ID transaksi, nama barang, petugas, outlet, atau kata kunci lain.',
+        'Tekan Muat untuk mengambil data.',
+        'Baca ringkasan dan detail tabel. Cek tanggal, jenis, barang, qty, petugas, dan keterangan.',
+        'Tekan PDF jika laporan perlu disimpan atau dibagikan.'
+      ],
+      note:'Kalau ada angka stok yang aneh, mulai investigasi dari sini. Riwayat transaksi adalah CCTV-nya data.'
     }
+  };
 
-    function closeInputPrintModal() {
-      const modal = document.getElementById('inputPrintModal');
-      const overlay = modal ? modal.querySelector('.modal-overlay') : null;
-      const content = modal ? modal.querySelector('.modal-content') : null;
-      if (!modal || !overlay || !content) return;
-      overlay.classList.remove('opacity-100');
-      overlay.classList.add('opacity-0');
-      content.classList.remove('scale-100', 'opacity-100');
-      content.classList.add('scale-95', 'opacity-0');
-      setTimeout(() => modal.classList.add('hidden'), 250);
-    }
+  function ready(fn){ if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+  function fileNameFromHref(href){ try { return (href || '').split('/').pop().split('?')[0].split('#')[0].toLowerCase(); } catch(e){ return ''; } }
+  function currentFile(){ return page || fileNameFromHref(location.href); }
+  function safe(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-    async function handleInputPrintTanggalChange() {
-      inputPrintSelectedItems = [];
-      renderInputPrintSelectedList();
-      await loadInputPrintOptionsForDate();
-    }
+  function renderSidebar(){
+    const nav = document.querySelector('aside nav');
+    if (!nav) return;
+    const active = currentFile();
+    const menu = [
+      ['dashboard.html','Dashboard'], ['input-stok.html','Input Stok'], ['output-stok.html','Output Stok'],
+      ['transfer-produksi.html','Transfer Produk Outlet'], ['produk-outlet.html','Produk Outlet'],
+      ['stok-opname.html','Stok Opname'], ['lihat-stok.html','Lihat Stok'], ['riwayat-transaksi.html','Riwayat Transaksi']
+    ];
+    nav.innerHTML = '<p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>' + menu.map(([href,label]) => {
+      const isActive = active === href;
+      const cls = isActive ? 'apj-active-link flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors' : 'flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors';
+      return `<a href="${href}" class="${cls}"><span class="apj-nav-ico">${icons[href] || '•'}</span><span>${label}</span></a>`;
+    }).join('');
+  }
 
-    function setInputPrintButtonsDisabled(disabled) {
-      const btnAdd = document.getElementById('btnTambahPrintBarang');
-      const btnAll = document.getElementById('btnTambahSemuaPrintBarang');
-      if (btnAdd) btnAdd.disabled = disabled;
-      if (btnAll) btnAll.disabled = disabled;
-    }
+  function ensureLogout(){
+    const aside = document.querySelector('aside');
+    if (!aside) return;
+    if (aside.textContent.toLowerCase().includes('logout sistem')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'p-4 border-t border-slate-800';
+    wrap.innerHTML = '<button type="button" onclick="APJUI_logout()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50"><span class="apj-nav-ico">🚪</span><span>Logout Sistem</span></button>';
+    aside.appendChild(wrap);
+  }
 
-    async function loadInputPrintOptionsForDate() {
-      const tanggal = document.getElementById('printInputTanggal')?.value || '';
-      const select = document.getElementById('printInputBarang');
-      const info = document.getElementById('printInputInfo');
-      if (!select) return;
+  window.APJUI_logout = function(){
+    ['APJ_SESSION_ACTIVE','APJ_USER_NAME','APJ_USER_LEVEL','APJ_USER_PERMISSIONS'].forEach(k => localStorage.removeItem(k));
+    window.location.href = 'index.html';
+  };
 
-      inputPrintAvailableItems = [];
-      select.disabled = true;
-      setInputPrintButtonsDisabled(true);
+  function setupMobileSidebar(){
+    const aside = document.querySelector('aside');
+    if (!aside || document.querySelector('.apj-mobile-menu') || document.getElementById('mobileMenuBtn')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'apj-mobile-menu';
+    btn.setAttribute('aria-label','Buka menu');
+    btn.innerHTML = '☰';
+    const backdrop = document.createElement('div');
+    backdrop.className = 'apj-sidebar-backdrop';
+    document.body.appendChild(btn);
+    document.body.appendChild(backdrop);
+    function close(){ aside.classList.remove('apj-open'); backdrop.classList.remove('show'); }
+    function open(){ aside.classList.add('apj-open'); backdrop.classList.add('show'); }
+    btn.addEventListener('click', open);
+    backdrop.addEventListener('click', close);
+    aside.addEventListener('click', (e) => { if (e.target.closest('a') && window.innerWidth < 1024) close(); });
+  }
 
-      if (!tanggal) {
-        select.innerHTML = '<option value="" disabled selected>Pilih tanggal dulu</option>';
-        if (info) info.textContent = 'Pilih tanggal masuk terlebih dahulu.';
-        return;
-      }
-
-      select.innerHTML = '<option value="" disabled selected>Memuat barang tanggal ini...</option>';
-      if (info) info.textContent = 'Memuat barang dari transaksi input tersimpan...';
-
-      try {
-        const response = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          redirect: 'follow',
-          body: JSON.stringify({ action: 'getInputPrintOptions', tanggal })
-        });
-        const result = await response.json();
-        if (!result.success) throw new Error(result.message || 'Gagal memuat daftar barang.');
-
-        const rows = result.data || [];
-        inputPrintAvailableItems = rows.map(item => ({
-          key: String(item.key || item.id || item.nama || '').trim(),
-          id: item.id || '',
-          nama: item.nama || '-',
-          satuan: item.satuan || '-',
-          kategori: item.kategori || '',
-          qtyMasuk: item.qtyMasuk || 0
-        })).filter(item => item.key);
-
-        if (!inputPrintAvailableItems.length) {
-          select.innerHTML = '<option value="" disabled selected>Tidak ada barang pada tanggal ini</option>';
-          select.disabled = true;
-          setInputPrintButtonsDisabled(true);
-          if (info) info.textContent = 'Tanggal ini belum punya data stok masuk yang bisa dicetak.';
-          return;
-        }
-
-        select.disabled = false;
-        setInputPrintButtonsDisabled(false);
-        select.innerHTML = '<option value="" disabled selected>-- Pilih Barang --</option>' + inputPrintAvailableItems.map(item => {
-          const label = `${item.nama || '-'} • ${formatNumber(item.qtyMasuk || 0)} ${item.satuan || '-'}${item.kategori ? ' • ' + item.kategori : ''}`;
-          return `<option value="${escapeHtml(item.key)}">${escapeHtml(label)}</option>`;
-        }).join('');
-        if (info) info.textContent = `${inputPrintAvailableItems.length} barang pada tanggal ini. Bisa tambah satu-satu atau tambah semua.`;
-      } catch (error) {
-        select.innerHTML = '<option value="" disabled selected>Gagal memuat daftar barang</option>';
-        select.disabled = true;
-        setInputPrintButtonsDisabled(true);
-        if (info) info.textContent = 'Gagal mengambil daftar barang dari server.';
-        showToast('Gagal memuat daftar barang print.', 'error');
-      }
-    }
-
-    function addInputPrintBarang() {
-      const select = document.getElementById('printInputBarang');
-      const key = select?.value || '';
-      if (!key) return showToast('Pilih nama barang dulu.', 'error');
-      const item = inputPrintAvailableItems.find(x => x.key === key);
-      if (!item) return showToast('Barang tidak ditemukan di tanggal ini.', 'error');
-      if (inputPrintSelectedItems.some(x => x.key === key)) return showToast('Barang ini sudah masuk daftar print.', 'error');
-      inputPrintSelectedItems.push(item);
-      renderInputPrintSelectedList();
-    }
-
-    function addAllInputPrintBarang() {
-      if (!inputPrintAvailableItems.length) return showToast('Tidak ada barang pada tanggal ini.', 'error');
-      inputPrintSelectedItems = inputPrintAvailableItems.slice();
-      renderInputPrintSelectedList();
-      showToast(`${inputPrintSelectedItems.length} barang masuk daftar print.`, 'success');
-    }
-
-    function removeInputPrintBarang(key) {
-      inputPrintSelectedItems = inputPrintSelectedItems.filter(item => item.key !== key);
-      renderInputPrintSelectedList();
-    }
-
-    function clearInputPrintBarang() {
-      inputPrintSelectedItems = [];
-      renderInputPrintSelectedList();
-    }
-
-    function renderInputPrintSelectedList() {
-      const wrap = document.getElementById('printInputSelectedList');
-      if (!wrap) return;
-      if (!inputPrintSelectedItems.length) {
-        wrap.innerHTML = '<p class="text-sm text-slate-500 italic">Belum ada barang ditambahkan.</p>';
-        return;
-      }
-      wrap.innerHTML = inputPrintSelectedItems.map((item, idx) => `
-        <div class="flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2">
+  function guideData(){ return guide[currentFile()] || null; }
+  function buildGuideModal(){
+    const data = guideData();
+    if (!data || document.getElementById('apjGuideModal')) return;
+    const modal = document.createElement('div');
+    modal.id = 'apjGuideModal';
+    modal.className = 'apj-guide-modal';
+    modal.innerHTML = `
+      <div class="apj-guide-backdrop" onclick="APJUI_closeGuide()"></div>
+      <div class="apj-guide-card" role="dialog" aria-modal="true" aria-labelledby="apjGuideTitle">
+        <div class="apj-guide-title">
+          <div class="apj-guide-icon">${data.icon}</div>
           <div class="min-w-0">
-            <p class="text-sm font-semibold text-white truncate">${idx + 1}. ${escapeHtml(item.nama)}</p>
-            <p class="text-xs text-slate-500">Qty: ${escapeHtml(formatNumber(item.qtyMasuk || 0))} ${escapeHtml(item.satuan || '-')}</p>
+            <p class="text-[11px] font-black uppercase tracking-[.18em] text-blue-300 mb-1">Bantuan Cepat APJ</p>
+            <h3 id="apjGuideTitle" class="text-xl sm:text-2xl font-extrabold text-white">${safe(data.title)}</h3>
+            <p class="text-sm text-slate-400 mt-1 leading-relaxed">${safe(data.subtitle)}</p>
           </div>
-          <button type="button" onclick="removeInputPrintBarang('${escapeHtml(item.key)}')" class="text-xs font-semibold text-rose-400 hover:text-rose-300 shrink-0">Hapus</button>
         </div>
-      `).join('');
+        <div class="apj-guide-steps">
+          ${data.steps.map((step, idx) => `<div class="apj-guide-step"><span class="apj-step-no">${idx+1}</span><p class="text-sm text-slate-200 leading-relaxed">${safe(step)}</p></div>`).join('')}
+        </div>
+        <div class="apj-guide-note"><b>Catatan:</b> ${safe(data.note)}</div>
+        <div class="apj-guide-actions">
+          <button type="button" class="apj-btn-soft" onclick="APJUI_resetGuideAuto()">Tampilkan otomatis lagi</button>
+          <button type="button" class="apj-btn-primary" onclick="APJUI_closeGuide()">Paham, lanjut kerja</button>
+        </div>
+      </div>`;
+    const fab = document.createElement('button');
+    fab.type = 'button';
+    fab.className = 'apj-help-fab';
+    fab.innerHTML = `<span>${data.icon}</span><span>Panduan</span>`;
+    fab.addEventListener('click', () => window.APJUI_openGuide(false));
+    document.body.appendChild(modal);
+    document.body.appendChild(fab);
+  }
+
+  window.APJUI_openGuide = function(auto){
+    const modal = document.getElementById('apjGuideModal');
+    if (!modal) return;
+    modal.classList.add('show');
+    if (auto) localStorage.setItem('APJ_HELP_SEEN_' + currentFile(), 'Y');
+  };
+  window.APJUI_closeGuide = function(){
+    const modal = document.getElementById('apjGuideModal');
+    if (modal) modal.classList.remove('show');
+  };
+  window.APJUI_resetGuideAuto = function(){
+    localStorage.removeItem('APJ_HELP_SEEN_' + currentFile());
+    window.APJUI_closeGuide();
+    setTimeout(() => window.APJUI_openGuide(true), 150);
+  };
+
+  function enhanceCards(){
+    document.querySelectorAll('.bg-slate-950.border, .bg-slate-900.border').forEach(el => el.classList.add('apj-lift'));
+    document.querySelectorAll('main > div, main > section').forEach(el => el.classList.add('apj-soft-animate'));
+  }
+
+  ready(function(){
+    renderSidebar();
+    ensureLogout();
+    setupMobileSidebar();
+    buildGuideModal();
+    enhanceCards();
+    const data = guideData();
+    if (data && !localStorage.getItem('APJ_HELP_SEEN_' + currentFile())) {
+      setTimeout(() => window.APJUI_openGuide(true), 650);
     }
-
-    function formatDateID(dateText) {
-      if (!dateText) return '-';
-      const parts = String(dateText).split('-');
-      if (parts.length !== 3) return dateText;
-      const bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-      const y = parts[0];
-      const m = Math.max(0, Math.min(11, parseInt(parts[1], 10) - 1));
-      const d = parseInt(parts[2], 10);
-      return `${d} ${bulan[m]} ${y}`;
-    }
-
-    function buildInput58PrintHtml(data) {
-      const items = Array.isArray(data.items) && data.items.length ? data.items : [data];
-      const labelsHtml = items.map((item, idx) => {
-        const nama = escapeHtml(item.namaBarang || '-');
-        const tanggal = escapeHtml(formatDateID(item.tanggal || data.tanggal));
-        const qty = escapeHtml(formatNumber(item.qtyMasuk || 0));
-        const satuan = escapeHtml(item.satuan || '-');
-        return `
-          <section class="label-block">
-            <div class="brand">AMPERA PAK JENGGOT</div>
-            <div class="line"></div>
-            <div class="nama">${nama}</div>
-            <div class="row"><div class="label">Tanggal Masuk</div><div class="value">${tanggal}</div></div>
-            <div class="row"><div class="label">Qty Masuk</div><div class="value">${qty}</div></div>
-            <div class="row"><div class="label">Satuan</div><div class="value">${satuan}</div></div>
-            <div class="cut">${idx < items.length - 1 ? 'potong di sini' : ''}</div>
-          </section>`;
-      }).join('');
-
-      return `
-        <!DOCTYPE html>
-        <html lang="id">
-        <head>
-          <meta charset="UTF-8">
-          <title>Print Input Stok 58mm</title>
-          <style>
-            @page { size: 58mm auto; margin: 2mm; }
-            * { box-sizing: border-box; }
-            body { width: 54mm; margin: 0; padding: 0; font-family: Arial, sans-serif; color: #000; background: #fff; }
-            .paper { width: 54mm; padding: 0; }
-            .label-block { width: 54mm; padding: 1mm 0 2mm; break-inside: avoid; page-break-inside: avoid; border-bottom: 1px dashed #000; margin-bottom: 2mm; }
-            .brand { text-align: center; font-size: 8px; font-weight: 700; letter-spacing: .15px; margin-bottom: 1.5mm; }
-            .nama { text-align: center; font-size: 12px; line-height: 1.12; font-weight: 800; margin: 1mm 0 2.5mm; word-break: break-word; }
-            .line { border-top: 1px dashed #000; margin: 1.5mm 0; }
-            .row { display: flex; justify-content: space-between; gap: 2mm; font-size: 10px; line-height: 1.3; margin: .8mm 0; }
-            .label { white-space: nowrap; }
-            .value { text-align: right; font-weight: 700; word-break: break-word; }
-            .cut { text-align: center; font-size: 7px; margin-top: 1.5mm; color: #000; min-height: 8px; }
-          </style>
-        </head>
-        <body>
-          <div class="paper">${labelsHtml}</div>
-          <script>window.onload = function(){ window.print(); setTimeout(function(){ window.close(); }, 500); };<\/script>
-        </body>
-        </html>`;
-    }
-
-    async function printInputStok58mm() {
-      const tanggal = document.getElementById('printInputTanggal')?.value || '';
-      const barangKeys = inputPrintSelectedItems.map(item => item.key);
-      if (!tanggal) return showToast('Pilih tanggal dulu.', 'error');
-      if (!barangKeys.length) return showToast('Tambahkan minimal 1 barang ke daftar print.', 'error');
-
-      const btn = document.getElementById('btnPrintInput58');
-      if (btn) { btn.disabled = true; btn.textContent = 'Memuat...'; }
-
-      try {
-        const response = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          redirect: 'follow',
-          body: JSON.stringify({ action: 'getInputPrintData', tanggal, barangKeys })
-        });
-        const result = await response.json();
-        if (!result.success) {
-          showToast(result.message || 'Data print tidak ditemukan.', 'error');
-          return;
-        }
-
-        const w = window.open('', '_blank', 'width=320,height=700');
-        if (!w) return showToast('Popup print diblokir browser. Izinkan popup dulu.', 'error');
-        w.document.open();
-        w.document.write(buildInput58PrintHtml(result.data));
-        w.document.close();
-      } catch (error) {
-        showToast('Gagal mengambil data print.', 'error');
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Print 58mm'; }
-      }
-    }
-
-
-    // Logout modal, disamakan dengan dashboard agar semua halaman punya alur keluar yang sama.
-    const apjLogoutModal = document.getElementById('logoutModal');
-    const apjLogoutOverlay = apjLogoutModal ? apjLogoutModal.querySelector('.modal-overlay') : null;
-    const apjLogoutContent = apjLogoutModal ? apjLogoutModal.querySelector('.modal-content') : null;
-
-    function showLogoutModal() {
-      if (!apjLogoutModal || !apjLogoutOverlay || !apjLogoutContent) return;
-      apjLogoutModal.classList.remove('hidden');
-      void apjLogoutModal.offsetWidth;
-      apjLogoutOverlay.classList.add('opacity-100');
-      apjLogoutOverlay.classList.remove('opacity-0');
-      apjLogoutContent.classList.add('scale-100', 'opacity-100');
-      apjLogoutContent.classList.remove('scale-95', 'opacity-0');
-    }
-
-    function closeLogoutModal() {
-      if (!apjLogoutModal || !apjLogoutOverlay || !apjLogoutContent) return;
-      apjLogoutOverlay.classList.remove('opacity-100');
-      apjLogoutOverlay.classList.add('opacity-0');
-      apjLogoutContent.classList.remove('scale-100', 'opacity-100');
-      apjLogoutContent.classList.add('scale-95', 'opacity-0');
-      setTimeout(() => apjLogoutModal.classList.add('hidden'), 300);
-    }
-
-    function executeLogout() {
-      localStorage.removeItem('APJ_SESSION_ACTIVE');
-      localStorage.removeItem('APJ_USER_NAME');
-      localStorage.removeItem('APJ_USER_LEVEL');
-      localStorage.removeItem('APJ_USER_OUTLET');
-      localStorage.removeItem('APJ_USER_PERMISSIONS');
-      window.location.href = 'index.html';
-    }
-  
-
-    // Kontrol sidebar mobile, tidak mengganggu tampilan desktop.
-    function openMobileSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const backdrop = document.getElementById('sidebarBackdrop');
-      if (!sidebar || !backdrop) return;
-      sidebar.classList.remove('-translate-x-full');
-      backdrop.classList.remove('hidden');
-      document.body.classList.add('overflow-hidden');
-    }
-
-    function closeMobileSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const backdrop = document.getElementById('sidebarBackdrop');
-      if (!sidebar || !backdrop) return;
-      sidebar.classList.add('-translate-x-full');
-      backdrop.classList.add('hidden');
-      document.body.classList.remove('overflow-hidden');
-    }
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeMobileSidebar();
-    });
-
-    window.addEventListener('resize', () => {
-      if (window.innerWidth >= 1024) closeMobileSidebar();
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('#sidebar a').forEach(link => {
-        link.addEventListener('click', closeMobileSidebar);
-      });
-    });
-
+  });
+})();
 </script>
+
 </body>
 </html>
