@@ -3,575 +3,191 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | APJ Inventori v15 UI Pro</title>
+  <title>Dashboard | Sistem Inventori APJ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-
-
-    /* ================= APJ INVENTORI v15 UI PRO ================= */
-    :root {
-      --apj-blue: #3b82f6;
-      --apj-sky: #38bdf8;
-      --apj-emerald: #34d399;
-      --apj-amber: #f59e0b;
-      --apj-rose: #fb7185;
-      --apj-violet: #a78bfa;
-      --apj-bg: #0f172a;
-      --apj-card: rgba(15, 23, 42, .86);
-    }
-    html { scroll-behavior: smooth; }
-    body {
-      background:
-        radial-gradient(circle at 0% 0%, rgba(59,130,246,.18), transparent 28%),
-        radial-gradient(circle at 100% 0%, rgba(167,139,250,.14), transparent 24%),
-        radial-gradient(circle at 80% 100%, rgba(52,211,153,.10), transparent 30%),
-        #0f172a !important;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: radial-gradient(circle at center, rgba(0,0,0,.72), transparent 72%);
-    }
-    aside, main { position: relative; z-index: 1; }
-    aside {
-      background: linear-gradient(180deg, rgba(2,6,23,.98), rgba(15,23,42,.96)) !important;
-      border-right-color: rgba(51,65,85,.85) !important;
-      box-shadow: 18px 0 50px rgba(0,0,0,.18);
-    }
-    aside nav a {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid transparent;
-    }
-    aside nav a::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, rgba(255,255,255,.08), transparent 45%);
-      opacity: 0;
-      transform: translateX(-30%);
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    aside nav a:hover::after { opacity: 1; transform: translateX(0); }
-    .apj-nav-ico {
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex: 0 0 auto;
-      border-radius: 10px;
-      background: rgba(15,23,42,.85);
-      border: 1px solid rgba(148,163,184,.18);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    .apj-active-link {
-      background: linear-gradient(135deg, rgba(59,130,246,.18), rgba(14,165,233,.08)) !important;
-      border-color: rgba(59,130,246,.35) !important;
-      color: #fff !important;
-      box-shadow: 0 14px 35px rgba(37,99,235,.12);
-    }
-    .apj-card-glow, .bg-slate-950, .bg-slate-900\/80 {
-      box-shadow: 0 22px 70px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    .apj-lift, .bg-slate-950.border, .bg-slate-900.border {
-      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-    }
-    .apj-lift:hover, .bg-slate-950.border:hover {
-      transform: translateY(-2px);
-      border-color: rgba(96,165,250,.35) !important;
-      box-shadow: 0 24px 70px rgba(15,23,42,.38), 0 0 0 1px rgba(96,165,250,.06) inset;
-    }
-    .apj-soft-animate { animation: apjSoftEnter .45s ease-out both; }
-    @keyframes apjSoftEnter { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @keyframes apjPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.35); } 50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
-    .apj-help-fab {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 60;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(96,165,250,.35);
-      background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(14,165,233,.9));
-      color: #fff;
-      font-size: 13px;
-      font-weight: 800;
-      box-shadow: 0 22px 60px rgba(37,99,235,.32);
-      transition: transform .2s ease, filter .2s ease;
-      animation: apjPulse 2.2s ease-in-out infinite;
-    }
-    .apj-help-fab:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.08); }
-    .apj-guide-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-    }
-    .apj-guide-modal.show { display: flex; }
-    .apj-guide-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(2,6,23,.82);
-      backdrop-filter: blur(10px);
-    }
-    .apj-guide-card {
-      position: relative;
-      width: min(760px, 100%);
-      max-height: 90dvh;
-      overflow: auto;
-      border-radius: 24px;
-      border: 1px solid rgba(148,163,184,.22);
-      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
-      box-shadow: 0 30px 120px rgba(0,0,0,.55);
-      padding: 22px;
-      transform: translateY(10px) scale(.98);
-      opacity: 0;
-      transition: transform .24s ease, opacity .24s ease;
-    }
-    .apj-guide-modal.show .apj-guide-card { transform: translateY(0) scale(1); opacity: 1; }
-    .apj-guide-title {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-    .apj-guide-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 18px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25px;
-      background: linear-gradient(135deg, rgba(59,130,246,.2), rgba(14,165,233,.10));
-      border: 1px solid rgba(96,165,250,.28);
-    }
-    .apj-guide-steps { display: grid; gap: 10px; margin: 16px 0; }
-    .apj-guide-step {
-      display: grid;
-      grid-template-columns: 34px 1fr;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 16px;
-      background: rgba(15,23,42,.78);
-      border: 1px solid rgba(71,85,105,.55);
-    }
-    .apj-step-no {
-      width: 30px;
-      height: 30px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 900;
-      color: white;
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
-    }
-    .apj-guide-note {
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(245,158,11,.28);
-      background: rgba(120,53,15,.20);
-      color: #fde68a;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-    .apj-guide-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
-    .apj-btn-soft {
-      border-radius: 12px;
-      border: 1px solid rgba(148,163,184,.25);
-      background: rgba(15,23,42,.9);
-      color: #e2e8f0;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-    .apj-btn-primary {
-      border-radius: 12px;
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
-      color: white;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 800;
-      box-shadow: 0 14px 40px rgba(37,99,235,.22);
-    }
-    .apj-mobile-menu {
-      position: fixed;
-      top: 14px;
-      left: 14px;
-      z-index: 70;
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,.28);
-      background: rgba(2,6,23,.88);
-      color: white;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 18px 45px rgba(0,0,0,.28);
-    }
-    .apj-sidebar-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 65;
-      display: none;
-      background: rgba(2,6,23,.68);
-      backdrop-filter: blur(7px);
-    }
-    .apj-sidebar-backdrop.show { display: block; }
+    .animate-fade-in { animation: fadeIn .45s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all .35s ease; z-index: 9999; }
+    .toast.show { top: 24px; }
+    .modal-overlay { transition: opacity .25s ease-out; }
+    .modal-content { transition: transform .25s ease-out, opacity .25s ease-out; }
+    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .table-scroll::-webkit-scrollbar { height: 8px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
     @media (max-width: 1023px) {
-      body { min-height: 100dvh; }
-      .apj-mobile-menu { display: inline-flex; }
-      aside {
-        position: fixed !important;
-        inset: 0 auto 0 0 !important;
-        width: min(290px, 86vw) !important;
-        z-index: 80 !important;
-        transform: translateX(-105%);
-        transition: transform .28s ease !important;
-      }
-      aside.apj-open { transform: translateX(0) !important; }
-      main header { padding-left: 68px !important; }
-      input, select, textarea { font-size: 16px !important; }
-      .apj-help-fab { right: 14px; bottom: 14px; padding: 11px 13px; }
-      .apj-help-fab span:last-child { display: none; }
+      .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
+      input, select, textarea { font-size: 16px; }
+      main { width: 100%; }
     }
-    @media print {
-      .apj-help-fab, .apj-guide-modal, .apj-mobile-menu, .apj-sidebar-backdrop { display: none !important; }
-      body::before { display: none !important; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
-    }
-    /* ================= /APJ INVENTORI v15 UI PRO ================= */
-
-    .dash-shell { min-height: 100dvh; }
-    .dash-hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 28px;
-      border: 1px solid rgba(96,165,250,.25);
-      background:
-        linear-gradient(135deg, rgba(37,99,235,.30), rgba(15,23,42,.90) 48%, rgba(16,185,129,.13)),
-        radial-gradient(circle at 100% 0%, rgba(56,189,248,.22), transparent 28%);
-      box-shadow: 0 30px 100px rgba(2,6,23,.46);
-    }
-    .dash-hero::before {
-      content: "";
-      position: absolute;
-      width: 360px;
-      height: 360px;
-      right: -110px;
-      top: -140px;
-      border-radius: 999px;
-      background: radial-gradient(circle, rgba(56,189,248,.26), transparent 68%);
-      animation: floatGlow 8s ease-in-out infinite alternate;
-    }
-    .dash-hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(120deg, rgba(255,255,255,.08), transparent 35%, rgba(255,255,255,.04));
-      opacity: .9;
-      pointer-events: none;
-    }
-    @keyframes floatGlow { from { transform: translate(0,0) scale(1); } to { transform: translate(-30px, 28px) scale(1.08); } }
-    .kpi-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 22px;
-      border: 1px solid rgba(148,163,184,.16);
-      background: linear-gradient(180deg, rgba(15,23,42,.92), rgba(2,6,23,.88));
-      padding: 18px;
-      box-shadow: 0 20px 70px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05);
-      transition: transform .25s ease, border-color .25s ease;
-    }
-    .kpi-card:hover { transform: translateY(-3px); border-color: rgba(96,165,250,.38); }
-    .kpi-card::after { content:""; position:absolute; inset:auto -40px -70px auto; width:150px; height:150px; border-radius:999px; opacity:.14; background: currentColor; }
-    .icon-tile { width: 46px; height: 46px; border-radius: 16px; display:inline-flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.06); font-size:22px; }
-    .panel { border-radius: 24px; border: 1px solid rgba(148,163,184,.15); background: rgba(2,6,23,.68); box-shadow: 0 24px 90px rgba(0,0,0,.24); }
-    .mini-row { border:1px solid rgba(71,85,105,.55); background:rgba(15,23,42,.75); border-radius:16px; padding:12px; }
-    .skeleton { position:relative; overflow:hidden; background:rgba(51,65,85,.45); border-radius:12px; min-height:22px; }
-    .skeleton::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent); animation:shimmer 1.4s infinite; }
-    @keyframes shimmer { 100% { transform:translateX(100%); } }
   
 
-/* ================= APJ v15.1 UI FIXED - profesional, stabil, dan ramah karyawan ================= */
-:root{
-  --apj-bg:#0f172a;
-  --apj-panel:#020617;
-  --apj-panel-2:#0b1220;
-  --apj-border:rgba(148,163,184,.18);
-  --apj-text:#f8fafc;
-  --apj-muted:#94a3b8;
-  --apj-blue:#2563eb;
-  --apj-cyan:#06b6d4;
-  --apj-emerald:#10b981;
-  --apj-amber:#f59e0b;
-  --apj-rose:#f43f5e;
-  --apj-violet:#8b5cf6;
-}
-html,body{min-height:100%;}
-body{
-  background:
-    radial-gradient(circle at 18% 8%, rgba(37,99,235,.18), transparent 34%),
-    radial-gradient(circle at 86% 10%, rgba(16,185,129,.10), transparent 28%),
-    linear-gradient(135deg,#020617 0%,#0f172a 52%,#111827 100%) !important;
-  color:var(--apj-text);
-}
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(148,163,184,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.035) 1px,transparent 1px);
-  background-size:42px 42px;
-  mask-image:linear-gradient(to bottom,rgba(0,0,0,.88),rgba(0,0,0,.18));
-}
-aside,main{position:relative;z-index:1;}
-aside{
-  background:linear-gradient(180deg,rgba(2,6,23,.98),rgba(15,23,42,.98)) !important;
-  border-right:1px solid rgba(148,163,184,.16) !important;
-  box-shadow:18px 0 50px rgba(0,0,0,.18);
-}
-aside nav a{
-  position:relative;overflow:hidden;border:1px solid transparent;
-  transition:transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
-}
-aside nav a:hover{transform:translateX(3px);border-color:rgba(59,130,246,.18);background:rgba(30,41,59,.70) !important;color:white !important;}
-main{background:transparent !important;}
-main header{
-  background:linear-gradient(90deg,rgba(15,23,42,.92),rgba(15,23,42,.72)) !important;
-  border-bottom:1px solid rgba(148,163,184,.16) !important;
-  backdrop-filter:blur(14px);
-  box-shadow:0 16px 40px rgba(2,6,23,.20);
-}
-.apj-page-hero{
-  margin:1.25rem auto 0; width:calc(100% - 2rem); max-width:1500px;
-  border:1px solid rgba(59,130,246,.18); border-radius:24px; padding:18px 20px;
-  background:linear-gradient(135deg,rgba(37,99,235,.18),rgba(2,6,23,.75) 44%,rgba(6,182,212,.10));
-  box-shadow:0 24px 80px rgba(2,6,23,.26);
-  animation:apjSlideDown .45s ease both;
-}
-.apj-page-hero h1{font-size:clamp(1.15rem,2vw,1.7rem);line-height:1.1;font-weight:900;color:#fff;letter-spacing:-.03em;}
-.apj-page-hero p{color:#cbd5e1;font-size:.88rem;line-height:1.55;margin-top:.35rem;max-width:860px;}
-.apj-hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem;}
-.apj-hero-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.42rem .7rem;border-radius:999px;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.18);color:#cbd5e1;font-size:.72rem;font-weight:800;letter-spacing:.02em;}
-.bg-slate-950.border,.bg-slate-900.border,.print-card{
-  background:linear-gradient(180deg,rgba(15,23,42,.88),rgba(2,6,23,.94)) !important;
-  border-color:rgba(148,163,184,.16) !important;
-  box-shadow:0 24px 80px rgba(2,6,23,.24);
-}
-.rounded-xl{border-radius:18px !important;}
-input,select,textarea{
-  background:rgba(15,23,42,.92) !important;
-  border-color:rgba(148,163,184,.25) !important;
-  transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease, background .18s ease;
-}
-input:focus,select:focus,textarea:focus{
-  outline:none !important;border-color:rgba(59,130,246,.85) !important;
-  box-shadow:0 0 0 4px rgba(37,99,235,.16) !important;
-  background:rgba(15,23,42,.98) !important;
-}
-button:not(:disabled){transition:transform .18s ease, filter .18s ease, box-shadow .18s ease;}
-button:not(:disabled):hover{transform:translateY(-1px);filter:saturate(1.08);}
-button:not(:disabled):active{transform:translateY(0) scale(.99);}
-.bg-blue-600,.bg-sky-600,.bg-emerald-600,.bg-amber-600,.bg-rose-600,.bg-violet-600{
-  background-image:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,0)) !important;
-  box-shadow:0 16px 34px rgba(2,6,23,.24);
-}
-thead tr{background:linear-gradient(90deg,rgba(30,41,59,.95),rgba(15,23,42,.95)) !important;}
-tbody tr{transition:background .15s ease, transform .15s ease;}
-tbody tr:hover{background:rgba(30,41,59,.54) !important;}
-.overflow-x-auto,.table-scroll{scrollbar-width:thin;scrollbar-color:#334155 #0f172a;}
-.overflow-x-auto::-webkit-scrollbar,.table-scroll::-webkit-scrollbar{height:10px;width:10px;}
-.overflow-x-auto::-webkit-scrollbar-track,.table-scroll::-webkit-scrollbar-track{background:#0f172a;border-radius:999px;}
-.overflow-x-auto::-webkit-scrollbar-thumb,.table-scroll::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;border:2px solid #0f172a;}
-.toast{
-  position:fixed !important; top:-120px !important; left:50% !important; transform:translateX(-50%) !important;
-  z-index:99999 !important; opacity:0; visibility:hidden; pointer-events:none;
-  min-height:52px; max-width:min(92vw,480px); border-radius:16px !important;
-}
-.toast.show{top:24px !important; opacity:1; visibility:visible; pointer-events:auto;}
-.apj-guide-modal{
-  position:fixed !important; inset:0 !important; z-index:99990 !important; display:none !important;
-  align-items:center !important; justify-content:center !important; padding:24px !important;
-}
-.apj-guide-modal.show{display:flex !important;}
-.apj-guide-backdrop{
-  position:absolute !important; inset:0 !important;
-  background:rgba(2,6,23,.78) !important; backdrop-filter:blur(12px) !important;
-}
-.apj-guide-card{
-  position:relative !important; width:min(760px,calc(100vw - 32px)) !important;
-  max-height:calc(100dvh - 48px) !important; overflow:auto !important;
-  border-radius:26px !important; padding:24px !important;
-  background:
-    radial-gradient(circle at 12% 0%,rgba(37,99,235,.20),transparent 30%),
-    linear-gradient(180deg,rgba(15,23,42,.98),rgba(2,6,23,.98)) !important;
-  border:1px solid rgba(148,163,184,.24) !important;
-  box-shadow:0 34px 120px rgba(0,0,0,.58) !important;
-  transform:translateY(8px) scale(.98); opacity:0;
-}
-.apj-guide-modal.show .apj-guide-card{animation:apjGuideIn .22s ease forwards;}
-.apj-guide-title{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
-.apj-guide-icon{flex:0 0 auto;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-size:25px;background:linear-gradient(135deg,#2563eb,#06b6d4);box-shadow:0 14px 35px rgba(37,99,235,.26);}
-.apj-guide-steps{display:grid;gap:9px;margin:14px 0;}
-.apj-guide-step{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.16);}
-.apj-step-no{flex:0 0 auto;width:30px;height:30px;border-radius:999px;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#06b6d4);font-size:13px;font-weight:900;color:#fff;}
-.apj-guide-note{border:1px solid rgba(245,158,11,.24);background:rgba(245,158,11,.09);color:#fde68a;border-radius:16px;padding:12px 14px;font-size:.86rem;line-height:1.55;}
-.apj-guide-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;}
-.apj-btn-soft,.apj-btn-primary{border-radius:14px;padding:11px 16px;font-weight:900;font-size:.85rem;}
-.apj-btn-soft{background:rgba(30,41,59,.88);border:1px solid rgba(148,163,184,.18);color:#e2e8f0;}
-.apj-btn-primary{background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;box-shadow:0 14px 34px rgba(37,99,235,.28);}
-.apj-help-fab{position:fixed !important;right:22px !important;bottom:22px !important;z-index:9999 !important;display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:1px solid rgba(255,255,255,.16);font-weight:900;box-shadow:0 20px 60px rgba(37,99,235,.34);}
-body.apj-guide-open{overflow:hidden !important;}
-@keyframes apjGuideIn{to{transform:translateY(0) scale(1);opacity:1;}}
-@keyframes apjSlideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-@media (max-width:768px){
-  .apj-page-hero{width:calc(100% - 1rem);padding:16px;margin-top:.75rem;border-radius:20px;}
-  .apj-guide-modal{padding:12px !important;align-items:flex-end !important;}
-  .apj-guide-card{width:100% !important;max-height:calc(100dvh - 24px) !important;border-radius:22px 22px 0 0 !important;padding:18px !important;}
-  .apj-guide-title{gap:10px;}.apj-guide-icon{width:44px;height:44px;font-size:21px;}
-  .apj-help-fab{right:14px !important;bottom:14px !important;padding:12px 14px;}
-}
-@media print{.apj-page-hero,.apj-help-fab,.apj-guide-modal{display:none !important;}}
-/* ================= END APJ v15.1 UI FIXED ================= */
+    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
+    @media screen and (max-width: 768px) {
+      .table-scroll { overflow-x: visible !important; }
+      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
+      .table-scroll thead { display: none !important; }
+      .table-scroll tbody { display: block !important; width: 100% !important; }
+      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
+      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
+      .table-scroll td:last-child { border-bottom: 0 !important; }
+      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
+      .table-scroll td > * { max-width: 58%; }
+      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
+      .table-scroll .text-center { text-align: right !important; }
+      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
+    }
 
-</style>
+  </style>
 </head>
-<body data-apj-page="dashboard.html" class="dash-shell flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
-  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition">☰</button>
+<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
+  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert">
+    <div class="ml-3 text-sm font-medium" id="toastMessage"></div>
+  </div>
+
+  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+  </button>
   <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/70 backdrop-blur-sm lg:hidden"></div>
 
   <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
     <div class="h-16 flex items-center px-6 border-b border-slate-800">
       <div class="flex items-center gap-3 text-blue-500">
-        <div class="w-9 h-9 rounded-2xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center">📦</div>
-        <div>
-          <span class="text-sm font-black tracking-wider text-white">APJ INVENTORI</span>
-          <p class="text-[10px] text-blue-300 font-bold uppercase tracking-widest">v15 UI Pro</p>
-        </div>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        <span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span>
       </div>
     </div>
+
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
       <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
-      <a href="dashboard.html" class="apj-active-link flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors"><span class="apj-nav-ico">🏠</span><span>Dashboard</span></a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors"><span class="apj-nav-ico">📥</span><span>Input Stok</span></a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors"><span class="apj-nav-ico">📤</span><span>Output Stok</span></a>
-      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors"><span class="apj-nav-ico">🚚</span><span>Transfer Produk Outlet</span></a>
-      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors"><span class="apj-nav-ico">🏪</span><span>Produk Outlet</span></a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors"><span class="apj-nav-ico">🧮</span><span>Stok Opname</span></a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors"><span class="apj-nav-ico">📊</span><span>Lihat Stok</span></a>
-      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors"><span class="apj-nav-ico">🧾</span><span>Riwayat Transaksi</span></a>
+      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 bg-blue-600/10 text-blue-400 rounded-lg font-semibold text-sm transition-colors border border-blue-500/20">Dashboard</a>
+      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
+      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
+      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
+      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
+      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
+      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
+      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
     </nav>
+
     <div class="p-4 border-t border-slate-800">
-      <button onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50"><span class="apj-nav-ico">🚪</span><span>Logout Sistem</span></button>
+      <button onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+        Logout Sistem
+      </button>
     </div>
   </aside>
 
-  <main class="flex-1 flex flex-col min-w-0 bg-slate-900/70 overflow-hidden">
-    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/60 backdrop-blur-md z-10">
+  <main class="flex-1 flex flex-col min-w-0 bg-slate-900">
+    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/70 backdrop-blur-sm z-10">
       <div class="min-w-0">
-        <h2 class="text-base sm:text-lg font-black text-white truncate">Dashboard Inventori</h2>
-        <p class="hidden sm:block text-xs text-slate-500">Kontrol stok, produksi, transfer, dan outlet dalam satu layar.</p>
+        <h2 class="text-base sm:text-lg font-semibold text-white truncate">Dashboard Inventori</h2>
+        <p class="hidden sm:block text-xs text-slate-500">Kontrol stok, produksi, dan aktivitas harian.</p>
       </div>
       <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-        <button id="btnRefreshDashboard" onclick="loadDashboard()" class="hidden sm:inline-flex items-center gap-2 rounded-xl border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-xs font-bold text-blue-200 hover:bg-blue-500/20 transition">↻ Refresh</button>
         <div class="text-right min-w-0">
           <p id="displayNama" class="text-sm font-semibold text-white leading-tight truncate max-w-[150px] sm:max-w-none">Memuat...</p>
-          <p id="displayLevel" class="text-[10px] uppercase tracking-wider text-blue-400 font-black">--</p>
+          <p id="displayLevel" class="text-[10px] uppercase tracking-wider text-blue-400 font-medium">--</p>
         </div>
-        <div class="w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-blue-200 font-black shadow-inner flex-shrink-0"><span id="displayInisial">U</span></div>
+        <div class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 font-bold shadow-inner flex-shrink-0"><span id="displayInisial">U</span></div>
       </div>
     </header>
 
     <section class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-      <div class="max-w-7xl mx-auto space-y-6 apj-soft-animate">
-        <div class="dash-hero p-5 sm:p-7 lg:p-8">
-          <div class="relative z-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+      <div class="max-w-7xl mx-auto animate-fade-in opacity-0 space-y-6">
+        <div id="heroCard" class="relative overflow-hidden rounded-2xl border border-blue-900/50 bg-gradient-to-r from-blue-950/70 via-slate-950 to-slate-900 p-5 sm:p-6 shadow-xl">
+          <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
             <div>
-              <div class="inline-flex items-center gap-2 rounded-full border border-blue-300/20 bg-blue-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-blue-200 mb-3"><span id="modeBadge">🟦 Mode Dashboard</span></div>
-              <h1 class="text-2xl sm:text-4xl font-black text-white leading-tight">Selamat datang, <span id="welcomeNama" class="text-sky-300">Pengguna</span>.</h1>
-              <p id="modeDescription" class="mt-2 text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">Menarik data dashboard dari database APJ...</p>
+              <div class="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-blue-300 mb-3">
+                <span id="modeBadge">Mode Dashboard</span>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">Selamat datang kembali, <span id="welcomeNama" class="text-blue-400">Pengguna</span>!</h1>
+              <p id="modeDescription" class="mt-2 text-sm text-slate-400 max-w-3xl">Memuat data dashboard...</p>
             </div>
-            <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2" id="quickActionMini"></div>
+            <div class="flex flex-wrap gap-2" id="quickActionMini"></div>
           </div>
         </div>
 
-        <div id="loadingState" class="panel p-6">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="skeleton h-28"></div><div class="skeleton h-28"></div><div class="skeleton h-28"></div><div class="skeleton h-28"></div>
-          </div>
-        </div>
-
-        <div id="errorState" class="hidden rounded-3xl border border-rose-800 bg-rose-950/30 p-5 text-rose-200">
-          <h3 class="font-black text-white mb-1">Dashboard belum bisa memuat data</h3>
-          <p id="errorMessage" class="text-sm text-rose-200/90">Periksa koneksi atau deploy Apps Script.</p>
+        <div id="loadingState" class="bg-slate-950 border border-slate-800 rounded-xl p-6 text-center text-slate-400">
+          <div class="mx-auto mb-3 w-8 h-8 rounded-full border-4 border-slate-700 border-t-blue-500 animate-spin"></div>
+          Menarik data dashboard dari database...
         </div>
 
         <div id="dashboardContent" class="hidden space-y-6">
           <div id="kpiGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
 
           <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div class="panel p-5">
-              <div class="flex items-center justify-between mb-4"><div><h3 class="text-base font-black text-white">Prioritas Hari Ini</h3><p class="text-xs text-slate-500">Kesimpulan cepat dari sistem.</p></div><span class="icon-tile">🎯</span></div>
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <h3 class="text-base font-bold text-white mb-1">Prioritas Hari Ini</h3>
+              <p class="text-xs text-slate-500 mb-4">Kesimpulan cepat dari stok dan aktivitas.</p>
               <div id="insightList" class="space-y-3"></div>
             </div>
-            <div class="panel p-5">
-              <div class="flex items-center justify-between mb-4"><div><h3 class="text-base font-black text-white">Kesehatan Stok</h3><p class="text-xs text-slate-500">Aman, waspada, kritis.</p></div><span class="icon-tile">🩺</span></div>
-              <div id="stockHealthBox" class="space-y-4"></div>
-            </div>
-            <div class="panel p-5">
-              <div class="flex items-center justify-between mb-4"><div><h3 class="text-base font-black text-white">Ringkasan Lokasi</h3><p class="text-xs text-slate-500">PUSAT dan outlet aktif.</p></div><span class="icon-tile">📍</span></div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <h3 class="text-base font-bold text-white mb-1">Ringkasan Lokasi</h3>
+              <p class="text-xs text-slate-500 mb-4">Stok per PUSAT/outlet dari STOK_AKHIR.</p>
               <div id="locationList" class="space-y-3"></div>
+            </div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <h3 class="text-base font-bold text-white mb-1">Pergerakan Hari Ini</h3>
+              <p class="text-xs text-slate-500 mb-4">Item dengan qty transaksi terbesar hari ini.</p>
+              <div id="movementList" class="space-y-3"></div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div class="xl:col-span-2 panel p-5">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-                <div><h3 class="text-base font-black text-white">Aktivitas Terbaru</h3><p class="text-xs text-slate-500">Audit cepat transaksi terakhir.</p></div>
-                <span id="syncDate" class="text-[11px] text-slate-400 bg-slate-900 border border-slate-800 rounded-full px-3 py-1">--</span>
+            <div class="xl:col-span-2 bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 id="primaryPanelTitle" class="text-base font-bold text-white">Ringkasan Kategori</h3>
+                  <p id="primaryPanelDesc" class="text-xs text-slate-500 mt-1">Komposisi stok per kategori.</p>
+                </div>
+                <span id="syncDate" class="text-[11px] text-slate-500 bg-slate-900 border border-slate-800 rounded-full px-3 py-1">--</span>
               </div>
-              <div class="overflow-x-auto table-scroll">
-                <table class="w-full min-w-[720px] text-left border-collapse">
-                  <thead class="text-xs uppercase tracking-wider text-slate-500 border-b border-slate-800"><tr><th class="py-3 pr-3">Tanggal</th><th class="py-3 px-3">Jenis</th><th class="py-3 px-3">Barang</th><th class="py-3 px-3 text-center">Qty</th><th class="py-3 pl-3">Petugas</th></tr></thead>
-                  <tbody id="recentBody" class="divide-y divide-slate-800/70"></tbody>
+              <div class="table-scroll overflow-x-auto">
+                <table class="w-full min-w-[640px] text-left border-collapse">
+                  <thead class="text-xs uppercase tracking-wider text-slate-500 border-b border-slate-800">
+                    <tr>
+                      <th class="py-3 pr-3">Kategori</th>
+                      <th class="py-3 px-3 text-center">Total Item</th>
+                      <th class="py-3 px-3 text-center">Aman</th>
+                      <th class="py-3 px-3 text-center">Waspada</th>
+                      <th class="py-3 pl-3 text-center">Kritis</th>
+                    </tr>
+                  </thead>
+                  <tbody id="categoryBody" class="divide-y divide-slate-800/70"></tbody>
                 </table>
               </div>
             </div>
-            <div class="panel p-5">
-              <div class="flex items-center justify-between mb-4"><div><h3 class="text-base font-black text-white">Stok Perhatian</h3><p class="text-xs text-slate-500">Kritis/waspada dulu.</p></div><span class="icon-tile">🚨</span></div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <h3 id="attentionTitle" class="text-base font-bold text-white mb-1">Stok Perlu Perhatian</h3>
+              <p id="attentionDesc" class="text-xs text-slate-500 mb-4">Item dengan status waspada/kritis.</p>
               <div id="criticalList" class="space-y-3"></div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <div class="panel p-5">
-              <div class="flex items-center justify-between mb-4"><div><h3 class="text-base font-black text-white">Ringkasan Kategori</h3><p class="text-xs text-slate-500">Komposisi item per kategori.</p></div><span class="icon-tile">🗂️</span></div>
-              <div id="categoryList" class="space-y-3"></div>
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <h3 class="text-base font-bold text-white mb-1">Menu Cepat</h3>
+              <p id="quickMenuDesc" class="text-xs text-slate-500 mb-4">Akses sesuai role dan permission.</p>
+              <div id="quickMenuGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-3"></div>
             </div>
-            <div class="panel p-5">
-              <div class="flex items-center justify-between mb-4"><div><h3 class="text-base font-black text-white">Pergerakan Hari Ini</h3><p class="text-xs text-slate-500">Qty terbesar hari ini.</p></div><span class="icon-tile">⚡</span></div>
-              <div id="movementList" class="space-y-3"></div>
+
+            <div class="xl:col-span-2 bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm">
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 id="activityTitle" class="text-base font-bold text-white">Aktivitas Terbaru</h3>
+                  <p id="activityDesc" class="text-xs text-slate-500 mt-1">Riwayat transaksi paling baru.</p>
+                </div>
+              </div>
+              <div id="activityList" class="space-y-3"></div>
             </div>
           </div>
         </div>
@@ -581,178 +197,372 @@ body.apj-guide-open{overflow:hidden !important;}
 
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
-      <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-500 mb-4 mx-auto border border-rose-500/20">⚠️</div>
-      <h3 class="text-lg font-black text-white text-center mb-2">Konfirmasi Keluar</h3>
+    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
+      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 mb-4 mx-auto border border-rose-500/20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+      </div>
+      <h3 class="text-lg font-bold text-white text-center mb-2">Konfirmasi Keluar</h3>
       <p class="text-sm text-slate-400 text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
-      <div class="flex gap-3"><button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-lg transition-colors border border-slate-600">Batal</button><button onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-lg transition-colors shadow-lg shadow-rose-600/20">Ya, Keluar</button></div>
+      <div class="flex gap-3">
+        <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors border border-slate-600">Batal</button>
+        <button onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-rose-600/20">Ya, Keluar</button>
+      </div>
     </div>
   </div>
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
-    let dashboardData = null;
+    let dashboardMode = 'operator';
 
     document.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
+      const isSessionActive = localStorage.getItem('APJ_SESSION_ACTIVE');
+      if (isSessionActive !== 'true') { window.location.href = 'index.html'; return; }
+
       const userName = localStorage.getItem('APJ_USER_NAME') || 'Pengguna';
       const userLevel = localStorage.getItem('APJ_USER_LEVEL') || 'Unknown Level';
+      const permissions = safeParseJSON(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
+
       document.getElementById('displayNama').textContent = userName;
       document.getElementById('welcomeNama').textContent = userName;
       document.getElementById('displayLevel').textContent = userLevel;
       document.getElementById('displayInisial').textContent = userName.charAt(0).toUpperCase();
-      loadDashboard();
+
+      loadDashboardData(userName, userLevel, permissions);
+      document.querySelectorAll('#sidebar a').forEach(link => link.addEventListener('click', closeMobileSidebar));
     });
 
-    async function loadDashboard() {
-      const loading = document.getElementById('loadingState');
-      const content = document.getElementById('dashboardContent');
-      const error = document.getElementById('errorState');
-      loading.classList.remove('hidden'); content.classList.add('hidden'); error.classList.add('hidden');
+    async function loadDashboardData(userName, userLevel, permissions) {
       try {
-        const permissions = safeParseJSON(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
-        const payload = { action:'getDashboardData', userName: localStorage.getItem('APJ_USER_NAME') || '', level: localStorage.getItem('APJ_USER_LEVEL') || '', permissions };
-        const res = await fetch(APPS_SCRIPT_URL, { method:'POST', body: JSON.stringify(payload) });
-        const text = await res.text();
-        const data = JSON.parse(text);
-        if (!data.success) throw new Error(data.message || 'Server menolak permintaan dashboard.');
-        dashboardData = data;
-        renderDashboard(data);
-        loading.classList.add('hidden'); content.classList.remove('hidden');
-      } catch(err) {
-        document.getElementById('errorMessage').textContent = err.message || err;
-        loading.classList.add('hidden'); error.classList.remove('hidden');
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          redirect: 'follow',
+          body: JSON.stringify({ action: 'getDashboardData', userName, level: userLevel, permissions })
+        });
+        const result = await response.json();
+        if (!result.success) throw new Error(result.message || 'Gagal memuat dashboard.');
+        renderDashboard(result);
+      } catch (error) {
+        document.getElementById('loadingState').innerHTML = `<div class="text-rose-400 font-semibold mb-1">Dashboard gagal dimuat.</div><div class="text-xs text-slate-500">${escapeHtml(error.message || 'Periksa deploy Code.gs terbaru.')}</div>`;
+        showToast('Gagal memuat data dashboard. Pastikan Code.gs v9 sudah dideploy.', 'error');
       }
     }
 
     function renderDashboard(data) {
-      const k = data.kpi || {};
-      document.getElementById('modeBadge').textContent = data.mode === 'owner' ? '👑 Owner Control Panel' : '🧑‍🍳 Operator Panel';
-      document.getElementById('modeDescription').textContent = data.mode === 'owner'
-        ? 'Pantau kesehatan stok seluruh lokasi, aktivitas harian, produk outlet, dan transaksi terbaru dari satu layar.'
-        : 'Pantau aktivitas dan menu yang sesuai dengan hak akses login Anda.';
-      document.getElementById('syncDate').textContent = 'Sync: ' + new Date().toLocaleString('id-ID');
-      renderQuickMenus(data.quickMenus || []);
-      renderKpis(k);
+      dashboardMode = data.mode || 'operator';
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('dashboardContent').classList.remove('hidden');
+      document.getElementById('syncDate').textContent = `Update: ${data.today || '-'}`;
+
+      const isOwner = dashboardMode === 'owner';
+      document.getElementById('modeBadge').textContent = isOwner ? 'Mode Owner' : 'Mode Operasional';
+      document.getElementById('modeDescription').textContent = isOwner
+        ? 'Owner melihat gambaran besar: transaksi seluruh tim, kesehatan stok, kategori kritis, dan aktivitas terbaru lintas modul.'
+        : 'Role operasional melihat menu sesuai izin, aktivitas milik sendiri, dan stok yang relevan dengan hak aksesnya.';
+      document.getElementById('primaryPanelTitle').textContent = isOwner ? 'Ringkasan Kategori Stok' : 'Kategori Sesuai Akses';
+      document.getElementById('primaryPanelDesc').textContent = isOwner ? 'Pantauan semua kategori stok yang tercatat di STOK_AKHIR.' : 'Kategori yang tampil mengikuti permission role login.';
+      document.getElementById('attentionTitle').textContent = isOwner ? 'Stok Perlu Perhatian' : 'Perhatian Operasional';
+      document.getElementById('attentionDesc').textContent = isOwner ? 'Prioritas owner: habis/kritis dulu, baru waspada.' : 'Item kritis dari kategori yang boleh diakses.';
+      document.getElementById('activityTitle').textContent = isOwner ? 'Aktivitas Terbaru Semua Tim' : 'Aktivitas Saya Terbaru';
+      document.getElementById('activityDesc').textContent = isOwner ? 'Gabungan input, output, produksi, transfer, dan opname.' : 'Hanya transaksi dengan nama petugas login.';
+      document.getElementById('quickMenuDesc').textContent = isOwner ? 'Semua modul terbuka untuk owner.' : 'Menu disaring berdasarkan permission role.';
+
+      renderKpis(data);
       renderInsights(data.insights || []);
-      renderHealth(k);
       renderLocations(data.locationSummary || []);
-      renderRecent(data.recentActivities || []);
-      renderCritical(data.criticalItems || []);
-      renderCategories(data.categorySummary || []);
       renderMovements(data.topMovements || []);
+      renderCategories(data.categorySummary || []);
+      renderCriticalItems(data.criticalItems || []);
+      renderQuickMenus(data.quickMenus || []);
+      renderMiniActions(data.quickMenus || []);
+      renderActivities(data.recentActivities || []);
     }
 
-    function renderQuickMenus(menus) {
-      const box = document.getElementById('quickActionMini');
-      const icons = {'Dashboard':'🏠','Input Stok':'📥','Output Stok':'📤','Transfer Produk Outlet':'🚚','Produk Outlet':'🏪','Stok Opname':'🧮','Lihat Stok':'📊','Riwayat Transaksi':'🧾','Arsip Data':'🗄️'};
-      box.innerHTML = (menus || []).filter(m => !m.disabled).slice(0,4).map(m => `<a href="${m.href}" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-white hover:bg-white/15 transition"><span>${icons[m.label] || '•'}</span>${escapeHtml(m.label)}</a>`).join('') || '<span class="text-xs text-slate-300">Belum ada menu cepat.</span>';
-    }
-
-    function renderKpis(k) {
-      const cards = [
-        ['📌','Transaksi Hari Ini', k.transaksiHariIni || 0, 'Input + output + produksi + transfer', 'text-blue-300'],
-        ['📦','Total Item Stok', k.totalItem || 0, `${k.itemPusat || 0} pusat • ${k.itemOutlet || 0} outlet`, 'text-sky-300'],
-        ['🚨','Stok Kritis', k.stokKritis || 0, `${k.stokKosong || 0} kosong • ${k.stokWaspada || 0} waspada`, 'text-rose-300'],
-        ['🏪','Lokasi Aktif', k.lokasiAktif || 0, `${k.transferHariIni || 0} transfer hari ini`, 'text-emerald-300']
+    function renderKpis(data) {
+      const k = data.kpi || {};
+      const isOwner = data.mode === 'owner';
+      const cards = isOwner ? [
+        { label: 'Transaksi Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue' },
+        { label: 'Input Hari Ini', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald' },
+        { label: 'Output Hari Ini', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose' },
+        { label: 'Produksi Hari Ini', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber' },
+        { label: 'Transfer Hari Ini', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet' },
+        { label: 'Stok Kosong', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose' },
+        { label: 'Stok Kritis', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber' },
+        { label: 'Lokasi Aktif', value: k.lokasiAktif || 0, suffix: 'Lokasi', tone: 'slate' }
+      ] : [
+        { label: 'Aktivitas Saya Hari Ini', value: k.transaksiHariIni || 0, suffix: 'Baris', tone: 'blue' },
+        { label: 'Input Saya', value: k.inputHariIni || 0, suffix: 'Masuk', tone: 'emerald' },
+        { label: 'Output Saya', value: k.outputHariIni || 0, suffix: 'Keluar', tone: 'rose' },
+        { label: 'Produksi Saya', value: k.produksiHariIni || 0, suffix: 'Produksi', tone: 'amber' },
+        { label: 'Transfer Saya', value: k.transferHariIni || 0, suffix: 'Transfer', tone: 'violet' },
+        { label: 'Stok Kosong Aksesku', value: k.stokKosong || 0, suffix: 'Item', tone: 'rose' },
+        { label: 'Stok Kritis Aksesku', value: k.stokKritis || 0, suffix: 'Item', tone: 'amber' },
+        { label: 'Menu Aktif', value: k.aksesAktif || 0, suffix: 'Akses', tone: 'slate' }
       ];
-      document.getElementById('kpiGrid').innerHTML = cards.map(c => `<div class="kpi-card ${c[4]}"><div class="flex items-start justify-between gap-3"><div><p class="text-[11px] font-black uppercase tracking-wider text-slate-500">${c[1]}</p><h3 class="mt-2 text-3xl font-black text-white">${formatNumber(c[2])}</h3><p class="mt-1 text-xs text-slate-400">${c[3]}</p></div><span class="icon-tile">${c[0]}</span></div></div>`).join('');
+
+      document.getElementById('kpiGrid').innerHTML = cards.map(card => `
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm overflow-hidden relative">
+          <div class="absolute right-0 top-0 w-24 h-24 ${toneBg(card.tone)} rounded-full blur-3xl opacity-40"></div>
+          <p class="relative text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">${escapeHtml(card.label)}</p>
+          <h4 class="relative text-3xl font-extrabold ${toneText(card.tone)}">${escapeHtml(String(card.value))} <span class="text-sm font-normal text-slate-500 ml-1">${escapeHtml(card.suffix)}</span></h4>
+        </div>
+      `).join('');
     }
 
     function renderInsights(items) {
-      const box = document.getElementById('insightList');
-      box.innerHTML = items.length ? items.map(it => `<div class="mini-row"><div class="flex items-start gap-3"><span class="mt-0.5">${toneIcon(it.tone)}</span><div><p class="text-sm font-black text-white">${escapeHtml(it.title)}</p><p class="text-xs text-slate-400 leading-relaxed mt-1">${escapeHtml(it.text)}</p></div></div></div>`).join('') : empty('Belum ada insight.');
+      const el = document.getElementById('insightList');
+      if (!items.length) {
+        el.innerHTML = `<div class="rounded-lg border border-slate-800 bg-slate-900 p-4 text-sm text-slate-500">Belum ada insight yang bisa ditampilkan.</div>`;
+        return;
+      }
+      el.innerHTML = items.map(item => `
+        <div class="rounded-lg border ${toneBorder(item.tone)} ${toneSoftBg(item.tone)} p-3">
+          <p class="text-sm font-bold ${toneText(item.tone)}">${escapeHtml(item.title || '-')}</p>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">${escapeHtml(item.text || '')}</p>
+        </div>
+      `).join('');
     }
 
-    function renderHealth(k) {
-      const total = Math.max(Number(k.totalItem || 0), 1);
-      const rows = [
-        ['Aman', k.stokAman || 0, 'bg-emerald-400'], ['Waspada', k.stokWaspada || 0, 'bg-amber-400'], ['Kritis', k.stokKritis || 0, 'bg-rose-400']
-      ];
-      document.getElementById('stockHealthBox').innerHTML = rows.map(r => `<div><div class="flex justify-between text-xs mb-1"><span class="font-bold text-slate-300">${r[0]}</span><span class="text-slate-400">${formatNumber(r[1])}</span></div><div class="h-2.5 rounded-full bg-slate-800 overflow-hidden"><div class="h-full ${r[2]} rounded-full" style="width:${Math.min(100, (Number(r[1]||0)/total)*100)}%"></div></div></div>`).join('') + `<div class="grid grid-cols-2 gap-2 pt-2"><div class="mini-row"><p class="text-[10px] text-slate-500 uppercase font-black">Produksi</p><p class="text-xl font-black text-white">${formatNumber(k.itemProduksi || 0)}</p></div><div class="mini-row"><p class="text-[10px] text-slate-500 uppercase font-black">Opname Bulan Ini</p><p class="text-xl font-black text-white">${formatNumber(k.opnameBulanIni || 0)}</p></div></div>`;
-    }
-
-    function renderLocations(items) {
-      const box = document.getElementById('locationList');
-      box.innerHTML = items.length ? items.slice(0,6).map(l => `<div class="mini-row"><div class="flex items-center justify-between gap-3"><div><p class="text-sm font-black text-white">${escapeHtml(l.lokasi)}</p><p class="text-xs text-slate-500">${formatNumber(l.totalItem)} item • ${formatNumber(l.produksi)} produksi</p></div><div class="text-right"><p class="text-xs text-rose-300 font-bold">${formatNumber(l.kritis)} kritis</p><p class="text-xs text-amber-300">${formatNumber(l.waspada)} waspada</p></div></div></div>`).join('') : empty('Belum ada data lokasi.');
-    }
-
-    function renderRecent(items) {
-      const body = document.getElementById('recentBody');
-      body.innerHTML = items.length ? items.slice(0,12).map(a => `<tr class="text-sm text-slate-300 hover:bg-slate-900/70"><td class="py-3 pr-3 text-slate-400">${escapeHtml(a.tanggal)}</td><td class="py-3 px-3"><span class="rounded-full px-2 py-1 text-[11px] font-black ${badge(a.jenis)}">${escapeHtml(a.jenis)}</span></td><td class="py-3 px-3"><p class="font-bold text-white">${escapeHtml(a.nama || '-')}</p><p class="text-xs text-slate-500">${escapeHtml(a.txId || '')}</p></td><td class="py-3 px-3 text-center font-black text-sky-200">${escapeHtml(a.qty || '0')} ${escapeHtml(a.satuan || '')}</td><td class="py-3 pl-3 text-slate-400">${escapeHtml(a.petugas || '-')}</td></tr>`).join('') : `<tr><td colspan="5" class="py-6 text-center text-slate-500">Belum ada aktivitas.</td></tr>`;
-    }
-
-    function renderCritical(items) {
-      const box = document.getElementById('criticalList');
-      box.innerHTML = items.length ? items.slice(0,8).map(i => `<div class="mini-row"><div class="flex justify-between gap-3"><div><p class="text-sm font-black text-white">${escapeHtml(i.nama)}</p><p class="text-xs text-slate-500">${escapeHtml(i.lokasi)} • ${escapeHtml(i.kategori || '-')}</p></div><div class="text-right"><p class="text-sm font-black ${i.level === 'kritis' ? 'text-rose-300' : 'text-amber-300'}">${escapeHtml(i.qty)} ${escapeHtml(i.satuan)}</p><p class="text-[10px] uppercase font-black text-slate-500">${escapeHtml(i.status)}</p></div></div></div>`).join('') : empty('Tidak ada stok kritis/waspada. Mantap.');
-    }
-
-    function renderCategories(items) {
-      const box = document.getElementById('categoryList');
-      box.innerHTML = items.length ? items.slice(0,10).map(c => `<div class="mini-row"><div class="flex items-center justify-between gap-3"><div><p class="text-sm font-black text-white">${escapeHtml(c.kategori)}</p><p class="text-xs text-slate-500">${formatNumber(c.totalItem)} item</p></div><div class="flex gap-2 text-[11px] font-black"><span class="text-emerald-300">${formatNumber(c.aman)} aman</span><span class="text-amber-300">${formatNumber(c.waspada)} waspada</span><span class="text-rose-300">${formatNumber(c.kritis)} kritis</span></div></div></div>`).join('') : empty('Belum ada ringkasan kategori.');
+    function renderLocations(rows) {
+      const el = document.getElementById('locationList');
+      if (!rows.length) {
+        el.innerHTML = `<div class="rounded-lg border border-slate-800 bg-slate-900 p-4 text-sm text-slate-500">Belum ada data lokasi.</div>`;
+        return;
+      }
+      el.innerHTML = rows.slice(0, 8).map(r => `
+        <div class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <p class="text-sm font-bold text-white">${escapeHtml(r.lokasi || 'PUSAT')}</p>
+            <span class="text-[11px] text-slate-400">${escapeHtml(String(r.totalItem || 0))} item</span>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-center">
+            <div><p class="text-[10px] text-slate-500">Aman</p><p class="text-sm font-bold text-emerald-400">${escapeHtml(String(r.aman || 0))}</p></div>
+            <div><p class="text-[10px] text-slate-500">Waspada</p><p class="text-sm font-bold text-amber-400">${escapeHtml(String(r.waspada || 0))}</p></div>
+            <div><p class="text-[10px] text-slate-500">Kritis</p><p class="text-sm font-bold text-rose-400">${escapeHtml(String(r.kritis || 0))}</p></div>
+            <div><p class="text-[10px] text-slate-500">Kosong</p><p class="text-sm font-bold text-rose-300">${escapeHtml(String(r.kosong || 0))}</p></div>
+          </div>
+        </div>
+      `).join('');
     }
 
     function renderMovements(items) {
-      const box = document.getElementById('movementList');
-      box.innerHTML = items.length ? items.slice(0,8).map(m => `<div class="mini-row"><div class="flex justify-between gap-3"><div><p class="text-sm font-black text-white">${escapeHtml(m.nama)}</p><p class="text-xs text-slate-500">${escapeHtml(m.jenis)} • ${escapeHtml(m.lokasi || 'PUSAT')}</p></div><p class="text-sm font-black text-sky-200">${formatNumber(m.qty)} ${escapeHtml(m.satuan || '')}</p></div></div>`).join('') : empty('Belum ada pergerakan hari ini.');
+      const el = document.getElementById('movementList');
+      if (!items.length) {
+        el.innerHTML = `<div class="rounded-lg border border-slate-800 bg-slate-900 p-4 text-sm text-slate-500">Belum ada pergerakan transaksi hari ini.</div>`;
+        return;
+      }
+      el.innerHTML = items.map(item => `
+        <div class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <span class="rounded-full px-2 py-0.5 text-[10px] font-bold ${activityBadge(item.jenis)}">${escapeHtml(item.jenis || '-')}</span>
+              <p class="mt-2 text-sm font-bold text-white truncate">${escapeHtml(item.nama || '-')}</p>
+              <p class="text-xs text-slate-500 mt-1">${escapeHtml(item.lokasi || 'PUSAT')}</p>
+            </div>
+            <p class="text-sm font-bold text-slate-200 text-right flex-shrink-0">${escapeHtml(String(item.qty || 0))}<br><span class="text-xs font-normal text-slate-500">${escapeHtml(item.satuan || '')}</span></p>
+          </div>
+        </div>
+      `).join('');
     }
 
-    function toneIcon(t) { return {rose:'🚨', amber:'⚠️', emerald:'✅', blue:'ℹ️', slate:'🕘'}[t] || 'ℹ️'; }
-    function badge(j) { const k=(j||'').toLowerCase(); if(k.includes('input')) return 'bg-blue-500/10 text-blue-300 border border-blue-500/20'; if(k.includes('output')) return 'bg-rose-500/10 text-rose-300 border border-rose-500/20'; if(k.includes('transfer')) return 'bg-violet-500/10 text-violet-300 border border-violet-500/20'; if(k.includes('opname')) return 'bg-amber-500/10 text-amber-300 border border-amber-500/20'; if(k.includes('produk')) return 'bg-sky-500/10 text-sky-300 border border-sky-500/20'; return 'bg-slate-700 text-slate-200'; }
-    function empty(text) { return `<div class="mini-row text-sm text-slate-500 text-center">${escapeHtml(text)}</div>`; }
-    function formatNumber(n) { const num = Number(n || 0); return Number.isFinite(num) ? num.toLocaleString('id-ID') : escapeHtml(n); }
-    function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-    function safeParseJSON(s) { try { return JSON.parse(s); } catch(e) { return {}; } }
+    function renderCategories(rows) {
+      if (!rows.length) {
+        document.getElementById('categoryBody').innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500">Belum ada data kategori yang bisa ditampilkan.</td></tr>`;
+        return;
+      }
+      document.getElementById('categoryBody').innerHTML = rows.map(r => `
+        <tr class="text-sm">
+          <td class="py-3 pr-3 font-semibold text-white">${escapeHtml(r.kategori || '-')}</td>
+          <td class="py-3 px-3 text-center text-slate-300">${escapeHtml(String(r.totalItem || 0))}</td>
+          <td class="py-3 px-3 text-center text-emerald-400 font-bold">${escapeHtml(String(r.aman || 0))}</td>
+          <td class="py-3 px-3 text-center text-amber-400 font-bold">${escapeHtml(String(r.waspada || 0))}</td>
+          <td class="py-3 pl-3 text-center text-rose-400 font-bold">${escapeHtml(String(r.kritis || 0))}</td>
+        </tr>
+      `).join('');
+    }
 
-    function openMobileSidebar() { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebarBackdrop').classList.remove('hidden'); }
-    function closeMobileSidebar() { document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebarBackdrop').classList.add('hidden'); }
+    function renderCriticalItems(items) {
+      if (!items.length) {
+        document.getElementById('criticalList').innerHTML = `<div class="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-300">Tidak ada stok kritis/waspada. Aman, tapi tetap jangan lengah—stok suka drama pas weekend.</div>`;
+        return;
+      }
+      document.getElementById('criticalList').innerHTML = items.map(item => `
+        <div class="rounded-lg border ${item.level === 'kritis' ? 'border-rose-500/20 bg-rose-500/10' : 'border-amber-500/20 bg-amber-500/10'} p-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-white truncate">${escapeHtml(item.nama || '-')}</p>
+              <p class="text-xs text-slate-500 mt-1">${escapeHtml(item.kategori || '-')} • ${escapeHtml(item.id || '-')}</p>
+            </div>
+            <span class="text-xs font-bold ${item.level === 'kritis' ? 'text-rose-300' : 'text-amber-300'}">${escapeHtml(item.status || '-')}</span>
+          </div>
+          <p class="mt-2 text-sm ${item.level === 'kritis' ? 'text-rose-300' : 'text-amber-300'} font-semibold">${escapeHtml(item.qty || '0')} ${escapeHtml(item.satuan || '')}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderQuickMenus(menus) {
+      document.getElementById('quickMenuGrid').innerHTML = menus.map(menu => {
+        const disabled = !!menu.disabled;
+        const tag = disabled ? 'div' : 'a';
+        const href = disabled ? '' : ` href="${escapeHtml(menu.href)}"`;
+        const disabledClass = disabled ? ' opacity-60 cursor-not-allowed' : ' hover:bg-slate-800/70';
+        const badge = disabled ? '<span class="ml-2 rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[10px] text-slate-500">Segera</span>' : '';
+        return `
+          <${tag}${href} class="block rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors${disabledClass}">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-bold text-white">${escapeHtml(menu.label)}${badge}</p>
+                <p class="text-xs text-slate-500 mt-1">${escapeHtml(menu.desc || '')}</p>
+              </div>
+              <span class="w-2.5 h-2.5 rounded-full ${toneDot(menu.tone)}"></span>
+            </div>
+          </${tag}>
+        `;
+      }).join('');
+    }
+
+    function renderMiniActions(menus) {
+      const visible = menus.filter(m => m.href !== 'dashboard.html' && !m.disabled).slice(0, 3);
+      document.getElementById('quickActionMini').innerHTML = visible.map(menu => `<a href="${escapeHtml(menu.href)}" class="rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-800 transition">${escapeHtml(menu.label)}</a>`).join('');
+    }
+
+    function renderActivities(items) {
+      if (!items.length) {
+        document.getElementById('activityList').innerHTML = `<div class="rounded-lg border border-slate-800 bg-slate-900 p-4 text-sm text-slate-500">Belum ada aktivitas yang tercatat.</div>`;
+        return;
+      }
+      document.getElementById('activityList').innerHTML = items.map(item => `
+        <div class="rounded-lg border border-slate-800 bg-slate-900 p-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <span class="rounded-full px-2 py-0.5 text-[11px] font-bold ${activityBadge(item.jenis)}">${escapeHtml(item.jenis || '-')}</span>
+                <span class="text-xs text-slate-500">${escapeHtml(item.tanggal || '-')}</span>
+                <span class="text-xs text-slate-600">${escapeHtml(item.txId || '')}</span>
+              </div>
+              <p class="text-sm font-bold text-white truncate">${escapeHtml(item.nama || '-')}</p>
+              <p class="text-xs text-slate-500 mt-1">${escapeHtml(item.kategori || '-')} ${item.tujuan ? '• ' + escapeHtml(item.tujuan) : ''} • ${escapeHtml(item.petugas || '-')}</p>
+            </div>
+            <div class="text-left sm:text-right flex-shrink-0">
+              <p class="text-sm font-bold text-slate-200">${escapeHtml(item.qty || '-')} ${escapeHtml(item.satuan || '')}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('customToast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.className = type === 'success'
+        ? 'toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md'
+        : 'toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md';
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
     const modal = document.getElementById('logoutModal');
     const overlay = modal.querySelector('.modal-overlay');
     const content = modal.querySelector('.modal-content');
-    function showLogoutModal() { modal.classList.remove('hidden'); void modal.offsetWidth; overlay.classList.add('opacity-100'); overlay.classList.remove('opacity-0'); content.classList.add('scale-100','opacity-100'); content.classList.remove('scale-95','opacity-0'); }
-    function closeLogoutModal() { overlay.classList.remove('opacity-100'); overlay.classList.add('opacity-0'); content.classList.remove('scale-100','opacity-100'); content.classList.add('scale-95','opacity-0'); setTimeout(() => modal.classList.add('hidden'), 250); }
-    function executeLogout() { ['APJ_SESSION_ACTIVE','APJ_USER_NAME','APJ_USER_LEVEL','APJ_USER_PERMISSIONS'].forEach(k => localStorage.removeItem(k)); window.location.href = 'index.html'; }
+
+    function showLogoutModal() {
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      overlay.classList.add('opacity-100'); overlay.classList.remove('opacity-0');
+      content.classList.add('scale-100', 'opacity-100'); content.classList.remove('scale-95', 'opacity-0');
+    }
+    function closeLogoutModal() {
+      overlay.classList.remove('opacity-100'); overlay.classList.add('opacity-0');
+      content.classList.remove('scale-100', 'opacity-100'); content.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 250);
+    }
+    function executeLogout() {
+      localStorage.removeItem('APJ_SESSION_ACTIVE');
+      localStorage.removeItem('APJ_USER_NAME');
+      localStorage.removeItem('APJ_USER_LEVEL');
+      localStorage.removeItem('APJ_USER_OUTLET');
+      localStorage.removeItem('APJ_USER_PERMISSIONS');
+      window.location.href = 'index.html';
+    }
+
+    function openMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (!sidebar || !backdrop) return;
+      sidebar.classList.remove('-translate-x-full');
+      backdrop.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+    function closeMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (!sidebar || !backdrop) return;
+      sidebar.classList.add('-translate-x-full');
+      backdrop.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMobileSidebar(); });
+    window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeMobileSidebar(); });
+
+    function safeParseJSON(text) { try { return JSON.parse(text); } catch (e) { return {}; } }
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[ch]));
+    }
+    function toneSoftBg(tone) {
+      return { blue:'bg-blue-500/10', emerald:'bg-emerald-500/10', rose:'bg-rose-500/10', amber:'bg-amber-500/10', violet:'bg-violet-500/10', slate:'bg-slate-900' }[tone] || 'bg-slate-900';
+    }
+    function toneBorder(tone) {
+      return { blue:'border-blue-500/20', emerald:'border-emerald-500/20', rose:'border-rose-500/20', amber:'border-amber-500/20', violet:'border-violet-500/20', slate:'border-slate-800' }[tone] || 'border-slate-800';
+    }
+    function toneText(tone) {
+      return { blue:'text-blue-400', emerald:'text-emerald-400', rose:'text-rose-400', amber:'text-amber-400', violet:'text-violet-400', slate:'text-white' }[tone] || 'text-white';
+    }
+    function toneBg(tone) {
+      return { blue:'bg-blue-500/20', emerald:'bg-emerald-500/20', rose:'bg-rose-500/20', amber:'bg-amber-500/20', violet:'bg-violet-500/20', slate:'bg-slate-500/20' }[tone] || 'bg-slate-500/20';
+    }
+    function toneDot(tone) {
+      return { blue:'bg-blue-400', emerald:'bg-emerald-400', rose:'bg-rose-400', amber:'bg-amber-400', violet:'bg-violet-400', slate:'bg-slate-400' }[tone] || 'bg-slate-400';
+    }
+    function activityBadge(jenis) {
+      const j = String(jenis || '').toLowerCase();
+      if (j.includes('input')) return 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20';
+      if (j.includes('output')) return 'bg-rose-500/10 text-rose-300 border border-rose-500/20';
+      if (j.includes('produksi')) return 'bg-amber-500/10 text-amber-300 border border-amber-500/20';
+      if (j.includes('opname')) return 'bg-violet-500/10 text-violet-300 border border-violet-500/20';
+      if (j.includes('transfer')) return 'bg-blue-500/10 text-blue-300 border border-blue-500/20';
+      return 'bg-slate-500/10 text-slate-300 border border-slate-500/20';
+    }
   </script>
 
-<script>
-(function APJ_V151_FIX_BOOT(){
-  const page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  const info = {
-    'input-stok.html': { icon:'📥', title:'Input Stok', sub:'Catat barang masuk dari pembelian atau penambahan awal. Pastikan satuan beli dan stok riil sesuai sebelum simpan.', badges:['Barang Masuk','Pembelian','Stok Awal'] },
-    'output-stok.html': { icon:'📤', title:'Output Stok', sub:'Catat barang keluar, pemakaian dapur, dan transaksi produksi. Data ini akan memengaruhi stok sistem.', badges:['Barang Keluar','Produksi','Pemakaian'] },
-    'stok-opname.html': { icon:'🧮', title:'Stok Opname', sub:'Samakan stok sistem dengan stok fisik. Hitung barang dulu, baru input angka fisik. Jangan tebak-tebakan, stok bukan ramalan cuaca.', badges:['Koreksi Fisik','Selisih','Audit'] },
-    'lihat-stok.html': { icon:'📊', title:'Lihat Stok', sub:'Pantau stok terkini, pilih kategori, tanggal laporan, lalu cetak PDF bila dibutuhkan.', badges:['Monitoring','PDF','Tanggal Laporan'] },
-    'transfer-produksi.html': { icon:'🚚', title:'Transfer Produk Outlet', sub:'Kirim produk dari PUSAT ke outlet, cek stok pusat dan stok outlet, lalu cetak surat jalan.', badges:['Transfer','Outlet','Surat Jalan'] },
-    'produk-outlet.html': { icon:'🏪', title:'Produk Outlet', sub:'Pantau stok outlet, input produk terjual, lakukan opname outlet, dan cetak laporan outlet.', badges:['Outlet','Terjual','Opname'] },
-    'riwayat-transaksi.html': { icon:'🧾', title:'Riwayat Transaksi', sub:'Audit semua aktivitas stok: input, output, produksi, transfer, produk outlet, dan opname.', badges:['Audit','Filter','PDF'] }
-  };
-  function ready(fn){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fn); else fn(); }
-  ready(function(){
-    const toast = document.getElementById('customToast');
-    if (toast && !toast.classList.contains('show')) {
-      toast.style.removeProperty('position');
-      toast.setAttribute('aria-hidden','true');
-      const msg = document.getElementById('toastMessage');
-      if (msg && msg.textContent.trim() === 'Pesan Notifikasi') msg.textContent = '';
-    }
-    const d = info[page];
-    if (d && !document.querySelector('.apj-page-hero')) {
-      const main = document.querySelector('main');
-      const header = main && main.querySelector('header');
-      const html = `<section class="apj-page-hero no-print"><div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3"><div><h1><span class="mr-2">${d.icon}</span>${d.title}</h1><p>${d.sub}</p><div class="apj-hero-badges">${d.badges.map(b=>`<span class="apj-hero-badge">✓ ${b}</span>`).join('')}</div></div><button type="button" class="apj-btn-primary" onclick="window.APJUI_openGuide&&window.APJUI_openGuide(false)">Buka Panduan</button></div></section>`;
-      if(header) header.insertAdjacentHTML('afterend', html);
-    }
-    const oldOpen = window.APJUI_openGuide;
-    if (typeof oldOpen === 'function' && !window.__APJ151_GUIDE_PATCHED__) {
-      window.__APJ151_GUIDE_PATCHED__ = true;
-      window.APJUI_openGuide = function(auto){ oldOpen(auto); document.body.classList.add('apj-guide-open'); };
-      const oldClose = window.APJUI_closeGuide || function(){};
-      window.APJUI_closeGuide = function(){ oldClose(); document.body.classList.remove('apj-guide-open'); };
-    }
-    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && window.APJUI_closeGuide) window.APJUI_closeGuide(); });
-  });
-})();
-</script>
+
+  <script>
+    // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
+    (function(){
+      function headersFor(table){
+        return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
+      }
+      function labelTable(table){
+        var headers = headersFor(table);
+        if (!headers.length) return;
+        Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
+          Array.from(row.children).forEach(function(cell, idx){
+            if (!cell || cell.tagName !== 'TD') return;
+            if (!cell.getAttribute('data-label')) cell.setAttribute('data-label', headers[idx] || 'Data');
+          });
+        });
+      }
+      function applyResponsiveTableLabels(root){
+        root = root || document;
+        root.querySelectorAll('.table-scroll table').forEach(labelTable);
+      }
+      window.applyResponsiveTableLabels = applyResponsiveTableLabels;
+      document.addEventListener('DOMContentLoaded', function(){
+        applyResponsiveTableLabels(document);
+        var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
+        obs.observe(document.body, { childList:true, subtree:true });
+      });
+    })();
+  </script>
 
 </body>
 </html>

@@ -5,872 +5,559 @@
   <title>Stok Opname | APJ Inventori</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style> body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; } .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all 0.4s ease; z-index: 9999; } .toast.show { top: 24px; } input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; } 
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+    .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all 0.4s ease; z-index: 9999; }
+    .toast.show { top: 24px; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
 
-    /* ================= APJ INVENTORI v15 UI PRO ================= */
-    :root {
-      --apj-blue: #3b82f6;
-      --apj-sky: #38bdf8;
-      --apj-emerald: #34d399;
-      --apj-amber: #f59e0b;
-      --apj-rose: #fb7185;
-      --apj-violet: #a78bfa;
-      --apj-bg: #0f172a;
-      --apj-card: rgba(15, 23, 42, .86);
-    }
-    html { scroll-behavior: smooth; }
-    body {
-      background:
-        radial-gradient(circle at 0% 0%, rgba(59,130,246,.18), transparent 28%),
-        radial-gradient(circle at 100% 0%, rgba(167,139,250,.14), transparent 24%),
-        radial-gradient(circle at 80% 100%, rgba(52,211,153,.10), transparent 30%),
-        #0f172a !important;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: radial-gradient(circle at center, rgba(0,0,0,.72), transparent 72%);
-    }
-    aside, main { position: relative; z-index: 1; }
-    aside {
-      background: linear-gradient(180deg, rgba(2,6,23,.98), rgba(15,23,42,.96)) !important;
-      border-right-color: rgba(51,65,85,.85) !important;
-      box-shadow: 18px 0 50px rgba(0,0,0,.18);
-    }
-    aside nav a {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid transparent;
-    }
-    aside nav a::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, rgba(255,255,255,.08), transparent 45%);
-      opacity: 0;
-      transform: translateX(-30%);
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    aside nav a:hover::after { opacity: 1; transform: translateX(0); }
-    .apj-nav-ico {
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex: 0 0 auto;
-      border-radius: 10px;
-      background: rgba(15,23,42,.85);
-      border: 1px solid rgba(148,163,184,.18);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    .apj-active-link {
-      background: linear-gradient(135deg, rgba(59,130,246,.18), rgba(14,165,233,.08)) !important;
-      border-color: rgba(59,130,246,.35) !important;
-      color: #fff !important;
-      box-shadow: 0 14px 35px rgba(37,99,235,.12);
-    }
-    .apj-card-glow, .bg-slate-950, .bg-slate-900\/80 {
-      box-shadow: 0 22px 70px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    .apj-lift, .bg-slate-950.border, .bg-slate-900.border {
-      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-    }
-    .apj-lift:hover, .bg-slate-950.border:hover {
-      transform: translateY(-2px);
-      border-color: rgba(96,165,250,.35) !important;
-      box-shadow: 0 24px 70px rgba(15,23,42,.38), 0 0 0 1px rgba(96,165,250,.06) inset;
-    }
-    .apj-soft-animate { animation: apjSoftEnter .45s ease-out both; }
-    @keyframes apjSoftEnter { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @keyframes apjPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.35); } 50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
-    .apj-help-fab {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 60;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(96,165,250,.35);
-      background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(14,165,233,.9));
-      color: #fff;
-      font-size: 13px;
-      font-weight: 800;
-      box-shadow: 0 22px 60px rgba(37,99,235,.32);
-      transition: transform .2s ease, filter .2s ease;
-      animation: apjPulse 2.2s ease-in-out infinite;
-    }
-    .apj-help-fab:hover { transform: translateY(-2px) scale(1.02); filter: brightness(1.08); }
-    .apj-guide-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-    }
-    .apj-guide-modal.show { display: flex; }
-    .apj-guide-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(2,6,23,.82);
-      backdrop-filter: blur(10px);
-    }
-    .apj-guide-card {
-      position: relative;
-      width: min(760px, 100%);
-      max-height: 90dvh;
-      overflow: auto;
-      border-radius: 24px;
-      border: 1px solid rgba(148,163,184,.22);
-      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(2,6,23,.98));
-      box-shadow: 0 30px 120px rgba(0,0,0,.55);
-      padding: 22px;
-      transform: translateY(10px) scale(.98);
-      opacity: 0;
-      transition: transform .24s ease, opacity .24s ease;
-    }
-    .apj-guide-modal.show .apj-guide-card { transform: translateY(0) scale(1); opacity: 1; }
-    .apj-guide-title {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-    .apj-guide-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 18px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25px;
-      background: linear-gradient(135deg, rgba(59,130,246,.2), rgba(14,165,233,.10));
-      border: 1px solid rgba(96,165,250,.28);
-    }
-    .apj-guide-steps { display: grid; gap: 10px; margin: 16px 0; }
-    .apj-guide-step {
-      display: grid;
-      grid-template-columns: 34px 1fr;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 16px;
-      background: rgba(15,23,42,.78);
-      border: 1px solid rgba(71,85,105,.55);
-    }
-    .apj-step-no {
-      width: 30px;
-      height: 30px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 900;
-      color: white;
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
-    }
-    .apj-guide-note {
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(245,158,11,.28);
-      background: rgba(120,53,15,.20);
-      color: #fde68a;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-    .apj-guide-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
-    .apj-btn-soft {
-      border-radius: 12px;
-      border: 1px solid rgba(148,163,184,.25);
-      background: rgba(15,23,42,.9);
-      color: #e2e8f0;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-    .apj-btn-primary {
-      border-radius: 12px;
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
-      color: white;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 800;
-      box-shadow: 0 14px 40px rgba(37,99,235,.22);
-    }
-    .apj-mobile-menu {
-      position: fixed;
-      top: 14px;
-      left: 14px;
-      z-index: 70;
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,.28);
-      background: rgba(2,6,23,.88);
-      color: white;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 18px 45px rgba(0,0,0,.28);
-    }
-    .apj-sidebar-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 65;
-      display: none;
-      background: rgba(2,6,23,.68);
-      backdrop-filter: blur(7px);
-    }
-    .apj-sidebar-backdrop.show { display: block; }
+    /* Logout modal, disamakan dengan dashboard */
+    .modal-overlay { transition: opacity 0.3s ease-out; }
+    .modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
+
+
+    /* Responsif mobile/tablet */
+    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .table-scroll::-webkit-scrollbar { height: 8px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
     @media (max-width: 1023px) {
-      body { min-height: 100dvh; }
-      .apj-mobile-menu { display: inline-flex; }
-      aside {
-        position: fixed !important;
-        inset: 0 auto 0 0 !important;
-        width: min(290px, 86vw) !important;
-        z-index: 80 !important;
-        transform: translateX(-105%);
-        transition: transform .28s ease !important;
-      }
-      aside.apj-open { transform: translateX(0) !important; }
-      main header { padding-left: 68px !important; }
-      input, select, textarea { font-size: 16px !important; }
-      .apj-help-fab { right: 14px; bottom: 14px; padding: 11px 13px; }
-      .apj-help-fab span:last-child { display: none; }
+      .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
+      input, select, textarea { font-size: 16px; } /* cegah auto-zoom iOS */
+      main { width: 100%; }
     }
-    @media print {
-      .apj-help-fab, .apj-guide-modal, .apj-mobile-menu, .apj-sidebar-backdrop { display: none !important; }
-      body::before { display: none !important; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
-    }
-    /* ================= /APJ INVENTORI v15 UI PRO ================= */
 
   
 
-/* ================= APJ v15.1 UI FIXED - profesional, stabil, dan ramah karyawan ================= */
-:root{
-  --apj-bg:#0f172a;
-  --apj-panel:#020617;
-  --apj-panel-2:#0b1220;
-  --apj-border:rgba(148,163,184,.18);
-  --apj-text:#f8fafc;
-  --apj-muted:#94a3b8;
-  --apj-blue:#2563eb;
-  --apj-cyan:#06b6d4;
-  --apj-emerald:#10b981;
-  --apj-amber:#f59e0b;
-  --apj-rose:#f43f5e;
-  --apj-violet:#8b5cf6;
-}
-html,body{min-height:100%;}
-body{
-  background:
-    radial-gradient(circle at 18% 8%, rgba(37,99,235,.18), transparent 34%),
-    radial-gradient(circle at 86% 10%, rgba(16,185,129,.10), transparent 28%),
-    linear-gradient(135deg,#020617 0%,#0f172a 52%,#111827 100%) !important;
-  color:var(--apj-text);
-}
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(148,163,184,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.035) 1px,transparent 1px);
-  background-size:42px 42px;
-  mask-image:linear-gradient(to bottom,rgba(0,0,0,.88),rgba(0,0,0,.18));
-}
-aside,main{position:relative;z-index:1;}
-aside{
-  background:linear-gradient(180deg,rgba(2,6,23,.98),rgba(15,23,42,.98)) !important;
-  border-right:1px solid rgba(148,163,184,.16) !important;
-  box-shadow:18px 0 50px rgba(0,0,0,.18);
-}
-aside nav a{
-  position:relative;overflow:hidden;border:1px solid transparent;
-  transition:transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
-}
-aside nav a:hover{transform:translateX(3px);border-color:rgba(59,130,246,.18);background:rgba(30,41,59,.70) !important;color:white !important;}
-main{background:transparent !important;}
-main header{
-  background:linear-gradient(90deg,rgba(15,23,42,.92),rgba(15,23,42,.72)) !important;
-  border-bottom:1px solid rgba(148,163,184,.16) !important;
-  backdrop-filter:blur(14px);
-  box-shadow:0 16px 40px rgba(2,6,23,.20);
-}
-.apj-page-hero{
-  margin:1.25rem auto 0; width:calc(100% - 2rem); max-width:1500px;
-  border:1px solid rgba(59,130,246,.18); border-radius:24px; padding:18px 20px;
-  background:linear-gradient(135deg,rgba(37,99,235,.18),rgba(2,6,23,.75) 44%,rgba(6,182,212,.10));
-  box-shadow:0 24px 80px rgba(2,6,23,.26);
-  animation:apjSlideDown .45s ease both;
-}
-.apj-page-hero h1{font-size:clamp(1.15rem,2vw,1.7rem);line-height:1.1;font-weight:900;color:#fff;letter-spacing:-.03em;}
-.apj-page-hero p{color:#cbd5e1;font-size:.88rem;line-height:1.55;margin-top:.35rem;max-width:860px;}
-.apj-hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem;}
-.apj-hero-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.42rem .7rem;border-radius:999px;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.18);color:#cbd5e1;font-size:.72rem;font-weight:800;letter-spacing:.02em;}
-.bg-slate-950.border,.bg-slate-900.border,.print-card{
-  background:linear-gradient(180deg,rgba(15,23,42,.88),rgba(2,6,23,.94)) !important;
-  border-color:rgba(148,163,184,.16) !important;
-  box-shadow:0 24px 80px rgba(2,6,23,.24);
-}
-.rounded-xl{border-radius:18px !important;}
-input,select,textarea{
-  background:rgba(15,23,42,.92) !important;
-  border-color:rgba(148,163,184,.25) !important;
-  transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease, background .18s ease;
-}
-input:focus,select:focus,textarea:focus{
-  outline:none !important;border-color:rgba(59,130,246,.85) !important;
-  box-shadow:0 0 0 4px rgba(37,99,235,.16) !important;
-  background:rgba(15,23,42,.98) !important;
-}
-button:not(:disabled){transition:transform .18s ease, filter .18s ease, box-shadow .18s ease;}
-button:not(:disabled):hover{transform:translateY(-1px);filter:saturate(1.08);}
-button:not(:disabled):active{transform:translateY(0) scale(.99);}
-.bg-blue-600,.bg-sky-600,.bg-emerald-600,.bg-amber-600,.bg-rose-600,.bg-violet-600{
-  background-image:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,0)) !important;
-  box-shadow:0 16px 34px rgba(2,6,23,.24);
-}
-thead tr{background:linear-gradient(90deg,rgba(30,41,59,.95),rgba(15,23,42,.95)) !important;}
-tbody tr{transition:background .15s ease, transform .15s ease;}
-tbody tr:hover{background:rgba(30,41,59,.54) !important;}
-.overflow-x-auto,.table-scroll{scrollbar-width:thin;scrollbar-color:#334155 #0f172a;}
-.overflow-x-auto::-webkit-scrollbar,.table-scroll::-webkit-scrollbar{height:10px;width:10px;}
-.overflow-x-auto::-webkit-scrollbar-track,.table-scroll::-webkit-scrollbar-track{background:#0f172a;border-radius:999px;}
-.overflow-x-auto::-webkit-scrollbar-thumb,.table-scroll::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;border:2px solid #0f172a;}
-.toast{
-  position:fixed !important; top:-120px !important; left:50% !important; transform:translateX(-50%) !important;
-  z-index:99999 !important; opacity:0; visibility:hidden; pointer-events:none;
-  min-height:52px; max-width:min(92vw,480px); border-radius:16px !important;
-}
-.toast.show{top:24px !important; opacity:1; visibility:visible; pointer-events:auto;}
-.apj-guide-modal{
-  position:fixed !important; inset:0 !important; z-index:99990 !important; display:none !important;
-  align-items:center !important; justify-content:center !important; padding:24px !important;
-}
-.apj-guide-modal.show{display:flex !important;}
-.apj-guide-backdrop{
-  position:absolute !important; inset:0 !important;
-  background:rgba(2,6,23,.78) !important; backdrop-filter:blur(12px) !important;
-}
-.apj-guide-card{
-  position:relative !important; width:min(760px,calc(100vw - 32px)) !important;
-  max-height:calc(100dvh - 48px) !important; overflow:auto !important;
-  border-radius:26px !important; padding:24px !important;
-  background:
-    radial-gradient(circle at 12% 0%,rgba(37,99,235,.20),transparent 30%),
-    linear-gradient(180deg,rgba(15,23,42,.98),rgba(2,6,23,.98)) !important;
-  border:1px solid rgba(148,163,184,.24) !important;
-  box-shadow:0 34px 120px rgba(0,0,0,.58) !important;
-  transform:translateY(8px) scale(.98); opacity:0;
-}
-.apj-guide-modal.show .apj-guide-card{animation:apjGuideIn .22s ease forwards;}
-.apj-guide-title{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
-.apj-guide-icon{flex:0 0 auto;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-size:25px;background:linear-gradient(135deg,#2563eb,#06b6d4);box-shadow:0 14px 35px rgba(37,99,235,.26);}
-.apj-guide-steps{display:grid;gap:9px;margin:14px 0;}
-.apj-guide-step{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.16);}
-.apj-step-no{flex:0 0 auto;width:30px;height:30px;border-radius:999px;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#06b6d4);font-size:13px;font-weight:900;color:#fff;}
-.apj-guide-note{border:1px solid rgba(245,158,11,.24);background:rgba(245,158,11,.09);color:#fde68a;border-radius:16px;padding:12px 14px;font-size:.86rem;line-height:1.55;}
-.apj-guide-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;}
-.apj-btn-soft,.apj-btn-primary{border-radius:14px;padding:11px 16px;font-weight:900;font-size:.85rem;}
-.apj-btn-soft{background:rgba(30,41,59,.88);border:1px solid rgba(148,163,184,.18);color:#e2e8f0;}
-.apj-btn-primary{background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;box-shadow:0 14px 34px rgba(37,99,235,.28);}
-.apj-help-fab{position:fixed !important;right:22px !important;bottom:22px !important;z-index:9999 !important;display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:13px 18px;background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:1px solid rgba(255,255,255,.16);font-weight:900;box-shadow:0 20px 60px rgba(37,99,235,.34);}
-body.apj-guide-open{overflow:hidden !important;}
-@keyframes apjGuideIn{to{transform:translateY(0) scale(1);opacity:1;}}
-@keyframes apjSlideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-@media (max-width:768px){
-  .apj-page-hero{width:calc(100% - 1rem);padding:16px;margin-top:.75rem;border-radius:20px;}
-  .apj-guide-modal{padding:12px !important;align-items:flex-end !important;}
-  .apj-guide-card{width:100% !important;max-height:calc(100dvh - 24px) !important;border-radius:22px 22px 0 0 !important;padding:18px !important;}
-  .apj-guide-title{gap:10px;}.apj-guide-icon{width:44px;height:44px;font-size:21px;}
-  .apj-help-fab{right:14px !important;bottom:14px !important;padding:12px 14px;}
-}
-@media print{.apj-page-hero,.apj-help-fab,.apj-guide-modal{display:none !important;}}
-/* ================= END APJ v15.1 UI FIXED ================= */
+    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
+    @media screen and (max-width: 768px) {
+      .table-scroll { overflow-x: visible !important; }
+      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
+      .table-scroll thead { display: none !important; }
+      .table-scroll tbody { display: block !important; width: 100% !important; }
+      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
+      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
+      .table-scroll td:last-child { border-bottom: 0 !important; }
+      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
+      .table-scroll td > * { max-width: 58%; }
+      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
+      .table-scroll .text-center { text-align: right !important; }
+      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
+    }
 
-</style>
+  </style>
 </head>
-<body data-apj-page="stok-opname.html" class="flex h-screen overflow-hidden antialiased">
+<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
+  <!-- Tombol menu mobile: tampil di layar kecil untuk membuka sidebar -->
+  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+  </button>
+  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/70 backdrop-blur-sm lg:hidden"></div>
 
-  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert"><div class="ml-3 text-sm font-medium" id="toastMessage"></div></div>
 
-  <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0">
+  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert">
+    <div class="ml-3 text-sm font-medium" id="toastMessage"></div>
+</div>
+
+  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
     <div class="h-16 flex items-center px-6 border-b border-slate-800"><div class="flex items-center gap-3 text-blue-500"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span></div></div>
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
       <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
       <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
       <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
       <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
+      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
+      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
       <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 bg-amber-600/10 text-amber-500 rounded-lg font-medium text-sm transition-colors border border-amber-500/20">Stok Opname</a>
       <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
+      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Riwayat Transaksi</a>
     </nav>
+
+    <div class="p-4 border-t border-slate-800">
+      <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+        Logout Sistem
+      </button>
+    </div>
   </aside>
 
   <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
-    <header class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
-      <h2 class="text-lg font-semibold text-amber-400">Form Stok Opname (Koreksi)</h2>
-      <div class="text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-amber-400">Memuat...</span></div>
+    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <h2 class="text-base sm:text-lg font-semibold text-amber-400">Form Stok Opname</h2>
+      <div class="hidden sm:block text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-amber-400">Memuat...</span></div>
     </header>
 
-    <div class="p-8 max-w-[1400px] mx-auto w-full">
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 shadow-xl">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div><label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Opname</label><input type="date" id="tanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none"></div>
-          <div><label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Transaksi</label><select id="kategoriSelect" onchange="handleKategoriChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none"><option value="" disabled selected>-- Pilih Kategori --</option></select></div>
-        </div>
-
-        <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll mb-6">
-          <table class="w-full text-left border-collapse min-w-[900px]">
-            <thead>
-              <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
-                <th class="p-4 w-4/12">Nama Barang</th>
-                <th class="p-4 w-1/12 text-center">Stok Sistem</th>
-                <th class="p-4 w-1/12 text-center">Stok Fisik</th>
-                <th class="p-4 w-1/12 text-center">Selisih</th>
-                <th class="p-4 w-1/12 text-center">Satuan</th>
-                <th class="p-4 w-3/12">Alasan Koreksi</th>
-                <th class="p-4 w-1/12 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="itemTableBody">
-              <tr class="border-b border-slate-800/50 bg-slate-950 item-row">
-                <td class="p-3"><select class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang" disabled><option>Pilih kategori dulu...</option></select></td>
-                <td class="p-3 text-center">-</td>
-                <td class="p-3"><input type="number" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center" disabled></td>
-                <td class="p-3 text-center">-</td>
-                <td class="p-3 text-center">-</td>
-                <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white" disabled></td>
-                <td class="p-3 text-center">-</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="bg-slate-900 p-3 text-center border-t border-slate-800">
-            <button type="button" id="btnTambahBaris" onclick="tambahBarisBaru()" class="text-amber-500 hover:text-amber-400 text-sm font-medium flex items-center justify-center gap-2 w-full" disabled>+ Tambah Baris Opname</button>
+    <div class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto w-full">
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Opname</label>
+            <input type="date" id="tanggalInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Transaksi</label>
+            <select id="kategoriSelect" onchange="handleKategoriChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none">
+              <option value="" disabled selected>-- Pilih Kategori --</option>
+            </select>
           </div>
         </div>
 
-        <div class="flex justify-end">
-          <button type="button" id="btnSimpan" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-amber-600/20">Simpan Stok Opname</button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Mode</p>
+            <p class="text-sm font-semibold text-amber-400">Koreksi Fisik</p>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Item Dipilih</p>
+            <p id="countItem" class="text-sm text-slate-300">0 item</p>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Selisih Plus</p>
+            <p id="countPlus" class="text-sm text-emerald-400">0</p>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Selisih Minus</p>
+            <p id="countMinus" class="text-sm text-rose-400">0</p>
+          </div>
+        </div>
+
+        <div class="mb-4 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg p-3">
+          Stok opname dipakai untuk menyamakan stok sistem dengan stok fisik di lapangan. Masukkan <b>Stok Fisik</b>, sistem akan menghitung <b>Selisih</b> otomatis.
+        </div>
+
+        <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll mb-6">
+          <table class="w-full text-left border-collapse min-w-[980px]">
+            <thead>
+              <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
+                <th class="p-4 min-w-[260px]">Nama Barang</th>
+                <th class="p-4 min-w-[120px] text-center">Stok Sistem</th>
+                <th class="p-4 min-w-[140px] text-center">Stok Fisik</th>
+                <th class="p-4 min-w-[120px] text-center">Selisih</th>
+                <th class="p-4 min-w-[100px] text-center">Satuan</th>
+                <th class="p-4 min-w-[260px]">Alasan Koreksi</th>
+                <th class="p-4 min-w-[90px] text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="itemTableBody">
+              <tr><td colspan="7" class="p-8 text-center text-slate-500">Pilih kategori untuk mulai stok opname.</td></tr>
+            </tbody>
+          </table>
+          <div class="bg-slate-900 p-3 text-center border-t border-slate-800">
+            <button type="button" id="btnTambahBaris" onclick="tambahBarisBaru()" class="text-amber-500 hover:text-amber-400 text-sm font-medium flex items-center justify-center gap-2 w-full disabled:opacity-40 disabled:cursor-not-allowed" disabled>+ Tambah Baris Opname</button>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <p id="saveHint" class="text-xs text-slate-500">Selisih minus berarti stok fisik lebih kecil dari stok sistem.</p>
+          <button type="button" id="btnSimpan" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-amber-600/20 disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto">Simpan Stok Opname</button>
         </div>
       </div>
     </div>
   </main>
 
+
+  <!-- Modal konfirmasi logout, dibuat konsisten dengan dashboard -->
+  <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
+    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
+      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 mb-4 mx-auto border border-rose-500/20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+      </div>
+      <h3 class="text-lg font-bold text-white text-center mb-2">Konfirmasi Keluar</h3>
+      <p class="text-sm text-slate-400 text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
+      <div class="flex gap-3">
+        <button type="button" onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors border border-slate-600">Batal</button>
+        <button type="button" onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-rose-600/20">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
+
     let globalListBarang = [];
 
-    function parseNumber(inputVal) {
-      if (!inputVal) return 0;
-      return parseFloat(inputVal.toString().replace(',', '.'));
-    }
+    const KATEGORI_GENERAL = [
+      { key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' },
+      { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' },
+      { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' },
+      { key: 'minuman', label: 'Minuman & Barang Dagang', sheet: 'MASTER_MINUMAN' },
+      { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }
+    ];
 
     document.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') { window.location.href = 'index.html'; return; }
-      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME');
+      if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true') {
+        window.location.href = 'index.html';
+        return;
+      }
+      document.getElementById('namaPetugas').textContent = localStorage.getItem('APJ_USER_NAME') || '-';
       document.getElementById('tanggalInput').value = new Date().toISOString().split('T')[0];
-      const perms = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
-      const kats = [{ key: 'bahanMentah', label: 'Bahan Mentah', sheet: 'MASTER_BAHAN_MENTAH' }, { key: 'bahanBaku', label: 'Bahan Baku', sheet: 'MASTER_BAHAN_BAKU' }, { key: 'kemasan', label: 'Kemasan', sheet: 'MASTER_KEMASAN' }, { key: 'minuman', label: 'Minuman', sheet: 'MASTER_MINUMAN' }, { key: 'kebersihan', label: 'Kebersihan', sheet: 'MASTER_KEBERSIHAN' }];
-      kats.forEach(kat => { if (perms[kat.key] === 'Y') { const op = document.createElement('option'); op.value = kat.sheet; op.textContent = kat.label; document.getElementById('kategoriSelect').appendChild(op); }});
+      buildKategoriOptions();
+      updateSummary();
     });
 
-    function showToast(msg, type = 'success') {
-      const t = document.getElementById('customToast'); document.getElementById('toastMessage').textContent = msg;
-      t.className = type === 'success' ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md" : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
-      setTimeout(() => t.classList.remove('show'), 3000);
+    
+    function normPermValue(value) {
+      return String(value ?? '').trim().toLowerCase();
+    }
+
+    function isOwnerLevel() {
+      const level = normPermValue(localStorage.getItem('APJ_USER_LEVEL'));
+      return level === 'owner' || level === 'superadmin' || level === 'super admin';
+    }
+
+    function hasPerm(permissions, key) {
+      return isOwnerLevel() || normPermValue(permissions && permissions[key]) === 'y';
+    }
+function buildKategoriOptions() {
+      const permissions = JSON.parse(localStorage.getItem('APJ_USER_PERMISSIONS') || '{}');
+      const kategoriSelect = document.getElementById('kategoriSelect');
+      let count = 0;
+
+      // Opname adalah izin aksi. Kalau Opname = N, kategori tidak dibuka sama sekali.
+      if (!hasPerm(permissions, 'opname')) {
+        showToast('Role ini belum punya akses Stok Opname.', 'error');
+        return;
+      }
+
+      KATEGORI_GENERAL.forEach(kat => {
+        // Opname tetap mengikuti izin kategori supaya PIC hanya koreksi area masing-masing.
+        if (hasPerm(permissions, kat.key)) {
+          const option = document.createElement('option');
+          option.value = kat.sheet;
+          option.textContent = kat.label;
+          kategoriSelect.appendChild(option);
+          count++;
+        }
+      });
+
+      if (!count) showToast('Opname aktif, tapi belum ada kategori yang dibuka untuk role ini.', 'error');
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('customToast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.className = type === 'success'
+        ? "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-emerald-950/90 border-emerald-800 text-emerald-400 backdrop-blur-md"
+        : "toast show flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border bg-rose-950/90 border-rose-800 text-rose-400 backdrop-blur-md";
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
+    }
+
+    function parseNumber(value) {
+      const n = parseFloat(String(value ?? '').replace(',', '.'));
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function formatNumber(value) {
+      const n = parseNumber(value);
+      return Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
+    }
+
+    function setLoadingRow(text) {
+      document.getElementById('itemTableBody').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-500 italic">${escapeHtml(text)}</td></tr>`;
+      document.getElementById('btnTambahBaris').disabled = true;
+      updateSummary();
     }
 
     async function handleKategoriChange() {
-      const sh = document.getElementById('kategoriSelect').value; if(!sh) return;
-      const tbody = document.getElementById('itemTableBody');
-      tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500 italic">Sedang memuat data dari database...</td></tr>';
-      document.getElementById('btnTambahBaris').disabled = true;
+      const selectedSheet = document.getElementById('kategoriSelect').value;
+      if (!selectedSheet) return;
+
+      setLoadingRow('Memuat data stok sistem...');
+
       try {
-        const res = await (await fetch(APPS_SCRIPT_URL, { method: 'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({action:'getBarang', sheetName: sh})})).json();
-        if(res.success) {
-          globalListBarang = res.data;
-          tbody.innerHTML = '';
-          document.getElementById('btnTambahBaris').disabled = false;
-          tambahBarisBaru();
-        } else {
-            showToast(res.message, "error");
-            tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-rose-500">Gagal memuat data.</td></tr>';
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          redirect: 'follow',
+          body: JSON.stringify({ action: 'getBarang', sheetName: selectedSheet, context: 'operasional' })
+        });
+        const result = await res.json();
+
+        if (!result.success) {
+          document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-rose-500">Gagal memuat data stok.</td></tr>';
+          return showToast(result.message || 'Gagal memuat data stok.', 'error');
         }
-      } catch(e) { 
-        showToast("Gagal koneksi", "error");
-        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-rose-500">Koneksi terputus.</td></tr>';
+
+        globalListBarang = result.data || [];
+        if (!globalListBarang.length) {
+          document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-rose-500">Master barang kategori ini masih kosong.</td></tr>';
+          return showToast('Tabel master kosong.', 'error');
+        }
+
+        document.getElementById('itemTableBody').innerHTML = '';
+        document.getElementById('btnTambahBaris').disabled = false;
+        tambahBarisBaru();
+        showToast(`Berhasil memuat ${globalListBarang.length} barang.`, 'success');
+      } catch (e) {
+        document.getElementById('itemTableBody').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-rose-500">Koneksi ke server gagal.</td></tr>';
+        showToast('Gagal koneksi ke server database.', 'error');
       }
+      updateSummary();
+    }
+
+    function buildBarangOptions() {
+      return globalListBarang.map(b => `
+        <option value="${escapeHtml(b.id)}"
+          data-nama="${escapeHtml(b.nama)}"
+          data-stok="${escapeHtml(b.stokTersedia ?? 0)}"
+          data-sat="${escapeHtml(b.satuanStok || '-')}">
+          [${escapeHtml(b.id)}] ${escapeHtml(b.nama)}
+        </option>
+      `).join('');
     }
 
     function tambahBarisBaru() {
+      if (!globalListBarang.length) return showToast('Pilih kategori dulu.', 'error');
+
       const tbody = document.getElementById('itemTableBody');
       const tr = document.createElement('tr');
-      tr.className = "border-b border-slate-800/50 bg-slate-950 item-row";
+      tr.className = 'border-b border-slate-800/50 bg-slate-950 item-row hover:bg-slate-900/50 transition-colors';
       tr.innerHTML = `
         <td class="p-3">
-            <select onchange="upd(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang">
-                <option value="">-- Pilih Barang --</option>
-                ${globalListBarang.map(b => `<option value="${b.id}" data-stok="${b.stokTersedia}" data-sat="${b.satuanStok}">[${b.id}] ${b.nama}</option>`).join('')}
-            </select>
+          <select onchange="updateBarang(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white select-barang focus:border-amber-500 focus:outline-none">
+            <option value="" disabled selected>-- Pilih Barang --</option>
+            ${buildBarangOptions()}
+          </select>
         </td>
         <td class="p-3 text-center text-sm font-bold text-slate-400 label-stok-sistem">0</td>
-        <td class="p-3"><input type="number" step="any" onkeyup="calc(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-fis" placeholder="0"></td>
+        <td class="p-3"><input type="number" min="0" step="any" oninput="calc(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white text-center input-fisik focus:border-amber-500 focus:outline-none" placeholder="0"></td>
         <td class="p-3 text-center text-sm font-bold label-selisih text-slate-400">0</td>
-        <td class="p-3 text-center text-sm font-bold text-amber-400 label-sat">-</td>
-        <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-alasan" placeholder="Alasan..."></td>
-        <td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-amber-500 text-sm font-medium" onclick="this.closest('tr').remove()">Hapus</button></td>
+        <td class="p-3 text-center text-sm font-bold text-amber-400 label-satuan">-</td>
+        <td class="p-3"><input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white input-alasan focus:border-amber-500 focus:outline-none" placeholder="Contoh: rusak, susut, salah hitung..."></td>
+        <td class="p-3 text-center"><button type="button" class="text-slate-600 hover:text-amber-500 text-sm font-medium" onclick="hapusBaris(this)">Hapus</button></td>
       `;
       tbody.appendChild(tr);
+      updateSummary();
     }
 
-    function upd(sel) {
-      const opt = sel.options[sel.selectedIndex];
-      const tr = sel.closest('tr');
+    function hapusBaris(btn) {
+      btn.closest('tr').remove();
+      const rows = document.querySelectorAll('.item-row');
+      if (!rows.length && globalListBarang.length) tambahBarisBaru();
+      updateSummary();
+    }
+
+    function updateBarang(selectElement) {
+      const opt = selectElement.options[selectElement.selectedIndex];
+      const tr = selectElement.closest('tr');
       tr.querySelector('.label-stok-sistem').innerText = opt.getAttribute('data-stok') || '0';
-      tr.querySelector('.label-sat').innerText = opt.getAttribute('data-sat') || '-';
-      calc(tr.querySelector('.input-fis')); 
+      tr.querySelector('.label-satuan').innerText = opt.getAttribute('data-sat') || '-';
+      calc(tr.querySelector('.input-fisik'));
     }
 
     function calc(el) {
       const tr = el.closest('tr');
-      const s = parseNumber(tr.querySelector('.label-stok-sistem').innerText);
-      const f = parseNumber(el.value);
-      const d = f - s;
+      const stokSistem = parseNumber(tr.querySelector('.label-stok-sistem').innerText);
+      const stokFisik = parseNumber(el.value);
+      const selisih = stokFisik - stokSistem;
       const lbl = tr.querySelector('.label-selisih');
-      lbl.innerText = d.toString().replace('.', ',');
-      lbl.className = `p-3 text-center text-sm font-bold label-selisih ${d < 0 ? 'text-rose-500' : (d > 0 ? 'text-emerald-500' : 'text-slate-400')}`;
+      lbl.innerText = formatNumber(selisih);
+      lbl.className = `p-3 text-center text-sm font-bold label-selisih ${selisih < 0 ? 'text-rose-500' : (selisih > 0 ? 'text-emerald-500' : 'text-slate-400')}`;
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const rows = Array.from(document.querySelectorAll('.item-row'));
+      let item = 0, plus = 0, minus = 0;
+
+      rows.forEach(row => {
+        const selected = row.querySelector('.select-barang')?.value;
+        if (!selected) return;
+        item++;
+        const selisih = parseNumber(row.querySelector('.label-selisih')?.innerText || 0);
+        if (selisih > 0) plus++;
+        if (selisih < 0) minus++;
+      });
+
+      document.getElementById('countItem').textContent = `${item} item`;
+      document.getElementById('countPlus').textContent = plus;
+      document.getElementById('countMinus').textContent = minus;
     }
 
     document.getElementById('btnSimpan').addEventListener('click', async () => {
-      let data = [];
-      document.querySelectorAll('.item-row').forEach(r => {
-        let sel = r.querySelector('.select-barang');
-        if(sel.value) data.push([
-            document.getElementById('tanggalInput').value, 
-            localStorage.getItem('APJ_USER_NAME'), 
-            document.getElementById('kategoriSelect').options[document.getElementById('kategoriSelect').selectedIndex].text, 
-            sel.value, 
-            sel.options[sel.selectedIndex].text.split('] ')[1], 
-            r.querySelector('.label-stok-sistem').innerText, 
-            r.querySelector('.input-fis').value, 
-            r.querySelector('.label-selisih').innerText, 
-            r.querySelector('.label-sat').innerText, 
-            r.querySelector('.input-alasan').value
+      const tanggal = document.getElementById('tanggalInput').value;
+      const kategoriSelect = document.getElementById('kategoriSelect');
+      const petugas = localStorage.getItem('APJ_USER_NAME') || '';
+
+      if (!tanggal || !kategoriSelect.value) return showToast('Tanggal dan kategori wajib diisi.', 'error');
+
+      const kategori = kategoriSelect.options[kategoriSelect.selectedIndex].text;
+      const selectedIds = new Set();
+      const dataToSave = [];
+      let hasError = false;
+      let errorMessage = '';
+
+      document.querySelectorAll('.item-row').forEach(row => {
+        const select = row.querySelector('.select-barang');
+        const fisikInput = row.querySelector('.input-fisik').value;
+
+        if (!select.value && fisikInput === '') return;
+
+        if (!select.value || fisikInput === '' || parseNumber(fisikInput) < 0) {
+          hasError = true;
+          errorMessage = 'Pilih barang dan isi stok fisik dengan benar.';
+          return;
+        }
+
+        if (selectedIds.has(select.value)) {
+          hasError = true;
+          errorMessage = 'Barang tidak boleh dobel dalam satu opname.';
+          return;
+        }
+        selectedIds.add(select.value);
+
+        const opt = select.options[select.selectedIndex];
+        dataToSave.push([
+          tanggal,
+          petugas,
+          kategori,
+          select.value,
+          opt.getAttribute('data-nama') || opt.textContent.split('] ')[1] || '',
+          row.querySelector('.label-stok-sistem').innerText,
+          fisikInput,
+          row.querySelector('.label-selisih').innerText,
+          row.querySelector('.label-satuan').innerText,
+          row.querySelector('.input-alasan').value
         ]);
       });
-      if(!data.length) return showToast("Isi data terlebih dahulu!", "error");
-      
-      const btn = document.getElementById('btnSimpan'); 
-      btn.disabled = true; 
-      btn.innerText = "Menyimpan...";
-      
-      const res = await (await fetch(APPS_SCRIPT_URL, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-        body: JSON.stringify({ action: 'simpanTransaksi', sheetName: 'STOK_OPNAME', data }) 
-      })).json();
-      
-      if(res.success) { 
-        showToast(res.message); 
-        setTimeout(()=>location.reload(), 2000); 
-      } else { 
-        showToast(res.message, "error"); 
-        btn.disabled = false; 
-        btn.innerText = "Simpan Stok Opname"; 
+
+      if (hasError) return showToast(errorMessage, 'error');
+      if (!dataToSave.length) return showToast('Belum ada data opname untuk disimpan.', 'error');
+
+      const btn = document.getElementById('btnSimpan');
+      btn.disabled = true;
+      btn.innerText = 'Menyimpan...';
+      document.getElementById('saveHint').textContent = 'Mohon tunggu, opname sedang dikirim.';
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          redirect: 'follow',
+          body: JSON.stringify({ action: 'simpanTransaksi', sheetName: 'STOK_OPNAME', data: dataToSave })
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          showToast(result.message || 'Berhasil disimpan.', 'success');
+          setTimeout(() => location.reload(), 1800);
+        } else {
+          showToast(result.message || 'Gagal menyimpan opname.', 'error');
+          btn.disabled = false;
+          btn.innerText = 'Simpan Stok Opname';
+          document.getElementById('saveHint').textContent = 'Periksa data lalu coba simpan lagi.';
+        }
+      } catch (e) {
+        showToast('Gagal terhubung ke server.', 'error');
+        btn.disabled = false;
+        btn.innerText = 'Simpan Stok Opname';
+        document.getElementById('saveHint').textContent = 'Koneksi gagal. Coba ulangi.';
       }
     });
+
+
+    // Logout modal, disamakan dengan dashboard agar semua halaman punya alur keluar yang sama.
+    const apjLogoutModal = document.getElementById('logoutModal');
+    const apjLogoutOverlay = apjLogoutModal ? apjLogoutModal.querySelector('.modal-overlay') : null;
+    const apjLogoutContent = apjLogoutModal ? apjLogoutModal.querySelector('.modal-content') : null;
+
+    function showLogoutModal() {
+      if (!apjLogoutModal || !apjLogoutOverlay || !apjLogoutContent) return;
+      apjLogoutModal.classList.remove('hidden');
+      void apjLogoutModal.offsetWidth;
+      apjLogoutOverlay.classList.add('opacity-100');
+      apjLogoutOverlay.classList.remove('opacity-0');
+      apjLogoutContent.classList.add('scale-100', 'opacity-100');
+      apjLogoutContent.classList.remove('scale-95', 'opacity-0');
+    }
+
+    function closeLogoutModal() {
+      if (!apjLogoutModal || !apjLogoutOverlay || !apjLogoutContent) return;
+      apjLogoutOverlay.classList.remove('opacity-100');
+      apjLogoutOverlay.classList.add('opacity-0');
+      apjLogoutContent.classList.remove('scale-100', 'opacity-100');
+      apjLogoutContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => apjLogoutModal.classList.add('hidden'), 300);
+    }
+
+    function executeLogout() {
+      localStorage.removeItem('APJ_SESSION_ACTIVE');
+      localStorage.removeItem('APJ_USER_NAME');
+      localStorage.removeItem('APJ_USER_LEVEL');
+      localStorage.removeItem('APJ_USER_OUTLET');
+      localStorage.removeItem('APJ_USER_PERMISSIONS');
+      window.location.href = 'index.html';
+    }
+  
+
+    // Kontrol sidebar mobile, tidak mengganggu tampilan desktop.
+    function openMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (!sidebar || !backdrop) return;
+      sidebar.classList.remove('-translate-x-full');
+      backdrop.classList.remove('hidden');
+    }
+
+    function closeMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (!sidebar || !backdrop) return;
+      sidebar.classList.add('-translate-x-full');
+      backdrop.classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMobileSidebar();
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) closeMobileSidebar();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('#sidebar a').forEach(link => {
+        link.addEventListener('click', closeMobileSidebar);
+      });
+    });
+
+</script>
+
+
+  <script>
+    // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
+    (function(){
+      function headersFor(table){
+        return Array.from(table.querySelectorAll('thead th')).map(function(th){ return (th.textContent || '').trim(); });
+      }
+      function labelTable(table){
+        var headers = headersFor(table);
+        if (!headers.length) return;
+        Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
+          Array.from(row.children).forEach(function(cell, idx){
+            if (!cell || cell.tagName !== 'TD') return;
+            if (!cell.getAttribute('data-label')) cell.setAttribute('data-label', headers[idx] || 'Data');
+          });
+        });
+      }
+      function applyResponsiveTableLabels(root){
+        root = root || document;
+        root.querySelectorAll('.table-scroll table').forEach(labelTable);
+      }
+      window.applyResponsiveTableLabels = applyResponsiveTableLabels;
+      document.addEventListener('DOMContentLoaded', function(){
+        applyResponsiveTableLabels(document);
+        var obs = new MutationObserver(function(){ applyResponsiveTableLabels(document); });
+        obs.observe(document.body, { childList:true, subtree:true });
+      });
+    })();
   </script>
-
-<script>
-(function APJ_UI_PRO_BOOT(){
-  const page = (document.body.getAttribute('data-apj-page') || (location.pathname.split('/').pop() || '')).toLowerCase();
-  const icons = {
-    'dashboard.html':'🏠',
-    'input-stok.html':'📥',
-    'output-stok.html':'📤',
-    'transfer-produksi.html':'🚚',
-    'produk-outlet.html':'🏪',
-    'stok-opname.html':'🧮',
-    'lihat-stok.html':'📊',
-    'riwayat-transaksi.html':'🧾'
-  };
-  const tones = {
-    'dashboard.html':'apj-active-link',
-    'input-stok.html':'apj-active-link',
-    'output-stok.html':'apj-active-link',
-    'transfer-produksi.html':'apj-active-link',
-    'produk-outlet.html':'apj-active-link',
-    'stok-opname.html':'apj-active-link',
-    'lihat-stok.html':'apj-active-link',
-    'riwayat-transaksi.html':'apj-active-link'
-  };
-  const guide = {
-    'input-stok.html': {
-      icon:'📥', title:'Panduan Input Stok', subtitle:'Dipakai untuk mencatat barang masuk dari pembelian atau penambahan stok awal.',
-      steps:[
-        'Pilih Tanggal Transaksi sesuai tanggal barang datang.',
-        'Pilih Kategori Transaksi, misalnya Bahan Mentah, Bahan Baku, Kemasan, Minuman, atau Kebersihan.',
-        'Pilih Nama Barang. Kalau baris kurang, tekan tombol + Tambah Baris Barang.',
-        'Isi Qty Masuk (Beli) sesuai nota/belanja, lalu isi Qty Stok (Riil) sesuai jumlah yang benar-benar masuk ke stok.',
-        'Cek satuan beli dan satuan stok. Pastikan tidak tertukar antara Kg, Pcs, Porsi, Botol, atau satuan lain.',
-        'Tekan Simpan Transaksi Input. Jika sukses, sistem membuat ID transaksi otomatis.'
-      ],
-      note:'Khusus barang parent seperti Ayam Potong, isi hasil riil sesuai stok yang siap dipakai. Jangan asal “kira-kira”; stok itu ibarat kompas dapur, kalau meleset semua ikut muter.'
-    },
-    'output-stok.html': {
-      icon:'📤', title:'Panduan Output Stok', subtitle:'Dipakai untuk mencatat barang keluar, pemakaian dapur, atau proses produksi.',
-      steps:[
-        'Pilih Tanggal Keluar sesuai tanggal barang dipakai atau dikeluarkan.',
-        'Pilih Kategori Transaksi. Untuk produksi, pilih mode/kategori produksi jika tersedia.',
-        'Pilih barang atau produk yang dikeluarkan. Perhatikan stok tersedia sebelum mengisi qty.',
-        'Isi Qty Keluar dengan angka yang benar. Gunakan koma/titik seperlunya, sistem akan membaca sebagai angka.',
-        'Isi Keterangan/Tujuan supaya audit jelas, misalnya Masak Pagi, Produksi Lauk, atau Outlet tertentu.',
-        'Tekan Simpan Output Stok dan tunggu notifikasi berhasil.'
-      ],
-      note:'Kalau stok tersedia terlihat kecil atau nol, jangan dipaksa. Cek fisik dulu atau lakukan input/opname. Sistem ini membantu, tapi mata gudang tetap panglima.'
-    },
-    'stok-opname.html': {
-      icon:'🧮', title:'Panduan Stok Opname', subtitle:'Dipakai untuk menyamakan stok sistem dengan stok fisik di lapangan.',
-      steps:[
-        'Pilih Tanggal Opname sesuai hari pengecekan fisik.',
-        'Pilih Kategori Transaksi yang akan dicek.',
-        'Pilih Nama Barang. Stok Sistem akan menjadi pembanding.',
-        'Isi Stok Fisik sesuai hasil hitung nyata di gudang/dapur/outlet.',
-        'Periksa Selisih. Plus berarti fisik lebih banyak, minus berarti fisik lebih sedikit.',
-        'Isi Alasan Koreksi secara singkat, misalnya salah input, susut, rusak, atau stok ditemukan.',
-        'Tekan Simpan Stok Opname.'
-      ],
-      note:'Opname bukan tempat menebak-nebak. Hitung fisik dulu, baru input. Tradisi lama: barang dihitung pakai mata; sistem baru: hasilnya dikunci rapi.'
-    },
-    'lihat-stok.html': {
-      icon:'📊', title:'Panduan Lihat Stok', subtitle:'Dipakai untuk memantau stok terkini dan menyiapkan laporan PDF.',
-      steps:[
-        'Pilih Kategori Stok yang ingin dilihat.',
-        'Gunakan kolom Cari Barang untuk mencari ID atau nama barang.',
-        'Tekan Refresh jika data terasa belum terbaru.',
-        'Perhatikan Qty Stok, Satuan, Lokasi, Last Update, dan Status.',
-        'Tekan PDF jika ingin mencetak laporan. Pilih penandatangan jika diminta.',
-        'Gunakan status kritis/waspada sebagai prioritas belanja atau produksi.'
-      ],
-      note:'Lihat stok itu bukan sekadar melihat angka. Ini radar operasional: mana yang aman, mana yang mulai teriak minta dibeli.'
-    },
-    'produk-outlet.html': {
-      icon:'🏪', title:'Panduan Produk Outlet', subtitle:'Dipakai untuk mencatat produk outlet, stok outlet, produk terjual, dan opname outlet.',
-      steps:[
-        'Pilih Tanggal dan Outlet yang sedang dikerjakan.',
-        'Gunakan Cari Produk untuk mempercepat pencarian item.',
-        'Tekan Input Terjual untuk mencatat produk yang laku hari itu.',
-        'Isi Qty Terjual sesuai catatan penjualan outlet, lalu simpan.',
-        'Jika stok fisik outlet berbeda dengan sistem, tekan Stok Opname lalu isi stok fisik dan alasan.',
-        'Gunakan Print 58mm atau Print A4 untuk laporan outlet sesuai kebutuhan.'
-      ],
-      note:'Outlet wajib disiplin. Yang terjual dicatat, yang sisa dicek. Kalau tidak, stok jadi drama berseri—episode habisnya banyak.'
-    },
-    'transfer-produksi.html': {
-      icon:'🚚', title:'Panduan Transfer Produk Outlet', subtitle:'Dipakai untuk mengirim produk siap jual dari PUSAT ke outlet dan mencetak Surat Jalan.',
-      steps:[
-        'Pilih Tanggal Transfer.',
-        'Pilih Outlet Tujuan. Produk aktif outlet akan muncul otomatis dari MASTER_PRODUK_OUTLET.',
-        'Pilih PIC Penerima agar tanggung jawab jelas.',
-        'Cari produk jika daftar panjang, lalu isi Qty Transfer hanya pada produk yang dikirim.',
-        'Isi Catatan bila ada informasi tambahan, misalnya tambahan order atau barang pengganti.',
-        'Tekan Simpan Transfer. Baris kosong atau qty 0 tidak akan ikut disimpan.',
-        'Untuk cetak Surat Jalan, tekan Cetak Surat Jalan, pilih transaksi, lalu pilih A4 atau 58mm.'
-      ],
-      note:'Surat Jalan itu bukti jalan barang. Pastikan outlet, PIC, dan qty benar sebelum cetak. Sekali salah, kertas ikut menatap kecewa.'
-    },
-    'riwayat-transaksi.html': {
-      icon:'🧾', title:'Panduan Riwayat Transaksi', subtitle:'Dipakai untuk audit gabungan input, output, produksi, transfer, produk outlet, dan opname.',
-      steps:[
-        'Pilih Tanggal Dari dan Tanggal Sampai.',
-        'Pilih Jenis transaksi, atau pilih Semua untuk audit lengkap.',
-        'Gunakan kolom Cari untuk mencari ID transaksi, nama barang, petugas, outlet, atau kata kunci lain.',
-        'Tekan Muat untuk mengambil data.',
-        'Baca ringkasan dan detail tabel. Cek tanggal, jenis, barang, qty, petugas, dan keterangan.',
-        'Tekan PDF jika laporan perlu disimpan atau dibagikan.'
-      ],
-      note:'Kalau ada angka stok yang aneh, mulai investigasi dari sini. Riwayat transaksi adalah CCTV-nya data.'
-    }
-  };
-
-  function ready(fn){ if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
-  function fileNameFromHref(href){ try { return (href || '').split('/').pop().split('?')[0].split('#')[0].toLowerCase(); } catch(e){ return ''; } }
-  function currentFile(){ return page || fileNameFromHref(location.href); }
-  function safe(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-  function renderSidebar(){
-    const nav = document.querySelector('aside nav');
-    if (!nav) return;
-    const active = currentFile();
-    const menu = [
-      ['dashboard.html','Dashboard'], ['input-stok.html','Input Stok'], ['output-stok.html','Output Stok'],
-      ['transfer-produksi.html','Transfer Produk Outlet'], ['produk-outlet.html','Produk Outlet'],
-      ['stok-opname.html','Stok Opname'], ['lihat-stok.html','Lihat Stok'], ['riwayat-transaksi.html','Riwayat Transaksi']
-    ];
-    nav.innerHTML = '<p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>' + menu.map(([href,label]) => {
-      const isActive = active === href;
-      const cls = isActive ? 'apj-active-link flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors' : 'flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors';
-      return `<a href="${href}" class="${cls}"><span class="apj-nav-ico">${icons[href] || '•'}</span><span>${label}</span></a>`;
-    }).join('');
-  }
-
-  function ensureLogout(){
-    const aside = document.querySelector('aside');
-    if (!aside) return;
-    if (aside.textContent.toLowerCase().includes('logout sistem')) return;
-    const wrap = document.createElement('div');
-    wrap.className = 'p-4 border-t border-slate-800';
-    wrap.innerHTML = '<button type="button" onclick="APJUI_logout()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50"><span class="apj-nav-ico">🚪</span><span>Logout Sistem</span></button>';
-    aside.appendChild(wrap);
-  }
-
-  window.APJUI_logout = function(){
-    ['APJ_SESSION_ACTIVE','APJ_USER_NAME','APJ_USER_LEVEL','APJ_USER_PERMISSIONS'].forEach(k => localStorage.removeItem(k));
-    window.location.href = 'index.html';
-  };
-
-  function setupMobileSidebar(){
-    const aside = document.querySelector('aside');
-    if (!aside || document.querySelector('.apj-mobile-menu')) return;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'apj-mobile-menu';
-    btn.setAttribute('aria-label','Buka menu');
-    btn.innerHTML = '☰';
-    const backdrop = document.createElement('div');
-    backdrop.className = 'apj-sidebar-backdrop';
-    document.body.appendChild(btn);
-    document.body.appendChild(backdrop);
-    function close(){ aside.classList.remove('apj-open'); backdrop.classList.remove('show'); }
-    function open(){ aside.classList.add('apj-open'); backdrop.classList.add('show'); }
-    btn.addEventListener('click', open);
-    backdrop.addEventListener('click', close);
-    aside.addEventListener('click', (e) => { if (e.target.closest('a') && window.innerWidth < 1024) close(); });
-  }
-
-  function guideData(){ return guide[currentFile()] || null; }
-  function buildGuideModal(){
-    const data = guideData();
-    if (!data || document.getElementById('apjGuideModal')) return;
-    const modal = document.createElement('div');
-    modal.id = 'apjGuideModal';
-    modal.className = 'apj-guide-modal';
-    modal.innerHTML = `
-      <div class="apj-guide-backdrop" onclick="APJUI_closeGuide()"></div>
-      <div class="apj-guide-card" role="dialog" aria-modal="true" aria-labelledby="apjGuideTitle">
-        <div class="apj-guide-title">
-          <div class="apj-guide-icon">${data.icon}</div>
-          <div class="min-w-0">
-            <p class="text-[11px] font-black uppercase tracking-[.18em] text-blue-300 mb-1">Bantuan Cepat APJ</p>
-            <h3 id="apjGuideTitle" class="text-xl sm:text-2xl font-extrabold text-white">${safe(data.title)}</h3>
-            <p class="text-sm text-slate-400 mt-1 leading-relaxed">${safe(data.subtitle)}</p>
-          </div>
-        </div>
-        <div class="apj-guide-steps">
-          ${data.steps.map((step, idx) => `<div class="apj-guide-step"><span class="apj-step-no">${idx+1}</span><p class="text-sm text-slate-200 leading-relaxed">${safe(step)}</p></div>`).join('')}
-        </div>
-        <div class="apj-guide-note"><b>Catatan:</b> ${safe(data.note)}</div>
-        <div class="apj-guide-actions">
-          <button type="button" class="apj-btn-soft" onclick="APJUI_resetGuideAuto()">Tampilkan lagi otomatis</button>
-          <button type="button" class="apj-btn-primary" onclick="APJUI_closeGuide()">Paham, lanjut kerja</button>
-        </div>
-      </div>`;
-    const fab = document.createElement('button');
-    fab.type = 'button';
-    fab.className = 'apj-help-fab';
-    fab.innerHTML = `<span>${data.icon}</span><span>Panduan</span>`;
-    fab.addEventListener('click', () => window.APJUI_openGuide(false));
-    document.body.appendChild(modal);
-    document.body.appendChild(fab);
-  }
-
-  window.APJUI_openGuide = function(auto){
-    const modal = document.getElementById('apjGuideModal');
-    if (!modal) return;
-    modal.classList.add('show');
-    if (auto) localStorage.setItem('APJ_HELP_SEEN_' + currentFile(), 'Y');
-  };
-  window.APJUI_closeGuide = function(){
-    const modal = document.getElementById('apjGuideModal');
-    if (modal) modal.classList.remove('show');
-  };
-  window.APJUI_resetGuideAuto = function(){
-    localStorage.removeItem('APJ_HELP_SEEN_' + currentFile());
-    window.APJUI_closeGuide();
-    setTimeout(() => window.APJUI_openGuide(true), 150);
-  };
-
-  function enhanceCards(){
-    document.querySelectorAll('.bg-slate-950.border, .bg-slate-900.border').forEach(el => el.classList.add('apj-lift'));
-    document.querySelectorAll('main > div, main > section').forEach(el => el.classList.add('apj-soft-animate'));
-  }
-
-  ready(function(){
-    renderSidebar();
-    ensureLogout();
-    setupMobileSidebar();
-    buildGuideModal();
-    enhanceCards();
-    const data = guideData();
-    if (data && !localStorage.getItem('APJ_HELP_SEEN_' + currentFile())) {
-      setTimeout(() => window.APJUI_openGuide(true), 650);
-    }
-  });
-})();
-</script>
-
-
-<script>
-(function APJ_V151_FIX_BOOT(){
-  const page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  const info = {
-    'input-stok.html': { icon:'📥', title:'Input Stok', sub:'Catat barang masuk dari pembelian atau penambahan awal. Pastikan satuan beli dan stok riil sesuai sebelum simpan.', badges:['Barang Masuk','Pembelian','Stok Awal'] },
-    'output-stok.html': { icon:'📤', title:'Output Stok', sub:'Catat barang keluar, pemakaian dapur, dan transaksi produksi. Data ini akan memengaruhi stok sistem.', badges:['Barang Keluar','Produksi','Pemakaian'] },
-    'stok-opname.html': { icon:'🧮', title:'Stok Opname', sub:'Samakan stok sistem dengan stok fisik. Hitung barang dulu, baru input angka fisik. Jangan tebak-tebakan, stok bukan ramalan cuaca.', badges:['Koreksi Fisik','Selisih','Audit'] },
-    'lihat-stok.html': { icon:'📊', title:'Lihat Stok', sub:'Pantau stok terkini, pilih kategori, tanggal laporan, lalu cetak PDF bila dibutuhkan.', badges:['Monitoring','PDF','Tanggal Laporan'] },
-    'transfer-produksi.html': { icon:'🚚', title:'Transfer Produk Outlet', sub:'Kirim produk dari PUSAT ke outlet, cek stok pusat dan stok outlet, lalu cetak surat jalan.', badges:['Transfer','Outlet','Surat Jalan'] },
-    'produk-outlet.html': { icon:'🏪', title:'Produk Outlet', sub:'Pantau stok outlet, input produk terjual, lakukan opname outlet, dan cetak laporan outlet.', badges:['Outlet','Terjual','Opname'] },
-    'riwayat-transaksi.html': { icon:'🧾', title:'Riwayat Transaksi', sub:'Audit semua aktivitas stok: input, output, produksi, transfer, produk outlet, dan opname.', badges:['Audit','Filter','PDF'] }
-  };
-  function ready(fn){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fn); else fn(); }
-  ready(function(){
-    const toast = document.getElementById('customToast');
-    if (toast && !toast.classList.contains('show')) {
-      toast.style.removeProperty('position');
-      toast.setAttribute('aria-hidden','true');
-      const msg = document.getElementById('toastMessage');
-      if (msg && msg.textContent.trim() === 'Pesan Notifikasi') msg.textContent = '';
-    }
-    const d = info[page];
-    if (d && !document.querySelector('.apj-page-hero')) {
-      const main = document.querySelector('main');
-      const header = main && main.querySelector('header');
-      const html = `<section class="apj-page-hero no-print"><div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3"><div><h1><span class="mr-2">${d.icon}</span>${d.title}</h1><p>${d.sub}</p><div class="apj-hero-badges">${d.badges.map(b=>`<span class="apj-hero-badge">✓ ${b}</span>`).join('')}</div></div><button type="button" class="apj-btn-primary" onclick="window.APJUI_openGuide&&window.APJUI_openGuide(false)">Buka Panduan</button></div></section>`;
-      if(header) header.insertAdjacentHTML('afterend', html);
-    }
-    const oldOpen = window.APJUI_openGuide;
-    if (typeof oldOpen === 'function' && !window.__APJ151_GUIDE_PATCHED__) {
-      window.__APJ151_GUIDE_PATCHED__ = true;
-      window.APJUI_openGuide = function(auto){ oldOpen(auto); document.body.classList.add('apj-guide-open'); };
-      const oldClose = window.APJUI_closeGuide || function(){};
-      window.APJUI_closeGuide = function(){ oldClose(); document.body.classList.remove('apj-guide-open'); };
-    }
-    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && window.APJUI_closeGuide) window.APJUI_closeGuide(); });
-  });
-})();
-</script>
 
 </body>
 </html>
