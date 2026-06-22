@@ -101,8 +101,10 @@
     .sidebar-footer { padding:12px 15px 16px; border-top:1px solid rgba(255,255,255,.08); }
     .logout-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:rgba(244,63,94,.12); border:1px solid rgba(244,63,94,.25); color:#fb7185; font-size:13.5px; font-weight:880; transition:all .16s ease; }
     .logout-button:hover { background:rgba(244,63,94,.20); color:#fecdd3; transform:translateY(-1px); }
+    .help-sidebar-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; margin-bottom:10px; display:flex; align-items:center; gap:12px; background:rgba(37,99,235,.13); border:1px solid rgba(96,165,250,.25); color:#93c5fd; font-size:13.5px; font-weight:880; transition:all .16s ease; }
+    .help-sidebar-button:hover { background:rgba(37,99,235,.22); color:#dbeafe; transform:translateY(-1px); }
     #sidebar.sidebar-collapsed { width:88px; }
-    #sidebar.sidebar-collapsed .brand-text, #sidebar.sidebar-collapsed .nav-text, #sidebar.sidebar-collapsed .menu-label span, #sidebar.sidebar-collapsed .logout-text { display:none; }
+    #sidebar.sidebar-collapsed .brand-text, #sidebar.sidebar-collapsed .nav-text, #sidebar.sidebar-collapsed .menu-label span, #sidebar.sidebar-collapsed .logout-text, #sidebar.sidebar-collapsed .help-sidebar-text { display:none; }
     #sidebar.sidebar-collapsed .sidebar-head { padding:18px 14px 12px; }
     #sidebar.sidebar-collapsed .brand-toggle { justify-content:center; }
     #sidebar.sidebar-collapsed .logo-mark { width:52px; height:52px; border-radius:20px; }
@@ -112,6 +114,7 @@
     #sidebar.sidebar-collapsed .nav-item { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
     #sidebar.sidebar-collapsed .sidebar-footer { padding:12px 14px 16px; }
     #sidebar.sidebar-collapsed .logout-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
+    #sidebar.sidebar-collapsed .help-sidebar-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; margin-bottom:10px; }
 
     .apj-main { min-width:0; background:transparent; }
     .topbar { height:84px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:16px 24px; border-bottom:1px solid var(--border); background:rgba(2,6,23,.72); backdrop-filter:blur(18px); position:sticky; top:0; z-index:20; }
@@ -288,6 +291,7 @@
 </div>
 </nav>
 <div class="sidebar-footer">
+<button class="help-sidebar-button" onclick="openOutputHelpModal(false); closeMobileSidebar();" title="Panduan Output Stok" type="button"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="help-sidebar-text">Panduan Output</span></button>
 <button class="logout-button" onclick="showLogoutModal()" title="Logout Sistem" type="button"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M16 17l5-5-5-5M21 12H9M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></span><span class="logout-text">Logout Sistem</span></button>
 </div>
 </aside>
@@ -369,12 +373,6 @@
       </div>
     </section>
   </main>
-
-  <button id="outputHelpFab" type="button" onclick="openOutputHelpModal(false)" class="help-fab" aria-label="Buka panduan output stok" title="Panduan Output Stok">
-    <span class="help-fab-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span>
-    <span>Panduan Output</span>
-  </button>
-
   <div id="outputHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
     <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeOutputHelpModal()"></div>
     <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
@@ -427,7 +425,7 @@
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol mengambang di pojok kanan bawah.</p>
+          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol Panduan Output di sidebar, tepat di atas Logout Sistem.</p>
           <button type="button" onclick="closeOutputHelpModal()" class="btn-rose px-5 py-3 text-sm">Mengerti, lanjut output</button>
         </div>
       </div>
