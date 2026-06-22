@@ -282,31 +282,29 @@
         </div>
 
         <div id="adminContent" class="hidden space-y-6">
-          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div class="xl:col-span-2 panel">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                <div>
-                  <h3 class="text-base font-black text-white">User Sistem</h3>
-                  <p class="text-xs text-slate-500 mt-1">Password tidak ditampilkan, hanya status penyimpanannya.</p>
-                </div>
-                <span id="userCount" class="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] text-slate-400">0 user</span>
+          <div class="panel">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-base font-black text-white">User Sistem</h3>
+                <p class="text-xs text-slate-500 mt-1">Tampil 10 user per halaman. Klik <b class="text-violet-200">Aktif</b> untuk membuka detail user, edit data, dan ganti password hash.</p>
               </div>
-              <div class="table-shell table-scroll overflow-x-auto">
-                <table class="w-full min-w-[760px] text-left border-collapse">
-                  <thead class="thead-row"><tr><th class="py-3 pr-3">Username</th><th class="py-3 px-3">Nama</th><th class="py-3 px-3">Level</th><th class="py-3 px-3">Outlet</th><th class="py-3 px-3">Password</th><th class="py-3 pl-3 text-right">Aksi</th></tr></thead>
-                  <tbody id="usersBody" class="divide-y divide-slate-800/70"></tbody>
-                </table>
+              <div class="flex flex-wrap items-center gap-2">
+                <span id="userCount" class="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] text-slate-400">0 user</span>
+                <span id="userPageInfo" class="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] text-violet-200">Halaman 1</span>
               </div>
             </div>
-
-            <div class="panel">
-              <h3 class="text-base font-black text-white mb-1">Ganti Password</h3>
-              <p class="text-xs text-slate-500 mb-4">Password baru langsung disimpan sebagai hash SHA-256 bersalt.</p>
-              <form id="passwordForm" class="space-y-4" onsubmit="submitPasswordChange(event)">
-                <div><label class="form-label">Username</label><select id="passwordUsername" required class="form-control"></select></div>
-                <div><label class="form-label">Password Baru</label><input id="newPassword" type="password" required minlength="4" class="form-control" placeholder="Minimal 4 karakter"></div>
-                <button id="btnPassword" type="submit" class="w-full btn-primary px-4 py-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed">Simpan Password Hash</button>
-              </form>
+            <div class="table-shell table-scroll overflow-x-auto">
+              <table class="w-full min-w-[760px] text-left border-collapse">
+                <thead class="thead-row"><tr><th class="py-3 pr-3">Username</th><th class="py-3 px-3">Nama</th><th class="py-3 px-3">Level</th><th class="py-3 px-3">Outlet</th><th class="py-3 px-3">Password</th><th class="py-3 pl-3 text-right">Aksi</th></tr></thead>
+                <tbody id="usersBody" class="divide-y divide-slate-800/70"></tbody>
+              </table>
+            </div>
+            <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p id="userPageText" class="text-xs text-slate-500">Menampilkan 0 user.</p>
+              <div class="flex items-center gap-2">
+                <button type="button" id="btnUserPrev" onclick="changeUserPage(-1)" class="btn-slate px-4 py-2 text-xs disabled:opacity-40 disabled:cursor-not-allowed">Prev</button>
+                <button type="button" id="btnUserNext" onclick="changeUserPage(1)" class="btn-primary px-4 py-2 text-xs disabled:opacity-40 disabled:cursor-not-allowed">Next</button>
+              </div>
             </div>
           </div>
 
@@ -325,8 +323,13 @@
 
           <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div class="xl:col-span-2 panel">
-              <h3 class="text-base font-black text-white mb-1">Audit Log Terbaru</h3>
-              <p class="text-xs text-slate-500 mb-4">Aktivitas login dan perubahan penting dari backend.</p>
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                <div>
+                  <h3 class="text-base font-black text-white mb-1">Audit Log Terbaru</h3>
+                  <p class="text-xs text-slate-500">Ditampilkan ringkas 5 baris terakhir agar panel tetap rapi.</p>
+                </div>
+                <span id="auditInfo" class="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] text-slate-400">0 log</span>
+              </div>
               <div class="table-shell table-scroll overflow-x-auto">
                 <table class="w-full min-w-[920px] text-left border-collapse">
                   <thead class="thead-row"><tr><th class="py-3 pr-3">Waktu</th><th class="py-3 px-3">Action</th><th class="py-3 px-3">Status</th><th class="py-3 px-3">User</th><th class="py-3 pl-3">Pesan</th></tr></thead>
@@ -336,8 +339,13 @@
             </div>
 
             <div class="panel">
-              <h3 class="text-base font-black text-white mb-1">Master Sheet</h3>
-              <p class="text-xs text-slate-500 mb-4">Ringkasan keberadaan dan jumlah baris.</p>
+              <div class="flex items-start justify-between gap-3 mb-4">
+                <div>
+                  <h3 class="text-base font-black text-white mb-1">Master Sheet</h3>
+                  <p class="text-xs text-slate-500">Ringkasan 5 sheet pertama.</p>
+                </div>
+                <span id="masterInfo" class="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] text-slate-400">0 sheet</span>
+              </div>
               <div id="masterSummary" class="space-y-3"></div>
             </div>
           </div>
@@ -355,7 +363,7 @@
           <div>
             <p class="inline-flex items-center gap-2 rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-violet-200"><span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span> Panduan Modul</p>
             <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-tight text-white">Cara pakai Admin Sistem</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-400">Panduan ini membantu Owner/SuperAdmin/Supervisor mengelola user, password, permission role, audit log, dan pengecekan master sheet.</p>
+            <p class="mt-2 text-sm leading-6 text-slate-400">Panduan ini membantu Owner/SuperAdmin/Supervisor mengelola user, password hash, permission role, audit log, dan pengecekan master sheet ringkas.</p>
           </div>
           <button type="button" onclick="closeAdminHelpModal()" class="w-11 h-11 rounded-2xl border border-slate-700 bg-slate-950/70 text-slate-300 hover:text-white hover:bg-slate-800 transition" aria-label="Tutup panduan">×</button>
         </div>
@@ -377,6 +385,61 @@
     </div>
   </div>
 
+
+  <div id="userEditModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4 no-print">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeUserEditModal()"></div>
+    <div class="admin-modal-card modal-content pointer-events-auto w-full max-w-2xl max-h-[92dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
+      <div class="relative z-10">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <p class="inline-flex items-center gap-2 rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-violet-200"><span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span> Data User</p>
+            <h3 class="mt-4 text-2xl font-black tracking-tight text-white">Edit User Sistem</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-400">Ubah username, nama, level, outlet, dan password. Password baru akan disimpan sebagai hash.</p>
+          </div>
+          <button type="button" onclick="closeUserEditModal()" class="w-11 h-11 rounded-2xl border border-slate-700 bg-slate-950/70 text-slate-300 hover:text-white hover:bg-slate-800 transition" aria-label="Tutup edit user">×</button>
+        </div>
+
+        <form id="userEditForm" class="space-y-4" onsubmit="saveUserEdit(event)">
+          <input type="hidden" id="editOriginalUsername">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="form-label">Username</label>
+              <input id="editUsername" type="text" required class="form-control" placeholder="Username login">
+            </div>
+            <div>
+              <label class="form-label">Nama</label>
+              <input id="editNama" type="text" class="form-control" placeholder="Nama petugas">
+            </div>
+            <div>
+              <label class="form-label">Level</label>
+              <input id="editLevel" type="text" class="form-control" placeholder="Owner / Supervisor / Gudang">
+            </div>
+            <div>
+              <label class="form-label">Outlet</label>
+              <input id="editOutlet" type="text" class="form-control" placeholder="ALL / LAHOR / PUJON">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="form-label">Password Baru <span class="normal-case tracking-normal text-slate-500">(opsional)</span></label>
+              <input id="editPassword" type="password" minlength="4" class="form-control" placeholder="Kosongkan jika tidak ingin ganti password">
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs leading-5 text-amber-100/80">
+            Password lama tidak ditampilkan demi keamanan. Untuk edit username/nama/level/outlet, backend perlu action <b>adminUpdateUser</b>. Jika belum terpasang, pasang Code.gs revisi yang saya sertakan.
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+            <p id="userEditHint" class="text-xs text-slate-500">Klik Simpan untuk memperbarui data user.</p>
+            <div class="flex gap-3">
+              <button type="button" onclick="closeUserEditModal()" class="btn-slate px-5 py-3 text-sm">Batal</button>
+              <button id="btnSaveUserEdit" type="submit" class="btn-primary px-5 py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed">Simpan User</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none no-print">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
     <div class="admin-modal-card modal-content pointer-events-auto relative p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0">
@@ -392,6 +455,9 @@
   <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
     let adminData = null;
+    let adminUserList = [];
+    let userPage = 1;
+    const USERS_PER_PAGE = 10;
 
     document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem('APJ_SESSION_ACTIVE') !== 'true' || !localStorage.getItem('APJ_SESSION_TOKEN')) {
@@ -448,9 +514,29 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
     }
 
     function renderUsers(users) {
-      document.getElementById('userCount').textContent = `${users.length} user`;
-      document.getElementById('passwordUsername').innerHTML = users.map(user => `<option value="${escapeAttr(user.username)}">${escapeHtml(user.username)} - ${escapeHtml(user.nama || user.level || '')}</option>`).join('');
-      document.getElementById('usersBody').innerHTML = users.length ? users.map(user => `
+      adminUserList = Array.isArray(users) ? users : [];
+      const maxPage = Math.max(1, Math.ceil(adminUserList.length / USERS_PER_PAGE));
+      if (userPage > maxPage) userPage = maxPage;
+      if (userPage < 1) userPage = 1;
+      document.getElementById('userCount').textContent = `${adminUserList.length} user`;
+      renderUsersPage();
+    }
+
+    function renderUsersPage() {
+      const tbody = document.getElementById('usersBody');
+      const total = adminUserList.length;
+      const maxPage = Math.max(1, Math.ceil(total / USERS_PER_PAGE));
+      const start = (userPage - 1) * USERS_PER_PAGE;
+      const pageRows = adminUserList.slice(start, start + USERS_PER_PAGE);
+
+      document.getElementById('userPageInfo').textContent = `Halaman ${userPage}/${maxPage}`;
+      document.getElementById('userPageText').textContent = total
+        ? `Menampilkan ${start + 1}-${Math.min(start + USERS_PER_PAGE, total)} dari ${total} user.`
+        : 'Menampilkan 0 user.';
+      document.getElementById('btnUserPrev').disabled = userPage <= 1;
+      document.getElementById('btnUserNext').disabled = userPage >= maxPage;
+
+      tbody.innerHTML = pageRows.length ? pageRows.map(user => `
         <tr class="text-sm">
           <td class="py-3 pr-3 font-semibold text-white">${escapeHtml(user.username)}</td>
           <td class="py-3 px-3 text-slate-300">${escapeHtml(user.nama || '-')}</td>
@@ -458,10 +544,16 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
           <td class="py-3 px-3 text-slate-300">${escapeHtml(user.outlet || '-')}</td>
           <td class="py-3 px-3">${passwordBadge(user.passwordMode)}</td>
           <td class="py-3 pl-3 text-right">
-            <button type="button" onclick="selectPasswordUser(${jsString(user.username)})" class="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 transition">Pilih</button>
+            <button type="button" onclick="openUserEditModal(${jsString(user.username)})" class="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 transition">Aktif</button>
           </td>
         </tr>
       `).join('') : `<tr><td colspan="6" class="py-8 text-center text-slate-500">Belum ada user.</td></tr>`;
+    }
+
+    function changeUserPage(delta) {
+      const maxPage = Math.max(1, Math.ceil(adminUserList.length / USERS_PER_PAGE));
+      userPage = Math.min(maxPage, Math.max(1, userPage + delta));
+      renderUsersPage();
     }
 
     function renderPermissions(columns, rows) {
@@ -497,7 +589,11 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
     }
 
     function renderAudit(logs) {
-      document.getElementById('auditBody').innerHTML = logs.length ? logs.map(log => `
+      const allLogs = Array.isArray(logs) ? logs : [];
+      const visibleLogs = allLogs.slice(0, 5);
+      const info = document.getElementById('auditInfo');
+      if (info) info.textContent = `${Math.min(visibleLogs.length, 5)} dari ${allLogs.length} log`;
+      document.getElementById('auditBody').innerHTML = visibleLogs.length ? visibleLogs.map(log => `
         <tr class="text-sm">
           <td class="py-3 pr-3 text-slate-400 whitespace-nowrap">${escapeHtml(log.timestamp || '-')}</td>
           <td class="py-3 px-3 text-slate-300">${escapeHtml(log.action || '-')}</td>
@@ -509,7 +605,11 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
     }
 
     function renderMasterSummary(items) {
-      document.getElementById('masterSummary').innerHTML = items.map(item => `
+      const allItems = Array.isArray(items) ? items : [];
+      const visibleItems = allItems.slice(0, 5);
+      const info = document.getElementById('masterInfo');
+      if (info) info.textContent = `${Math.min(visibleItems.length, 5)} dari ${allItems.length} sheet`;
+      document.getElementById('masterSummary').innerHTML = visibleItems.length ? visibleItems.map(item => `
         <div class="rounded-lg border ${item.exists ? 'border-slate-800 bg-slate-900' : 'border-rose-500/20 bg-rose-500/10'} p-3">
           <div class="flex items-center justify-between gap-3">
             <p class="text-xs font-bold text-white truncate">${escapeHtml(item.name)}</p>
@@ -517,25 +617,69 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
           </div>
           <p class="mt-2 text-xs text-slate-500">${escapeHtml(String(item.rows || 0))} baris data, ${escapeHtml(String(item.columns || 0))} kolom</p>
         </div>
-      `).join('');
+      `).join('') : '<div class="rounded-lg border border-slate-800 bg-slate-900 p-3 text-xs text-slate-500">Belum ada data master sheet.</div>';
     }
 
-    async function submitPasswordChange(event) {
-      event.preventDefault();
-      const username = document.getElementById('passwordUsername').value;
-      const newPassword = document.getElementById('newPassword').value;
-      if (!username || !newPassword) return;
-      if (!confirm(`Ubah password untuk ${username}?`)) return;
+    function openUserEditModal(username) {
+      const user = adminUserList.find(item => String(item.username) === String(username));
+      if (!user) {
+        showToast('Data user tidak ditemukan.', 'error');
+        return;
+      }
+      document.getElementById('editOriginalUsername').value = user.username || '';
+      document.getElementById('editUsername').value = user.username || '';
+      document.getElementById('editNama').value = user.nama || '';
+      document.getElementById('editLevel').value = user.level || '';
+      document.getElementById('editOutlet').value = user.outlet || '';
+      document.getElementById('editPassword').value = '';
+      document.getElementById('userEditHint').textContent = `User aktif: ${user.username || '-'}`;
 
-      const button = document.getElementById('btnPassword');
+      const modal = document.getElementById('userEditModal');
+      const overlay = modal.querySelector('.modal-overlay');
+      const content = modal.querySelector('.modal-content');
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      overlay.classList.remove('opacity-0'); overlay.classList.add('opacity-100');
+      content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100');
+      setTimeout(() => document.getElementById('editUsername')?.focus(), 100);
+    }
+
+    function closeUserEditModal() {
+      const modal = document.getElementById('userEditModal');
+      if (!modal) return;
+      const overlay = modal.querySelector('.modal-overlay');
+      const content = modal.querySelector('.modal-content');
+      overlay.classList.remove('opacity-100'); overlay.classList.add('opacity-0');
+      content.classList.remove('scale-100', 'opacity-100'); content.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 250);
+    }
+
+    async function saveUserEdit(event) {
+      event.preventDefault();
+      const originalUsername = document.getElementById('editOriginalUsername').value.trim();
+      const username = document.getElementById('editUsername').value.trim();
+      const nama = document.getElementById('editNama').value.trim();
+      const level = document.getElementById('editLevel').value.trim();
+      const outlet = document.getElementById('editOutlet').value.trim();
+      const newPassword = document.getElementById('editPassword').value;
+      if (!originalUsername || !username) {
+        showToast('Username wajib diisi.', 'error');
+        return;
+      }
+      if (newPassword && newPassword.length < 4) {
+        showToast('Password baru minimal 4 karakter.', 'error');
+        return;
+      }
+
+      const button = document.getElementById('btnSaveUserEdit');
       button.disabled = true;
       try {
-        const result = await api('adminUpdatePassword', { username, newPassword });
-        showToast(result.message || 'Password berhasil diubah.', 'success');
-        document.getElementById('passwordForm').reset();
+        const result = await api('adminUpdateUser', { originalUsername, username, nama, level, outlet, newPassword });
+        showToast(result.message || 'Data user berhasil diperbarui.', 'success');
+        closeUserEditModal();
         await loadAdminData();
       } catch (error) {
-        showToast(error.message, 'error');
+        showToast(error.message || 'Gagal memperbarui user. Pastikan Code.gs sudah mendukung adminUpdateUser.', 'error');
       } finally {
         button.disabled = false;
       }
@@ -559,10 +703,6 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
       }
     }
 
-    function selectPasswordUser(username) {
-      document.getElementById('passwordUsername').value = username;
-      document.getElementById('newPassword').focus();
-    }
 
     function passwordBadge(mode) {
       const m = String(mode || '').toUpperCase();
