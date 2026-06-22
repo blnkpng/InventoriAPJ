@@ -140,16 +140,16 @@
     th { font-size:12px; text-transform:uppercase; letter-spacing:.07em; font-weight:900; color:var(--muted); }
     td { color:#cbd5e1; }
 
-    .admin-users-table { min-width:680px; table-layout:fixed; }
-    .admin-users-table th, .admin-users-table td { padding:.72rem .65rem!important; vertical-align:middle; }
+    .admin-users-table { min-width:620px; table-layout:fixed; }
+    .admin-users-table th, .admin-users-table td { padding:.52rem .48rem!important; vertical-align:middle; }
     .admin-users-table th:nth-child(1), .admin-users-table td:nth-child(1) { width:16%; }
-    .admin-users-table th:nth-child(2), .admin-users-table td:nth-child(2) { width:29%; }
+    .admin-users-table th:nth-child(2), .admin-users-table td:nth-child(2) { width:28%; }
     .admin-users-table th:nth-child(3), .admin-users-table td:nth-child(3) { width:13%; }
     .admin-users-table th:nth-child(4), .admin-users-table td:nth-child(4) { width:13%; }
-    .admin-users-table th:nth-child(5), .admin-users-table td:nth-child(5) { width:14%; }
-    .admin-users-table th:nth-child(6), .admin-users-table td:nth-child(6) { width:15%; }
+    .admin-users-table th:nth-child(5), .admin-users-table td:nth-child(5) { width:13%; }
+    .admin-users-table th:nth-child(6), .admin-users-table td:nth-child(6) { width:17%; }
     .admin-users-table .cell-ellipsis { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
-    .admin-users-table .edit-user-button { min-width:66px; min-height:34px; display:inline-flex; align-items:center; justify-content:center; border-radius:14px; }
+    .admin-users-table .edit-user-button { min-width:58px; min-height:30px; display:inline-flex; align-items:center; justify-content:center; border-radius:12px; }
     .btn-primary { border-radius:16px; background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; font-weight:900; box-shadow:0 16px 32px rgba(124,58,237,.24); transition:all .16s ease; }
     .btn-primary:hover { filter:brightness(1.05); transform:translateY(-1px); }
     .btn-slate { border-radius:16px; background:rgba(15,23,42,.84); border:1px solid var(--border); color:#e2e8f0; font-weight:900; transition:all .16s ease; }
@@ -405,7 +405,7 @@
           <div>
             <p class="inline-flex items-center gap-2 rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-violet-200"><span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span> Data User</p>
             <h3 class="mt-4 text-2xl font-black tracking-tight text-white">Edit User Sistem</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-400">Ubah username, nama, level, outlet, dan password. Password baru akan disimpan sebagai hash.</p>
+            <p class="mt-2 text-sm leading-6 text-slate-400">Ubah username, nama, level, outlet, dan password. Level dan outlet dipilih dari dropdown agar tidak salah ketik.</p>
           </div>
           <button type="button" onclick="closeUserEditModal()" class="w-11 h-11 rounded-2xl border border-slate-700 bg-slate-950/70 text-slate-300 hover:text-white hover:bg-slate-800 transition" aria-label="Tutup edit user">×</button>
         </div>
@@ -423,11 +423,11 @@
             </div>
             <div>
               <label class="form-label">Level</label>
-              <input id="editLevel" type="text" class="form-control" placeholder="Owner / Supervisor / Gudang">
+              <select id="editLevel" class="form-control"></select>
             </div>
             <div>
               <label class="form-label">Outlet</label>
-              <input id="editOutlet" type="text" class="form-control" placeholder="ALL / LAHOR / PUJON">
+              <select id="editOutlet" class="form-control"></select>
             </div>
             <div class="sm:col-span-2">
               <label class="form-label">Password Baru <span class="normal-case tracking-normal text-slate-500">(opsional)</span></label>
@@ -555,19 +555,11 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
           <td class="text-slate-300"><span class="cell-ellipsis" title="${escapeAttr(user.outlet || '-')}">${escapeHtml(user.outlet || '-')}</span></td>
           <td>${passwordBadge(user.passwordMode)}</td>
           <td class="text-right">
-            <button type="button" data-edit-user="${escapeAttr(user.username)}" title="Edit user" aria-label="Edit user" class="edit-user-button border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 transition">Edit</button>
+            <button type="button" data-edit-user="${escapeAttr(user.username)}" onclick="openUserEditModal(${jsString(user.username)})" title="Edit user" aria-label="Edit user" class="edit-user-button border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 transition">Edit</button>
           </td>
         </tr>
       `).join('') : `<tr><td colspan="6" class="py-8 text-center text-slate-500">Belum ada user.</td></tr>`;
     }
-
-
-    document.addEventListener('click', (event) => {
-      const button = event.target.closest('[data-edit-user]');
-      if (!button) return;
-      event.preventDefault();
-      openUserEditModal(button.getAttribute('data-edit-user'));
-    });
 
     function changeUserPage(delta) {
       const maxPage = Math.max(1, Math.ceil(adminUserList.length / USERS_PER_PAGE));
@@ -639,6 +631,47 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
       `).join('') : '<div class="rounded-lg border border-slate-800 bg-slate-900 p-3 text-xs text-slate-500">Belum ada data master sheet.</div>';
     }
 
+    function uniqueCleanValues(list) {
+      const seen = new Set();
+      const result = [];
+      (list || []).forEach(value => {
+        const text = String(value ?? '').trim();
+        if (!text) return;
+        const key = text.toUpperCase();
+        if (seen.has(key)) return;
+        seen.add(key);
+        result.push(text);
+      });
+      return result;
+    }
+
+    function setSelectOptions(selectId, values, selectedValue) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+      const selected = String(selectedValue ?? '').trim();
+      const options = uniqueCleanValues([selected, ...(values || [])]);
+      select.innerHTML = options.map(value => `<option value="${escapeAttr(value)}">${escapeHtml(value)}</option>`).join('');
+      select.value = selected || (options[0] || '');
+    }
+
+    function populateUserEditDropdowns(user) {
+      const levelValues = uniqueCleanValues([
+        user && user.level,
+        ...(adminUserList || []).map(item => item.level),
+        ...((adminData && adminData.permissionRows) || []).map(row => row.role),
+        'OWNER', 'SUPERVISOR', 'GUDANG', 'PRODUKSI', 'KEMASAN', 'KASIR', 'SUPERADMIN'
+      ]);
+
+      const outletValues = uniqueCleanValues([
+        user && user.outlet,
+        ...(adminUserList || []).map(item => item.outlet),
+        'ALL', 'LAHOR', 'SENISONO', 'PUJON', 'NGUJUNG', 'POKOPEK'
+      ]);
+
+      setSelectOptions('editLevel', levelValues, user && user.level);
+      setSelectOptions('editOutlet', outletValues, user && user.outlet);
+    }
+
     function openUserEditModal(username) {
       const user = adminUserList.find(item => String(item.username) === String(username));
       if (!user) {
@@ -648,8 +681,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
       document.getElementById('editOriginalUsername').value = user.username || '';
       document.getElementById('editUsername').value = user.username || '';
       document.getElementById('editNama').value = user.nama || '';
-      document.getElementById('editLevel').value = user.level || '';
-      document.getElementById('editOutlet').value = user.outlet || '';
+      populateUserEditDropdowns(user);
       document.getElementById('editPassword').value = '';
       document.getElementById('userEditHint').textContent = `User aktif: ${user.username || '-'}`;
 
