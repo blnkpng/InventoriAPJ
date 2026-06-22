@@ -5,190 +5,372 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Riwayat Transaksi | APJ Inventori</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-    .toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); transition: all 0.4s ease; z-index: 9999; }
-    .toast.show { top: 24px; }
-    .modal-overlay { transition: opacity 0.25s ease-out; }
-    .modal-content { transition: transform 0.25s ease-out, opacity 0.25s ease-out; }
-    .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-    .table-scroll::-webkit-scrollbar { height: 8px; }
-    .table-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
-    @media (max-width: 1023px) {
-      .toast { width: calc(100% - 2rem); max-width: calc(100% - 2rem); }
-      input, select, textarea { font-size: 16px; }
-      main { width: 100%; }
-    }
-    @media print {
-      body { background: white !important; color: black !important; }
-      .no-print, aside, #mobileMenuBtn, #sidebarBackdrop, #customToast, #logoutModal { display: none !important; }
-      main { display: block !important; overflow: visible !important; background: white !important; color: black !important; }
-      .print-card { border: none !important; box-shadow: none !important; background: white !important; color: black !important; }
-      table { color: black !important; }
-      th, td { border-color: #111 !important; color: black !important; }
-      @page { size: A4 landscape; margin: 1cm; }
-    }
-  
 
-    /* APJ v14.6 - responsive table cards: mobile tidak perlu scroll samping */
-    @media screen and (max-width: 768px) {
-      .table-scroll { overflow-x: visible !important; }
-      .table-scroll table { min-width: 0 !important; width: 100% !important; display: block !important; }
-      .table-scroll thead { display: none !important; }
-      .table-scroll tbody { display: block !important; width: 100% !important; }
-      .table-scroll tr { display: block !important; width: 100% !important; margin-bottom: 12px !important; padding: 10px !important; border: 1px solid #334155 !important; border-radius: 14px !important; background: rgba(15,23,42,.92) !important; }
-      .table-scroll td { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-width: 0 !important; padding: 8px 4px !important; border: 0 !important; border-bottom: 1px dashed rgba(100,116,139,.35) !important; text-align: right !important; white-space: normal !important; word-break: break-word !important; }
-      .table-scroll td:last-child { border-bottom: 0 !important; }
-      .table-scroll td::before { content: attr(data-label); flex: 0 0 42%; max-width: 42%; text-align: left !important; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .035em; }
-      .table-scroll td > * { max-width: 58%; }
-      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width: 0 !important; width: 100% !important; }
-      .table-scroll .text-center { text-align: right !important; }
-      .table-scroll .min-w-\[80px\], .table-scroll .min-w-\[90px\], .table-scroll .min-w-\[100px\], .table-scroll .min-w-\[110px\], .table-scroll .min-w-\[120px\], .table-scroll .min-w-\[140px\], .table-scroll .min-w-\[160px\], .table-scroll .min-w-\[180px\], .table-scroll .min-w-\[220px\], .table-scroll .min-w-\[260px\], .table-scroll .min-w-\[280px\] { min-width: 0 !important; }
+
+    :root {
+      color-scheme: dark;
+      --apj-bg: #0f172a;
+      --apj-card: rgba(15, 23, 42, .84);
+      --apj-border: rgba(51, 65, 85, .78);
+      --apj-blue: #2563eb;
+      --apj-cyan: #06b6d4;
+      --apj-emerald: #10b981;
+      --apj-rose: #f43f5e;
+      --apj-amber: #f59e0b;
+      --bg: #0f172a;
+      --surface: rgba(15, 23, 42, .84);
+      --surface-solid: #0f172a;
+      --surface-soft: rgba(2, 6, 23, .46);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --muted-2: #64748b;
+      --border: rgba(51, 65, 85, .78);
+      --border-strong: rgba(96, 165, 250, .34);
+      --shadow: 0 26px 90px rgba(0,0,0,.50), inset 0 1px 0 rgba(255,255,255,.04);
+      --shadow-soft: 0 18px 46px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.035);
+      --primary: #2563eb;
+      --primary-2: #0ea5e9;
+      --accent: #06b6d4;
+      --blue: #2563eb;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --amber: #f59e0b;
+      --violet: #8b5cf6;
+      --sky: #06b6d4;
     }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(37, 99, 235, .20), transparent 32%),
+        radial-gradient(circle at 82% 15%, rgba(6, 182, 212, .16), transparent 28%),
+        radial-gradient(circle at 70% 86%, rgba(16, 185, 129, .12), transparent 24%),
+        linear-gradient(135deg, #020617 0%, #0f172a 52%, #111827 100%);
+    }
+    body::before {
+      content:"";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, .05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 78%);
+      z-index: 0;
+    }
+    body > * { position: relative; z-index: 1; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+    input[type=number] { -moz-appearance:textfield; }
+
+    .apj-sidebar {
+      width: 286px;
+      height: 100dvh;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(2,6,23,.97));
+      border-right: 1px solid rgba(51,65,85,.70);
+      box-shadow: 18px 0 50px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04);
+      backdrop-filter: blur(18px);
+      color: #f8fafc;
+    }
+    .sidebar-head { padding:18px 18px 10px; }
+    .brand-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; background:transparent; border:0; color:inherit; text-align:left; transition:transform .18s ease; }
+    .brand-toggle:hover { transform: translateY(-1px); }
+    .logo-stack { display:flex; align-items:center; gap:12px; min-width:0; }
+    .logo-mark { width:54px; height:54px; border-radius:22px; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#ffffff,#dff6ff 48%,#2563eb); color:#0a0a0b; font-weight:950; letter-spacing:-.05em; box-shadow:0 16px 34px rgba(37,99,235,.26); }
+    .brand-text p:first-child { font-size:22px; line-height:1; font-weight:950; letter-spacing:-.04em; color:#fff; margin:0; }
+    .brand-text p:last-child { margin:3px 0 0; font-size:11px; font-weight:900; letter-spacing:.18em; color:#7dd3fc; }
+    .sidebar-nav { flex:1 1 auto; overflow:hidden; padding:8px 15px 12px; display:flex; flex-direction:column; gap:9px; }
+    .menu-section { display:flex; flex-direction:column; gap:4px; min-width:0; }
+    .menu-label { padding:0 12px 2px; color:rgba(203,213,225,.62); font-size:9px; font-weight:950; text-transform:uppercase; letter-spacing:.17em; line-height:1; white-space:nowrap; margin:0; }
+    .nav-item { display:flex; align-items:center; gap:11px; min-height:39px; padding:8px 12px; border-radius:16px; color:rgba(203,213,225,.62); font-size:13px; font-weight:780; border:1px solid transparent; transition:all .16s ease; min-width:0; text-decoration:none; }
+    .nav-item:hover { color:#fff; background:rgba(255,255,255,.065); transform:translateX(2px); }
+    .nav-item.active { color:#fff; background:linear-gradient(135deg, rgba(16,185,129,.32), rgba(6,182,212,.16)); border-color:rgba(125,211,252,.20); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 12px 28px rgba(16,185,129,.14); }
+    .nav-icon { width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; opacity:.94; }
+    .nav-icon svg { width:19px; height:19px; stroke-width:1.9; }
+    .nav-text { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sidebar-footer { padding:12px 15px 16px; border-top:1px solid rgba(255,255,255,.08); display:flex; flex-direction:column; gap:9px; }
+    .guide-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:rgba(37,99,235,.10); border:1px solid rgba(96,165,250,.24); color:#93c5fd; font-size:13.5px; font-weight:880; transition:all .16s ease; }
+    .guide-button:hover { background:rgba(37,99,235,.18); color:#fff; transform:translateY(-1px); }
+    .logout-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:rgba(244,63,94,.12); border:1px solid rgba(244,63,94,.25); color:#fb7185; font-size:13.5px; font-weight:880; transition:all .16s ease; }
+    .logout-button:hover { background:rgba(244,63,94,.20); color:#fecdd3; transform:translateY(-1px); }
+    #sidebar.sidebar-collapsed { width:88px; }
+    #sidebar.sidebar-collapsed .brand-text, #sidebar.sidebar-collapsed .nav-text, #sidebar.sidebar-collapsed .menu-label span, #sidebar.sidebar-collapsed .logout-text, #sidebar.sidebar-collapsed .guide-text { display:none; }
+    #sidebar.sidebar-collapsed .sidebar-head { padding:18px 14px 12px; }
+    #sidebar.sidebar-collapsed .brand-toggle { justify-content:center; }
+    #sidebar.sidebar-collapsed .logo-mark { width:52px; height:52px; border-radius:20px; }
+    #sidebar.sidebar-collapsed .sidebar-nav { padding-left:14px; padding-right:14px; align-items:center; gap:11px; }
+    #sidebar.sidebar-collapsed .menu-section { align-items:center; gap:7px; }
+    #sidebar.sidebar-collapsed .menu-label { width:34px; height:1px; padding:0; margin:2px 0; background:rgba(255,255,255,.18); border-radius:999px; }
+    #sidebar.sidebar-collapsed .nav-item { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
+    #sidebar.sidebar-collapsed .sidebar-footer { padding:12px 14px 16px; }
+    #sidebar.sidebar-collapsed .logout-button, #sidebar.sidebar-collapsed .guide-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
+
+    .apj-main { min-width:0; background:transparent; }
+    .topbar { height:84px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:16px 24px; border-bottom:1px solid var(--border); background:rgba(2,6,23,.72); backdrop-filter:blur(18px); position:sticky; top:0; z-index:20; }
+    .topbar-title { min-width:0; display:flex; align-items:center; gap:14px; }
+    .topbar-title-mark { width:42px; height:42px; border-radius:16px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, rgba(16,185,129,.18), rgba(6,182,212,.10)); border:1px solid rgba(45,212,191,.24); color:#6ee7b7; }
+    .topbar-title h2 { color:var(--text); font-size:18px; font-weight:900; letter-spacing:-.02em; line-height:1.1; margin:0; }
+    .topbar-title p { color:var(--muted); font-size:12px; font-weight:700; margin:3px 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .user-chip { display:flex; align-items:center; gap:12px; min-width:0; }
+    .user-avatar { width:52px; height:52px; border-radius:19px; display:flex; align-items:center; justify-content:center; font-weight:950; color:#fff; background:linear-gradient(135deg,#10b981,#06b6d4); box-shadow:0 14px 32px rgba(16,185,129,.22); flex:0 0 auto; }
+    .user-meta { min-width:0; line-height:1.12; }
+    .icon-button { width:48px; height:48px; border-radius:18px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); background:rgba(255,255,255,.035); color:var(--text); transition:transform .15s ease, border-color .15s ease, background .15s ease; backdrop-filter:blur(14px); }
+    .icon-button:hover { transform:translateY(-1px); border-color:var(--border-strong); background:rgba(255,255,255,.06); }
+    .page-scroll { overflow:auto; height:calc(100dvh - 84px); padding:22px 24px 30px; scroll-behavior:smooth; }
+    .page-wrap { max-width:1500px; margin:0 auto; display:flex; flex-direction:column; gap:18px; }
+    .hero-card { position:relative; overflow:hidden; border-radius:26px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(15,23,42,.88), rgba(2,6,23,.90)); padding:22px; box-shadow:var(--shadow); backdrop-filter:blur(20px); }
+    .hero-card::before { content:""; position:absolute; inset:-80px -40px auto auto; width:270px; height:270px; border-radius:999px; background:rgba(16,185,129,.18); filter:blur(32px); pointer-events:none; }
+    .hero-card::after { content:""; position:absolute; inset:auto auto -120px -80px; width:260px; height:260px; border-radius:999px; background:rgba(6,182,212,.16); filter:blur(34px); pointer-events:none; }
+    .hero-title { color:var(--text); font-size:clamp(26px,2.6vw,36px); font-weight:950; line-height:1.06; letter-spacing:-.045em; margin:0; }
+    .hero-desc { color:var(--muted); max-width:760px; font-size:14px; line-height:1.58; margin-top:10px; }
+    .soft-badge { display:inline-flex; align-items:center; gap:8px; padding:7px 11px; border-radius:999px; background:rgba(16,185,129,.13); color:#6ee7b7; border:1px solid rgba(45,212,191,.24); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.065em; }
+    .panel, .mini-stat { border:1px solid var(--apj-border); background:linear-gradient(180deg, rgba(15,23,42,.84), rgba(2,6,23,.78)); box-shadow:var(--shadow-soft); backdrop-filter:blur(18px); }
+    .panel { border-radius:24px; padding:18px; overflow:hidden; }
+    .mini-stat { border-radius:20px; padding:14px 15px; }
+    .mini-stat p { color:var(--muted); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.06em; margin:0; }
+    .mini-stat strong, .mini-stat .stat-value { display:block; color:var(--text); font-size:14px; font-weight:900; margin-top:4px; }
+    .info-card { border-radius:18px; border:1px solid rgba(45,212,191,.18); background:rgba(16,185,129,.09); padding:13px 14px; color:var(--muted); font-size:12px; line-height:1.55; }
+    .form-label { display:block; color:var(--muted); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+    .form-control { width:100%; border-radius:16px; border:1px solid var(--border); background:rgba(2,6,23,.62); color:#fff; padding:11px 13px; font-size:14px; outline:none; transition:all .16s ease; }
+    .form-control:focus { border-color:rgba(16,185,129,.95); box-shadow:0 0 0 4px rgba(16,185,129,.12); }
+    .table-shell { border:1px solid var(--border); border-radius:20px; overflow:hidden; background:rgba(2,6,23,.42); }
+    .table-scroll { -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+    .table-scroll::-webkit-scrollbar { height:8px; }
+    .table-scroll::-webkit-scrollbar-thumb { background:rgba(100,116,139,.45); border-radius:999px; }
+    .thead-row { background:rgba(15,23,42,.72); border-bottom:1px solid var(--border); color:var(--muted); }
+    .btn-primary { border-radius:16px; background:linear-gradient(135deg,#10b981,#06b6d4); color:#fff; font-weight:900; box-shadow:0 16px 32px rgba(16,185,129,.20); transition:all .16s ease; }
+    .btn-primary:hover { filter:brightness(1.05); transform:translateY(-1px); }
+    .btn-slate { border-radius:16px; background:rgba(15,23,42,.84); border:1px solid var(--border); color:#e2e8f0; font-weight:900; transition:all .16s ease; }
+    .btn-slate:hover { background:rgba(30,41,59,.88); transform:translateY(-1px); }
+    .toast {
+      position:fixed;
+      top:18px;
+      left:calc(50% + 143px);
+      transform:translate(-50%,-14px) scale(.98);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .24s ease, transform .24s cubic-bezier(.16,1,.3,1), left .28s ease;
+      z-index:9999;
+      min-width:280px;
+      max-width:min(460px,calc(100vw - 32px));
+      border-radius:22px;
+    }
+    .toast.show { opacity:1; transform:translate(-50%,0) scale(1); pointer-events:auto; }
+    body.sidebar-collapsed-active .toast { left:calc(50% + 44px); }
+    .help-modal-card {
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      border:1px solid rgba(96,165,250,.28);
+      background:linear-gradient(180deg, rgba(15,23,42,.96), rgba(2,6,23,.96));
+      box-shadow:0 28px 88px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+      backdrop-filter:blur(22px);
+    }
+    .help-modal-card::before { content:""; position:absolute; width:220px; height:220px; right:-90px; top:-110px; border-radius:999px; background:rgba(16,185,129,.22); filter:blur(34px); pointer-events:none; }
+    .help-step { border:1px solid rgba(51,65,85,.70); background:rgba(15,23,42,.58); border-radius:18px; padding:13px; }
+    .help-step-number { width:28px; height:28px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(16,185,129,.14); border:1px solid rgba(45,212,191,.24); color:#6ee7b7; font-weight:950; font-size:12px; flex:0 0 auto; }
+    .modal-overlay { transition:opacity .25s ease-out; }
+    .modal-content { transition:transform .25s ease-out, opacity .25s ease-out; }
+
+    @media print {
+      @page { size: A4 landscape; margin: 1cm; }
+      body { background:white !important; color:black !important; overflow:visible !important; height:auto !important; }
+      body::before { display:none !important; }
+      .no-print, aside, #mobileMenuBtn, #sidebarBackdrop, #customToast, #logoutModal, #riwayatHelpModal, .topbar, .hero-card { display:none !important; }
+      .web-ui, main, .apj-main, .page-scroll, .page-wrap { display:block !important; height:auto !important; overflow:visible !important; padding:0 !important; margin:0 !important; max-width:none !important; background:white !important; color:black !important; }
+      .print-card, .panel { border:0 !important; box-shadow:none !important; background:white !important; color:black !important; padding:0 !important; border-radius:0 !important; }
+      .mini-stat { border:1px solid #111 !important; background:white !important; color:black !important; box-shadow:none !important; break-inside:avoid; }
+      .mini-stat p, .mini-stat strong, .mini-stat .stat-value { color:black !important; }
+      #jenisBadges span { color:black !important; border-color:#111 !important; background:white !important; }
+      #tableInfo { color:#111 !important; }
+      .table-shell { border:0 !important; background:white !important; overflow:visible !important; }
+      .table-scroll { overflow:visible !important; }
+      table { width:100% !important; min-width:0 !important; border-collapse:collapse !important; color:black !important; display:table !important; }
+      thead { display:table-header-group !important; }
+      tbody { display:table-row-group !important; }
+      tr { display:table-row !important; background:white !important; page-break-inside:avoid; }
+      th, td { display:table-cell !important; border:1px solid #111 !important; color:black !important; background:white !important; padding:5px !important; font-size:8.5pt !important; text-align:left !important; max-width:none !important; }
+      th { font-weight:bold !important; text-align:center !important; background:#f2f2f2 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      td.text-center, th.text-center { text-align:center !important; }
+      td::before { display:none !important; content:none !important; }
+    }
+
+    @media (max-width:1023px) {
+      body { overflow:hidden; }
+      .apj-sidebar { width:288px; height:100dvh; margin:0; border-radius:0; }
+      .topbar { height:78px; padding-left:68px; }
+      .topbar-title p { display:none; }
+      .page-scroll { height:calc(100dvh - 78px); padding:16px; }
+      input,select,textarea{font-size:16px;}
+      main { width:100%; }
+      .toast { top:14px; left:50%; max-width:calc(100vw - 24px); }
+    }
+    @media (max-width:640px) {
+      .topbar-title-mark { display:none; }
+      .hero-card { padding:18px; border-radius:24px; }
+      .user-meta { display:none; }
+      .panel { padding:15px; }
+    }
+
+    @media screen and (max-width:768px) {
+      .table-scroll { overflow-x:visible!important; }
+      .table-scroll table { min-width:0!important; width:100%!important; display:block!important; }
+      .table-scroll thead { display:none!important; }
+      .table-scroll tbody { display:block!important; width:100%!important; }
+      .table-scroll tr { display:block!important; width:100%!important; margin-bottom:12px!important; padding:10px!important; border:1px solid #334155!important; border-radius:16px!important; background:rgba(15,23,42,.88)!important; }
+      .table-scroll td { display:flex!important; align-items:flex-start!important; justify-content:space-between!important; gap:12px!important; width:100%!important; min-width:0!important; padding:8px 4px!important; border:0!important; border-bottom:1px dashed rgba(100,116,139,.35)!important; text-align:right!important; white-space:normal!important; word-break:break-word!important; }
+      .table-scroll td:last-child { border-bottom:0!important; }
+      .table-scroll td::before { content:attr(data-label); flex:0 0 42%; max-width:42%; text-align:left!important; color:#94a3b8; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.035em; }
+      .table-scroll td > * { max-width:58%; }
+      .table-scroll input, .table-scroll select, .table-scroll textarea { min-width:0!important; width:100%!important; }
+      .table-scroll .text-center { text-align:right!important; }
+    }
+
+  
+    .riwayat-accent .nav-item.active { background:linear-gradient(135deg, rgba(37,99,235,.34), rgba(6,182,212,.16)); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 12px 28px rgba(37,99,235,.16); }
+    .riwayat-accent .topbar-title-mark { background:linear-gradient(135deg, rgba(37,99,235,.18), rgba(6,182,212,.10)); border-color:rgba(96,165,250,.24); color:#7dd3fc; }
+    .riwayat-accent .user-avatar { background:linear-gradient(135deg,#2563eb,#06b6d4); box-shadow:0 14px 32px rgba(37,99,235,.25); }
+    .riwayat-accent .soft-badge { background:rgba(37,99,235,.13); color:#7dd3fc; border-color:rgba(96,165,250,.24); }
+    .riwayat-accent .hero-card::before { background:rgba(37,99,235,.20); }
+    .riwayat-accent .info-card { border-color:rgba(96,165,250,.18); background:rgba(37,99,235,.09); }
+    .riwayat-accent .form-control:focus { border-color:rgba(59,130,246,.95); box-shadow:0 0 0 4px rgba(37,99,235,.12); }
+    .riwayat-accent .btn-primary { background:linear-gradient(135deg,#2563eb,#0ea5e9); box-shadow:0 16px 32px rgba(37,99,235,.24); }
 
   </style>
 </head>
-<body class="flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
-  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/90 text-slate-200 shadow-lg backdrop-blur-md active:scale-95 transition no-print">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-  </button>
-  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/70 backdrop-blur-sm lg:hidden no-print"></div>
+<body class="riwayat-accent flex h-[100dvh] lg:h-screen antialiased">
+  <div id="customToast" class="toast border backdrop-blur-xl p-4 no-print" role="alert"><div class="ml-3 text-sm font-medium" id="toastMessage"></div></div>
+  <button id="mobileMenuBtn" type="button" onclick="openMobileSidebar()" aria-label="Buka menu" class="fixed top-4 left-4 z-50 lg:hidden icon-button active:scale-95 transition no-print"><svg fill="none" stroke="currentColor" class="w-5 h-5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+  <div id="sidebarBackdrop" onclick="closeMobileSidebar()" class="fixed inset-0 z-30 hidden bg-slate-950/60 backdrop-blur-sm lg:hidden no-print"></div>
+  <div class="web-ui flex h-[100dvh] lg:h-screen overflow-hidden antialiased">
 
-  <div id="customToast" class="toast flex items-center w-full max-w-md p-4 rounded-lg shadow-xl border backdrop-blur-md" role="alert"><div class="ml-3 text-sm font-medium" id="toastMessage"></div></div>
+    <aside id="sidebar" class="apj-sidebar fixed lg:static inset-y-0 left-0 z-40 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out">
+      <div class="sidebar-head relative">
+        <div class="sidebar-head-inner flex items-center justify-between gap-3">
+          <button id="sidebarToggle" type="button" onclick="toggleSidebarCollapse()" class="brand-toggle hidden lg:flex" title="Buka/tutup sidebar" aria-label="Buka/tutup sidebar">
+            <span class="logo-stack"><span class="logo-mark">APJ</span><span class="brand-text min-w-0"><p>APJ</p><p>INVENTORI</p></span></span>
+          </button>
+          <div class="lg:hidden flex items-center gap-3 min-w-0"><div class="logo-mark">APJ</div><div class="brand-text min-w-0"><p>APJ</p><p>INVENTORI</p></div></div>
+          <button type="button" onclick="closeMobileSidebar()" class="lg:hidden w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10 text-white">×</button>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="menu-section"><p class="menu-label"><span>Overview</span></p><a  href="dashboard.html" class="nav-item" title="Dashboard"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"></path></svg></span><span class="nav-text">Dashboard</span></a></div>
+        <div class="menu-section"><p class="menu-label"><span>Transaksi Stok</span></p><a  href="input-stok.html" class="nav-item" title="Input Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg></span><span class="nav-text">Input Stok</span></a><a  href="output-stok.html" class="nav-item" title="Output Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21V9m0 0 4 4m-4-4-4 4M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"></path></svg></span><span class="nav-text">Output Stok</span></a></div>
+        <div class="menu-section"><p class="menu-label"><span>Outlet & Produksi</span></p><a  href="transfer-produksi.html" class="nav-item" title="Transfer Produk Outlet"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3"></path></svg></span><span class="nav-text">Transfer Produk Outlet</span></a><a  href="produk-outlet.html" class="nav-item" title="Produk Outlet"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16M6 10v10h12V10M8 10V6a4 4 0 0 1 8 0v4M9 15h2m2 0h2"></path></svg></span><span class="nav-text">Produk Outlet</span></a></div>
+        <div class="menu-section"><p class="menu-label"><span>Kontrol Stok</span></p><a  href="stok-opname.html" class="nav-item" title="Stok Opname"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l2 2 4-4M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path></svg></span><span class="nav-text">Stok Opname</span></a><a  href="lihat-stok.html" class="nav-item" title="Lihat Stok"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 0 0-1-1.73L13 2.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16ZM3.3 7.2 12 12l8.7-4.8M12 22V12"></path></svg></span><span class="nav-text">Lihat Stok</span></a></div>
+        <div class="menu-section"><p class="menu-label"><span>Laporan & Sistem</span></p><a  href="riwayat-transaksi.html" class="nav-item active" title="Riwayat Transaksi"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v5l3 2M4 4v5h5M4.6 15A8 8 0 1 0 5.7 6.3L4 9"></path></svg></span><span class="nav-text">Riwayat Transaksi</span></a><a id="adminMenuLink" data-admin-menu href="admin.html" class="nav-item hidden" title="Admin Sistem"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM19.4 15a1.7 1.7 0 0 0 .34 1.88l.03.03a2 2 0 0 1-2.83 2.83l-.03-.03A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6l-.02.02a2 2 0 0 1-3.96 0L10 20a1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.03.03a2 2 0 0 1-2.83-2.83l.03-.03A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1l-.02-.02a2 2 0 0 1 0-3.96L4 10a1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.03-.03a2 2 0 0 1 2.83-2.83l.03.03A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6l.02-.02a2 2 0 0 1 3.96 0L14 4a1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.03-.03a2 2 0 0 1 2.83 2.83l-.03.03A1.7 1.7 0 0 0 19.4 9c.1.36.3.7.6 1l.02.02a2 2 0 0 1 0 3.96L20 14c-.3.3-.5.64-.6 1Z"></path></svg></span><span class="nav-text">Admin Sistem</span></a></div>
+      </nav>
+      <div class="sidebar-footer no-print">
+        <button type="button" onclick="openRiwayatHelpModal(false)" class="guide-button" title="Panduan Riwayat Transaksi"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span><span class="guide-text">Panduan Riwayat</span></button>
+        <button type="button" onclick="showLogoutModal()" class="logout-button" title="Logout Sistem"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l5-5-5-5M21 12H9M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8"></path></svg></span><span class="logout-text">Logout Sistem</span></button>
+      </div>
+    </aside>
 
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out lg:transition-none shadow-2xl lg:shadow-none">
-    <div class="h-16 flex items-center px-6 border-b border-slate-800"><div class="flex items-center gap-3 text-blue-500"><span class="text-sm font-bold tracking-wider text-white">APJ INVENTORI</span></div></div>
-    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-      <p class="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
-      <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Dashboard</a>
-      <a href="input-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Input Stok</a>
-      <a href="output-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Output Stok</a>
-      <a href="transfer-produksi.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Transfer Produk Outlet</a>
-      <a href="produk-outlet.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Produk Outlet</a>
-      <a href="stok-opname.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Stok Opname</a>
-      <a href="lihat-stok.html" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-900 rounded-lg font-medium text-sm transition-colors">Lihat Stok</a>
-      <a href="riwayat-transaksi.html" class="flex items-center gap-3 px-3 py-2.5 bg-sky-600/10 text-sky-400 rounded-lg font-semibold text-sm transition-colors border border-sky-500/20">Riwayat Transaksi</a>
-      <a id="adminMenuLink" href="admin.html" class="hidden flex items-center gap-3 px-3 py-2.5 text-violet-300 hover:text-white hover:bg-violet-950/40 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-violet-500/20">Admin Sistem</a>
-    </nav>
-    <div class="p-4 border-t border-slate-800 no-print">
-      <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 w-full px-3 py-2.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/50 rounded-lg font-medium text-sm transition-colors border border-transparent hover:border-rose-900/50">Logout Sistem</button>
+
+    <main class="apj-main flex-1 flex flex-col">
+      <header class="topbar no-print">
+        <div class="topbar-title">
+          <div class="topbar-title-mark"><svg fill="none" stroke="currentColor" class="w-5 h-5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v5l3 2M4 4v5h5M4.6 15A8 8 0 1 0 5.7 6.3L4 9"></path></svg></div>
+          <div class="min-w-0"><h2>Riwayat Transaksi</h2><p>Audit gabungan input, output, produksi, transfer, produk outlet, dan opname.</p></div>
+        </div>
+        <div class="user-chip">
+          <div class="user-avatar"><span id="displayInisial">U</span></div>
+          <div class="user-meta text-right hidden sm:block"><p id="displayNama" class="text-sm font-extrabold text-white leading-tight truncate max-w-[180px]">Memuat...</p><p id="displayLevel" class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mt-1">--</p></div>
+        </div>
+      </header>
+      <section class="page-scroll">
+        <div class="page-wrap">
+          <div class="hero-card no-print">
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+              <div><div class="soft-badge mb-4"><span class="h-2 w-2 rounded-full bg-sky-300"></span><span>Audit Transaksi</span></div><h1 class="hero-title">Riwayat Transaksi APJ</h1><p class="hero-desc">Pantau seluruh aktivitas stok dalam satu halaman: input, output, produksi, transfer produk outlet, produk terjual, dan opname. Filter bisa dipakai untuk audit harian, bulanan, atau pencarian cepat.</p></div>
+              <div class="rounded-2xl border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm text-blue-100">Petugas: <span id="namaPetugas" class="font-extrabold text-white">Memuat...</span></div>
+            </div>
+          </div>
+          <div class="panel print-card">
+            <div class="no-print grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-5">
+              <div><label class="form-label">Tanggal Dari</label><input type="date" id="tanggalDari" class="form-control"></div>
+              <div><label class="form-label">Tanggal Sampai</label><input type="date" id="tanggalSampai" class="form-control"></div>
+              <div><label class="form-label">Jenis</label><select id="jenisSelect" class="form-control"><option value="ALL">Semua</option><option value="Input">Input</option><option value="Output">Output</option><option value="Produksi">Produksi</option><option value="Transfer">Transfer</option><option value="Produk Outlet Terjual">Produk Outlet Terjual</option><option value="Opname Produk Outlet">Opname Produk Outlet</option><option value="Opname">Opname</option></select></div>
+              <div class="xl:col-span-2"><label class="form-label">Cari</label><input type="text" id="keywordInput" onkeydown="if(event.key==='Enter') loadRiwayat()" placeholder="ID transaksi, barang, petugas, outlet..." class="form-control placeholder-slate-600"></div>
+              <div><label class="form-label">Aksi</label><div class="grid grid-cols-2 gap-3"><button onclick="loadRiwayat()" id="btnLoad" class="btn-primary px-4 py-3 text-sm">Muat</button><button onclick="window.print()" id="btnPrint" class="btn-slate px-4 py-3 text-sm">PDF</button></div></div>
+            </div>
+            <div class="info-card mb-5 no-print">Gunakan filter tanggal dan jenis transaksi untuk audit. Tekan <b class="text-blue-200">Enter</b> di kolom Cari atau klik <b class="text-blue-200">Muat</b> untuk memperbarui data.</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-5">
+              <div class="mini-stat"><p>Total Baris</p><strong id="cardRows">0</strong></div>
+              <div class="mini-stat"><p>ID Transaksi</p><strong id="cardTx" class="text-sky-300">0</strong></div>
+              <div class="mini-stat"><p>Petugas</p><strong id="cardPetugas" class="text-violet-300">0</strong></div>
+              <div class="mini-stat"><p>Total Qty</p><strong id="cardQty" class="text-emerald-300">0</strong></div>
+              <div class="mini-stat"><p>Mode</p><strong id="cardMode" class="text-slate-300">-</strong></div>
+            </div>
+            <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+              <div id="jenisBadges" class="flex flex-wrap gap-2"></div>
+              <p id="tableInfo" class="text-xs text-slate-500">Belum ada data dimuat.</p>
+            </div>
+            <div class="table-shell table-scroll overflow-x-auto">
+              <table class="w-full text-left border-collapse min-w-[1280px]">
+                <thead><tr class="thead-row text-xs uppercase tracking-wider"><th class="p-4 w-[70px] text-center">No</th><th class="p-4 min-w-[110px] text-center">Jenis</th><th class="p-4 min-w-[130px] text-center">Tanggal</th><th class="p-4 min-w-[180px]">ID Transaksi</th><th class="p-4 min-w-[150px]">Petugas</th><th class="p-4 min-w-[130px]">Kategori/Tujuan</th><th class="p-4 min-w-[150px]">ID Barang</th><th class="p-4 min-w-[280px]">Nama Barang</th><th class="p-4 min-w-[110px] text-center">Qty</th><th class="p-4 min-w-[100px] text-center">Satuan</th><th class="p-4 min-w-[260px]">Detail</th></tr></thead>
+                <tbody id="tbodyRiwayat"><tr><td colspan="11" class="p-8 text-center text-slate-500">Klik tombol Muat untuk menampilkan riwayat transaksi.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <div id="riwayatHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4 no-print">
+    <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeRiwayatHelpModal()"></div>
+    <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
+      <div class="relative z-10">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <p class="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-blue-200"><span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span> Panduan Modul</p>
+            <h3 class="mt-4 text-2xl sm:text-3xl font-black tracking-tight text-white">Cara pakai Riwayat Transaksi</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-400">Panduan ini membantu owner/supervisor membaca riwayat stok dan melakukan audit transaksi harian atau bulanan.</p>
+          </div>
+          <button type="button" onclick="closeRiwayatHelpModal()" class="w-11 h-11 rounded-2xl border border-slate-700 bg-slate-950/70 text-slate-300 hover:text-white hover:bg-slate-800 transition" aria-label="Tutup panduan">×</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+          <div class="help-step flex gap-3"><div class="help-step-number">1</div><div><p class="text-sm font-black text-white">Pilih rentang tanggal</p><p class="mt-1 text-xs leading-5 text-slate-400">Tanggal Dari dan Tanggal Sampai menentukan periode transaksi yang akan ditampilkan.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">2</div><div><p class="text-sm font-black text-white">Filter jenis transaksi</p><p class="mt-1 text-xs leading-5 text-slate-400">Gunakan filter jenis untuk melihat Input, Output, Produksi, Transfer, Produk Outlet Terjual, atau Opname saja.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">3</div><div><p class="text-sm font-black text-white">Cari transaksi</p><p class="mt-1 text-xs leading-5 text-slate-400">Kolom cari bisa dipakai untuk mencari ID transaksi, nama barang, petugas, outlet, atau detail transaksi.</p></div></div>
+          <div class="help-step flex gap-3"><div class="help-step-number">4</div><div><p class="text-sm font-black text-white">Cetak PDF</p><p class="mt-1 text-xs leading-5 text-slate-400">Klik <b class="text-blue-200">PDF</b> untuk mencetak riwayat yang sedang tampil dalam format landscape.</p></div></div>
+        </div>
+        <div class="rounded-2xl border border-cyan-500/22 bg-cyan-500/10 p-4 mb-5"><p class="text-sm font-black text-cyan-100">Audit cepat</p><p class="mt-1 text-xs sm:text-sm leading-6 text-cyan-100/75">Kartu ringkasan menampilkan total baris, jumlah ID transaksi, jumlah petugas, total qty, dan mode data. Ini membantu mengecek apakah filter sudah sesuai.</p></div>
+        <div class="rounded-2xl border border-amber-500/22 bg-amber-500/10 p-4 mb-5"><p class="text-sm font-black text-amber-100">Catatan penting</p><p class="mt-1 text-xs sm:text-sm leading-6 text-amber-100/75">Jika data terlalu banyak, sistem membatasi jumlah baris yang ditampilkan. Persempit tanggal atau jenis transaksi agar audit lebih ringan.</p></div>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari sidebar, tepat di atas tombol Logout Sistem.</p><button type="button" onclick="closeRiwayatHelpModal()" class="btn-primary px-5 py-3 text-sm">Mengerti, lanjut audit</button></div>
+      </div>
     </div>
-  </aside>
-
-  <main class="flex-1 flex flex-col min-w-0 bg-slate-900 overflow-y-auto">
-    <header class="h-16 min-h-16 flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 pl-16 lg:pl-8 border-b border-slate-800 bg-slate-900/70 backdrop-blur-sm sticky top-0 z-10 no-print">
-      <div>
-        <h2 class="text-base sm:text-lg font-semibold text-sky-400">Riwayat Transaksi</h2>
-        <p class="hidden sm:block text-xs text-slate-500">Audit gabungan input, output, produksi, transfer, dan opname.</p>
-      </div>
-      <div class="hidden sm:block text-sm font-medium text-slate-400">Petugas: <span id="namaPetugas" class="text-sky-400">Memuat...</span></div>
-    </header>
-
-    <section class="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
-      <div class="print-card bg-slate-950 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-xl">
-        <div class="no-print grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-6">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Dari</label>
-            <input type="date" id="tanggalDari" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-sky-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tanggal Sampai</label>
-            <input type="date" id="tanggalSampai" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-sky-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jenis</label>
-            <select id="jenisSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-sky-500 focus:outline-none">
-              <option value="ALL">Semua</option>
-              <option value="Input">Input</option>
-              <option value="Output">Output</option>
-              <option value="Produksi">Produksi</option>
-              <option value="Transfer">Transfer</option>
-              <option value="Produk Outlet Terjual">Produk Outlet Terjual</option>
-              <option value="Opname Produk Outlet">Opname Produk Outlet</option>
-              <option value="Opname">Opname</option>
-            </select>
-          </div>
-          <div class="xl:col-span-2">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cari</label>
-            <input type="text" id="keywordInput" onkeydown="if(event.key==='Enter') loadRiwayat()" placeholder="ID transaksi, barang, petugas, outlet..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-sky-500 focus:outline-none">
-          </div>
-          <div class="flex gap-2 items-end">
-            <button onclick="loadRiwayat()" id="btnLoad" class="flex-1 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-sky-600/20">Muat</button>
-            <button onclick="window.print()" id="btnPrint" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-slate-700">PDF</button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Baris</p>
-            <p id="cardRows" class="text-2xl font-bold text-white">0</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">ID Transaksi</p>
-            <p id="cardTx" class="text-2xl font-bold text-sky-400">0</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Petugas</p>
-            <p id="cardPetugas" class="text-2xl font-bold text-violet-400">0</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Qty</p>
-            <p id="cardQty" class="text-2xl font-bold text-emerald-400">0</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Mode</p>
-            <p id="cardMode" class="text-sm font-bold text-slate-300 mt-2">-</p>
-          </div>
-        </div>
-
-        <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-          <div id="jenisBadges" class="flex flex-wrap gap-2"></div>
-          <p id="tableInfo" class="text-xs text-slate-500">Belum ada data dimuat.</p>
-        </div>
-
-        <div class="border border-slate-800 rounded-lg overflow-x-auto table-scroll">
-          <table class="w-full text-left border-collapse min-w-[1280px]">
-            <thead>
-              <tr class="bg-slate-900 border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
-                <th class="p-4 w-[70px] text-center">No</th>
-                <th class="p-4 min-w-[110px] text-center">Jenis</th>
-                <th class="p-4 min-w-[130px] text-center">Tanggal</th>
-                <th class="p-4 min-w-[180px]">ID Transaksi</th>
-                <th class="p-4 min-w-[150px]">Petugas</th>
-                <th class="p-4 min-w-[130px]">Kategori/Tujuan</th>
-                <th class="p-4 min-w-[150px]">ID Barang</th>
-                <th class="p-4 min-w-[280px]">Nama Barang</th>
-                <th class="p-4 min-w-[110px] text-center">Qty</th>
-                <th class="p-4 min-w-[100px] text-center">Satuan</th>
-                <th class="p-4 min-w-[260px]">Detail</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyRiwayat">
-              <tr><td colspan="11" class="p-8 text-center text-slate-500">Klik tombol Muat untuk menampilkan riwayat transaksi.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </main>
+  </div>
 
   <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none no-print">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeLogoutModal()"></div>
-    <div class="relative bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
+    <div class="help-modal-card relative p-5 sm:p-6 w-[calc(100%-2rem)] max-w-sm transform scale-95 opacity-0 modal-content pointer-events-auto">
       <div class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 mb-4 mx-auto border border-rose-500/20">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
       </div>
       <h3 class="text-lg font-bold text-white text-center mb-2">Konfirmasi Keluar</h3>
       <p class="text-sm text-slate-400 text-center mb-6">Apakah Anda yakin ingin keluar dari Sistem Inventori APJ? Sesi Anda akan diakhiri.</p>
-      <div class="flex gap-3">
-        <button type="button" onclick="closeLogoutModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors border border-slate-600">Batal</button>
-        <button type="button" onclick="executeLogout()" class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-rose-600/20">Ya, Keluar</button>
-      </div>
+      <div class="flex gap-3"><button type="button" onclick="closeLogoutModal()" class="flex-1 btn-slate px-4 py-2 text-sm">Batal</button><button type="button" onclick="executeLogout()" class="flex-1 rounded-2xl bg-rose-600 hover:bg-rose-700 px-4 py-2 text-sm font-bold text-white transition-colors">Ya, Keluar</button></div>
     </div>
   </div>
+<script>
 
-  <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZjpjzuCuyeYuVi-bL0k1Nb1MgI40l5kQmSWfmxXCSfTpBy7sQ-0oQ/exec";
     let currentRows = [];
 
@@ -412,10 +594,11 @@
       localStorage.removeItem('APJ_USER_PERMISSIONS');
       window.location.href = 'index.html';
     }
-  </script>
+  
+</script>
 
+<script>
 
-  <script>
     // APJ v14.6 - auto label tabel agar mobile tampil sebagai kartu, bukan scroll samping.
     (function(){
       function headersFor(table){
@@ -442,11 +625,11 @@
         obs.observe(document.body, { childList:true, subtree:true });
       });
     })();
-  </script>
+  
+</script>
 
+<script>
 
-
-  <script>
     (function showAdminMenuForAuthorizedRoles() {
       const adminMenuLink = document.getElementById('adminMenuLink');
       if (!adminMenuLink) return;
@@ -458,6 +641,73 @@
         adminMenuLink.classList.remove('hidden');
       }
     })();
-  </script>
+  
+</script>
+
+<script>
+  function setupTopbarIdentityRiwayat() {
+    const userName = localStorage.getItem('APJ_USER_NAME') || '-';
+    const userLevel = localStorage.getItem('APJ_USER_LEVEL') || '-';
+    const displayNama = document.getElementById('displayNama');
+    const displayLevel = document.getElementById('displayLevel');
+    const displayInisial = document.getElementById('displayInisial');
+    if (displayNama) displayNama.textContent = userName;
+    if (displayLevel) displayLevel.textContent = userLevel;
+    if (displayInisial) displayInisial.textContent = (userName || 'U').charAt(0).toUpperCase();
+  }
+
+  function applySidebarState() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    const collapsed = localStorage.getItem('APJ_SIDEBAR_COLLAPSED') === 'true';
+    sidebar.classList.toggle('sidebar-collapsed', collapsed);
+    document.body.classList.toggle('sidebar-collapsed-active', collapsed);
+  }
+
+  function toggleSidebarCollapse() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    const collapsed = !sidebar.classList.contains('sidebar-collapsed');
+    localStorage.setItem('APJ_SIDEBAR_COLLAPSED', collapsed ? 'true' : 'false');
+    applySidebarState();
+  }
+
+  const riwayatHelpModal = () => document.getElementById('riwayatHelpModal');
+  function openRiwayatHelpModal(autoOpen = false) {
+    const modal = riwayatHelpModal();
+    const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+    const content = modal ? modal.querySelector('.modal-content') : null;
+    if (!modal || !overlay || !content) return;
+    if (autoOpen) modal.dataset.autoOpen = 'true';
+    modal.classList.remove('hidden');
+    void modal.offsetWidth;
+    overlay.classList.add('opacity-100');
+    overlay.classList.remove('opacity-0');
+    content.classList.add('scale-100', 'opacity-100');
+    content.classList.remove('scale-95', 'opacity-0');
+  }
+
+  function closeRiwayatHelpModal() {
+    const modal = riwayatHelpModal();
+    const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+    const content = modal ? modal.querySelector('.modal-content') : null;
+    if (!modal || !overlay || !content) return;
+    sessionStorage.setItem('APJ_RIWAYAT_HELP_SEEN', 'true');
+    overlay.classList.remove('opacity-100');
+    overlay.classList.add('opacity-0');
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => modal.classList.add('hidden'), 250);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setupTopbarIdentityRiwayat();
+    applySidebarState();
+    setTimeout(() => {
+      if (sessionStorage.getItem('APJ_RIWAYAT_HELP_SEEN') !== 'true') openRiwayatHelpModal(true);
+    }, 450);
+  });
+</script>
+
 </body>
 </html>
