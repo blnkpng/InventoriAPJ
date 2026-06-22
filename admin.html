@@ -139,6 +139,17 @@
     .thead-row, table thead { background:rgba(15,23,42,.72); border-bottom:1px solid var(--border); color:var(--muted); }
     th { font-size:12px; text-transform:uppercase; letter-spacing:.07em; font-weight:900; color:var(--muted); }
     td { color:#cbd5e1; }
+
+    .admin-users-table { min-width:680px; table-layout:fixed; }
+    .admin-users-table th, .admin-users-table td { padding:.72rem .65rem!important; vertical-align:middle; }
+    .admin-users-table th:nth-child(1), .admin-users-table td:nth-child(1) { width:16%; }
+    .admin-users-table th:nth-child(2), .admin-users-table td:nth-child(2) { width:29%; }
+    .admin-users-table th:nth-child(3), .admin-users-table td:nth-child(3) { width:13%; }
+    .admin-users-table th:nth-child(4), .admin-users-table td:nth-child(4) { width:13%; }
+    .admin-users-table th:nth-child(5), .admin-users-table td:nth-child(5) { width:14%; }
+    .admin-users-table th:nth-child(6), .admin-users-table td:nth-child(6) { width:15%; }
+    .admin-users-table .cell-ellipsis { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+    .admin-users-table .edit-user-button { min-width:66px; min-height:34px; display:inline-flex; align-items:center; justify-content:center; border-radius:14px; }
     .btn-primary { border-radius:16px; background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; font-weight:900; box-shadow:0 16px 32px rgba(124,58,237,.24); transition:all .16s ease; }
     .btn-primary:hover { filter:brightness(1.05); transform:translateY(-1px); }
     .btn-slate { border-radius:16px; background:rgba(15,23,42,.84); border:1px solid var(--border); color:#e2e8f0; font-weight:900; transition:all .16s ease; }
@@ -294,7 +305,7 @@
               </div>
             </div>
             <div class="table-shell table-scroll overflow-x-auto">
-              <table class="w-full min-w-[760px] text-left border-collapse">
+              <table class="admin-users-table w-full text-left border-collapse">
                 <thead class="thead-row"><tr><th class="py-3 pr-3">Username</th><th class="py-3 px-3">Nama</th><th class="py-3 px-3">Level</th><th class="py-3 px-3">Outlet</th><th class="py-3 px-3">Password</th><th class="py-3 pl-3 text-right">Aksi</th></tr></thead>
                 <tbody id="usersBody" class="divide-y divide-slate-800/70"></tbody>
               </table>
@@ -538,17 +549,25 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
 
       tbody.innerHTML = pageRows.length ? pageRows.map(user => `
         <tr class="text-sm">
-          <td class="py-3 pr-3 font-semibold text-white">${escapeHtml(user.username)}</td>
-          <td class="py-3 px-3 text-slate-300">${escapeHtml(user.nama || '-')}</td>
-          <td class="py-3 px-3 text-slate-300">${escapeHtml(user.level || '-')}</td>
-          <td class="py-3 px-3 text-slate-300">${escapeHtml(user.outlet || '-')}</td>
-          <td class="py-3 px-3">${passwordBadge(user.passwordMode)}</td>
-          <td class="py-3 pl-3 text-right">
-            <button type="button" onclick="openUserEditModal(${jsString(user.username)})" title="Edit user" aria-label="Edit user" class="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 transition">Edit</button>
+          <td class="font-semibold text-white"><span class="cell-ellipsis" title="${escapeAttr(user.username)}">${escapeHtml(user.username)}</span></td>
+          <td class="text-slate-300"><span class="cell-ellipsis" title="${escapeAttr(user.nama || '-')}">${escapeHtml(user.nama || '-')}</span></td>
+          <td class="text-slate-300"><span class="cell-ellipsis" title="${escapeAttr(user.level || '-')}">${escapeHtml(user.level || '-')}</span></td>
+          <td class="text-slate-300"><span class="cell-ellipsis" title="${escapeAttr(user.outlet || '-')}">${escapeHtml(user.outlet || '-')}</span></td>
+          <td>${passwordBadge(user.passwordMode)}</td>
+          <td class="text-right">
+            <button type="button" data-edit-user="${escapeAttr(user.username)}" title="Edit user" aria-label="Edit user" class="edit-user-button border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 transition">Edit</button>
           </td>
         </tr>
       `).join('') : `<tr><td colspan="6" class="py-8 text-center text-slate-500">Belum ada user.</td></tr>`;
     }
+
+
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-edit-user]');
+      if (!button) return;
+      event.preventDefault();
+      openUserEditModal(button.getAttribute('data-edit-user'));
+    });
 
     function changeUserPage(delta) {
       const maxPage = Math.max(1, Math.ceil(adminUserList.length / USERS_PER_PAGE));
@@ -635,8 +654,16 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
       document.getElementById('userEditHint').textContent = `User aktif: ${user.username || '-'}`;
 
       const modal = document.getElementById('userEditModal');
+      if (!modal) {
+        showToast('Popup edit user belum tersedia di halaman.', 'error');
+        return;
+      }
       const overlay = modal.querySelector('.modal-overlay');
       const content = modal.querySelector('.modal-content');
+      if (!overlay || !content) {
+        showToast('Komponen popup edit user belum lengkap.', 'error');
+        return;
+      }
       modal.classList.remove('hidden');
       void modal.offsetWidth;
       overlay.classList.remove('opacity-0'); overlay.classList.add('opacity-100');
