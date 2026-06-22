@@ -97,9 +97,11 @@
     .nav-icon { width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; opacity:.94; }
     .nav-icon svg { width:19px; height:19px; stroke-width:1.9; }
     .nav-text { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .sidebar-footer { padding:12px 15px 16px; border-top:1px solid rgba(255,255,255,.08); }
+    .sidebar-footer { padding:12px 15px 16px; border-top:1px solid rgba(255,255,255,.08); display:flex; flex-direction:column; gap:8px; }
     .logout-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:rgba(244,63,94,.12); border:1px solid rgba(244,63,94,.25); color:#fb7185; font-size:13.5px; font-weight:880; transition:all .16s ease; }
     .logout-button:hover { background:rgba(244,63,94,.20); color:#fecdd3; transform:translateY(-1px); }
+    .help-sidebar-button { background:rgba(37,99,235,.12); border-color:rgba(96,165,250,.25); color:#7dd3fc; }
+    .help-sidebar-button:hover { background:rgba(37,99,235,.20); border-color:rgba(125,211,252,.34); color:#e0f2fe; transform:translateY(-1px); }
     #sidebar.sidebar-collapsed { width:88px; }
     #sidebar.sidebar-collapsed .brand-text, #sidebar.sidebar-collapsed .nav-text, #sidebar.sidebar-collapsed .menu-label span, #sidebar.sidebar-collapsed .logout-text { display:none; }
     #sidebar.sidebar-collapsed .sidebar-head { padding:18px 14px 12px; }
@@ -365,6 +367,7 @@
       </div>
     </nav>
     <div class="sidebar-footer">
+      <button type="button" onclick="openProdukHelpModal(false)" class="logout-button help-sidebar-button" title="Panduan Produk Outlet"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span><span class="logout-text">Panduan Produk</span></button>
       <button type="button" onclick="showLogoutModal()" class="logout-button" title="Logout Sistem"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l5-5-5-5M21 12H9M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8"></path></svg></span><span class="logout-text">Logout Sistem</span></button>
     </div>
   </aside>
@@ -464,14 +467,6 @@
     </section>
   </main>
 
-
-
-
-  <button id="produkHelpFab" type="button" onclick="openProdukHelpModal(false)" class="help-fab no-print" aria-label="Buka panduan produk outlet" title="Panduan Produk Outlet">
-    <span class="help-fab-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span>
-    <span>Panduan Produk</span>
-  </button>
-
   <div id="produkHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4 no-print">
     <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeProdukHelpModal()"></div>
     <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
@@ -505,7 +500,7 @@
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol mengambang di pojok kanan bawah.</p>
+          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol Panduan Produk di sidebar, tepat di atas Logout Sistem.</p>
           <button type="button" onclick="closeProdukHelpModal()" class="btn-primary px-5 py-3 text-sm">Mengerti, lanjut</button>
         </div>
       </div>
@@ -953,6 +948,7 @@
       const content = modal ? modal.querySelector('.modal-content') : null;
       if (!modal || !overlay || !content) return;
       if (autoOpen) modal.dataset.autoOpen = 'true';
+      if (!autoOpen) closeMobileSidebar();
       modal.classList.remove('hidden');
       void modal.offsetWidth;
       overlay.classList.add('opacity-100');
