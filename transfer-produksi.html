@@ -98,7 +98,9 @@
     .nav-icon { width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; opacity:.94; }
     .nav-icon svg { width:19px; height:19px; stroke-width:1.9; }
     .nav-text { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .sidebar-footer { padding:12px 15px 16px; border-top:1px solid rgba(255,255,255,.08); }
+    .sidebar-footer { padding:12px 15px 16px; border-top:1px solid rgba(255,255,255,.08); display:flex; flex-direction:column; gap:8px; }
+    .sidebar-guide-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:rgba(37,99,235,.12); border:1px solid rgba(96,165,250,.24); color:#7dd3fc; font-size:13.5px; font-weight:880; transition:all .16s ease; }
+    .sidebar-guide-button:hover { background:rgba(37,99,235,.20); color:#e0f2fe; transform:translateY(-1px); }
     .logout-button { width:100%; min-height:44px; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:rgba(244,63,94,.12); border:1px solid rgba(244,63,94,.25); color:#fb7185; font-size:13.5px; font-weight:880; transition:all .16s ease; }
     .logout-button:hover { background:rgba(244,63,94,.20); color:#fecdd3; transform:translateY(-1px); }
     #sidebar.sidebar-collapsed { width:88px; }
@@ -111,7 +113,7 @@
     #sidebar.sidebar-collapsed .menu-label { width:34px; height:1px; padding:0; margin:2px 0; background:rgba(255,255,255,.18); border-radius:999px; }
     #sidebar.sidebar-collapsed .nav-item { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
     #sidebar.sidebar-collapsed .sidebar-footer { padding:12px 14px 16px; }
-    #sidebar.sidebar-collapsed .logout-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
+    #sidebar.sidebar-collapsed .sidebar-guide-button, #sidebar.sidebar-collapsed .logout-button { width:50px; height:46px; min-height:46px; justify-content:center; padding:0; border-radius:18px; }
 
     .apj-main { min-width:0; background:transparent; }
     .topbar { height:84px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:16px 24px; border-bottom:1px solid var(--border); background:rgba(2,6,23,.72); backdrop-filter:blur(18px); position:sticky; top:0; z-index:20; }
@@ -385,6 +387,7 @@
       </div>
     </nav>
     <div class="sidebar-footer">
+      <button type="button" onclick="openTransferHelpModal(false)" class="sidebar-guide-button" title="Panduan Transfer Produk Outlet" aria-label="Panduan Transfer Produk Outlet"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span><span class="logout-text">Panduan Transfer</span></button>
       <button type="button" onclick="showLogoutModal()" class="logout-button" title="Logout Sistem"><span class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l5-5-5-5M21 12H9M13 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8"></path></svg></span><span class="logout-text">Logout Sistem</span></button>
     </div>
   </aside>
@@ -497,14 +500,6 @@
       </div>
     </section>
   </main>
-
-
-
-  <button id="transferHelpFab" type="button" onclick="openTransferHelpModal(false)" class="help-fab" aria-label="Buka panduan transfer produk outlet" title="Panduan Transfer Produk Outlet">
-    <span class="help-fab-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.2 9a4 4 0 1 1 6.8 2.8c-.9.6-1.5 1.2-1.5 2.2M12 18h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg></span>
-    <span>Panduan Transfer</span>
-  </button>
-
   <div id="transferHelpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden pointer-events-none p-4">
     <div class="absolute inset-0 bg-slate-950/78 backdrop-blur-sm opacity-0 modal-overlay pointer-events-auto" onclick="closeTransferHelpModal()"></div>
     <div class="help-modal-card modal-content pointer-events-auto w-full max-w-3xl max-h-[90dvh] overflow-y-auto transform scale-95 opacity-0 p-5 sm:p-6">
@@ -562,7 +557,7 @@
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari tombol mengambang di pojok kanan bawah.</p>
+          <p class="text-xs text-slate-500">Panduan bisa dibuka lagi dari sidebar, tepat di atas tombol Logout Sistem.</p>
           <button type="button" onclick="closeTransferHelpModal()" class="btn-primary px-5 py-3 text-sm">Mengerti, lanjut transfer</button>
         </div>
       </div>
@@ -701,6 +696,7 @@
       const overlay = modal ? modal.querySelector('.modal-overlay') : null;
       const content = modal ? modal.querySelector('.modal-content') : null;
       if (!modal || !overlay || !content) return;
+      if (!autoOpen) closeMobileSidebar();
       if (autoOpen) modal.dataset.autoOpen = 'true';
       modal.classList.remove('hidden');
       void modal.offsetWidth;
