@@ -445,7 +445,30 @@
       }
     }
 
+    function buildRiwayatSummary(rows) {
+      const uniqueTx = {};
+      const uniquePetugas = {};
+      const byJenis = {};
+      let totalQty = 0;
+      (rows || []).forEach(r => {
+        if (r.txId) uniqueTx[r.txId] = true;
+        if (r.petugas) uniquePetugas[r.petugas] = true;
+        const jenis = r.jenis || '-';
+        byJenis[jenis] = (byJenis[jenis] || 0) + 1;
+        totalQty += parseNumber(getRiwayatQty(r));
+      });
+      return {
+        totalRows: (rows || []).length,
+        uniqueTransaksi: Object.keys(uniqueTx).length,
+        totalPetugas: Object.keys(uniquePetugas).length,
+        totalQty,
+        byJenis
+      };
+    }
+
     function renderSummary(summary, result) {
+      const hasSummary = summary && Object.keys(summary).length;
+      if (!hasSummary) summary = buildRiwayatSummary(currentRows);
       document.getElementById('cardRows').textContent = formatNumber(summary.totalRows || 0);
       document.getElementById('cardTx').textContent = formatNumber(summary.uniqueTransaksi || 0);
       document.getElementById('cardPetugas').textContent = formatNumber(summary.totalPetugas || 0);
@@ -462,6 +485,40 @@
       document.getElementById('tableInfo').textContent = `${formatNumber(summary.totalRows || 0)} baris riwayat tampil.${limited}`;
     }
 
+    function firstRiwayatValue() {
+      for (let i = 0; i < arguments.length; i++) {
+        const value = arguments[i];
+        if (value === null || typeof value === 'undefined') continue;
+        const text = String(value).trim();
+        if (!text || text === '-' || text.toLowerCase() === 'null' || text.toLowerCase() === 'undefined') continue;
+        return value;
+      }
+      return '';
+    }
+
+    function getRiwayatIdBarang(r) {
+      return firstRiwayatValue(r.idBarang, r.id_barang, r.IDBarang, r.id, r.ID, r.kodeBarang, r.kode, r.idProduk, r.idProduksi);
+    }
+
+    function getRiwayatNamaBarang(r) {
+      return firstRiwayatValue(r.namaBarang, r.nama_barang, r.NamaBarang, r.nama, r.namaItem, r.produk, r.produksi, r.namaProduk, r.namaProduksi);
+    }
+
+    function getRiwayatQty(r) {
+      return firstRiwayatValue(r.qty, r.Qty, r.jumlah, r.qtyMasuk, r.qtyKeluar, r.qtyTransfer, r.selisih, 0);
+    }
+
+    function getRiwayatSatuan(r) {
+      return firstRiwayatValue(r.satuan, r.satuanStok, r.satuanProduk, r.satuanProduksi, r.unit);
+    }
+
+    function getRiwayatKategoriTujuan(r) {
+      const isTransfer = String(r.jenis || '').toLowerCase().includes('transfer');
+      return isTransfer
+        ? firstRiwayatValue(r.outlet, r.tujuan, r.kategori)
+        : firstRiwayatValue(r.kategori, r.tujuan, r.outlet);
+    }
+
     function renderTable() {
       const tbody = document.getElementById('tbodyRiwayat');
       if (!currentRows.length) {
@@ -471,6 +528,11 @@
 
       tbody.innerHTML = currentRows.map((r, idx) => {
         const detail = buildDetail(r);
+        const idBarang = getRiwayatIdBarang(r);
+        const namaBarang = getRiwayatNamaBarang(r);
+        const kategoriTujuan = getRiwayatKategoriTujuan(r);
+        const qty = getRiwayatQty(r);
+        const satuan = getRiwayatSatuan(r);
         return `
           <tr class="border-b border-slate-800/60 bg-slate-950 hover:bg-slate-900 transition-colors">
             <td class="p-4 text-center text-sm text-slate-500">${idx + 1}</td>
@@ -478,11 +540,11 @@
             <td class="p-4 text-center text-sm text-slate-300">${escapeHtml(formatDateDisplay(r.tanggal))}</td>
             <td class="p-4 text-sm font-semibold text-sky-300">${escapeHtml(r.txId || '-')}</td>
             <td class="p-4 text-sm text-slate-300">${escapeHtml(r.petugas || '-')}</td>
-            <td class="p-4 text-sm text-slate-300">${escapeHtml(String(r.jenis || '').toLowerCase().includes('transfer') ? (r.outlet || r.tujuan || '-') : (r.kategori || '-'))}</td>
-            <td class="p-4 text-sm text-slate-400">${escapeHtml(r.idBarang || '-')}</td>
-            <td class="p-4 text-sm font-semibold text-white">${escapeHtml(r.namaBarang || '-')}</td>
-            <td class="p-4 text-center text-sm font-bold ${qtyTone(r)}">${escapeHtml(formatNumber(r.qty || 0))}</td>
-            <td class="p-4 text-center text-sm text-slate-400">${escapeHtml(r.satuan || '-')}</td>
+            <td class="p-4 text-sm text-slate-300">${escapeHtml(kategoriTujuan || '-')}</td>
+            <td class="p-4 text-sm text-slate-400">${escapeHtml(idBarang || '-')}</td>
+            <td class="p-4 text-sm font-semibold text-white">${escapeHtml(namaBarang || '-')}</td>
+            <td class="p-4 text-center text-sm font-bold ${qtyTone(r)}">${escapeHtml(formatNumber(qty))}</td>
+            <td class="p-4 text-center text-sm text-slate-400">${escapeHtml(satuan || '-')}</td>
             <td class="p-4 text-sm text-slate-400">${escapeHtml(detail)}</td>
           </tr>`;
       }).join('');
@@ -499,7 +561,7 @@
 
     function qtyTone(r) {
       const j = String(r.jenis || '').toLowerCase();
-      const qty = parseNumber(r.qty);
+      const qty = parseNumber(getRiwayatQty(r));
       if (j.includes('opname')) return qty < 0 ? 'text-rose-400' : (qty > 0 ? 'text-emerald-400' : 'text-slate-400');
       if (j.includes('output') || j.includes('transfer')) return 'text-rose-400';
       if (j.includes('input') || j.includes('produksi')) return 'text-emerald-400';
