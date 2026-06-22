@@ -286,7 +286,7 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4">
               <div>
                 <h3 class="text-base font-black text-white">User Sistem</h3>
-                <p class="text-xs text-slate-500 mt-1">Tampil 10 user per halaman. Klik <b class="text-violet-200">Aktif</b> untuk membuka detail user, edit data, dan ganti password hash.</p>
+                <p class="text-xs text-slate-500 mt-1">Tampil 10 user per halaman. Klik <b class="text-violet-200">Edit</b> untuk membuka detail user, edit data, dan ganti password hash.</p>
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <span id="userCount" class="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] text-slate-400">0 user</span>
@@ -544,7 +544,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3sNyaAR5b1MZj
           <td class="py-3 px-3 text-slate-300">${escapeHtml(user.outlet || '-')}</td>
           <td class="py-3 px-3">${passwordBadge(user.passwordMode)}</td>
           <td class="py-3 pl-3 text-right">
-            <button type="button" onclick="openUserEditModal(${jsString(user.username)})" class="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 transition">Aktif</button>
+            <button type="button" onclick="openUserEditModal(${jsString(user.username)})" title="Edit user" aria-label="Edit user" class="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200 hover:bg-violet-500/20 transition">Edit</button>
           </td>
         </tr>
       `).join('') : `<tr><td colspan="6" class="py-8 text-center text-slate-500">Belum ada user.</td></tr>`;
